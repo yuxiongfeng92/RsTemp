@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.proton.runbear.viewmodel.measure.MeasureViewModel" />
+
+        <import type="com.proton.runbear.utils.Utils" />
+
+        <import type="android.view.View" />
+
+        <import type="com.proton.runbear.BuildConfig" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.graphics.Color" />
+
+        <import type="android.support.v4.content.ContextCompat" />
+
+        <import type="com.proton.runbear.utils.MQTTShareManager" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ScrollView
+            android:id="@+id/id_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/id_connect_status_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/id_close"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="5dp"
+                        android:src="@drawable/icon_close_card" />
+
+                    <ImageView
+                        android:id="@+id/iv_battery"
+                        android:layout_width="40dp"
+                        android:layout_height="15dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/battery_icon"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txt_battery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text='@{(safeUnbox(viewmodel.battery) == -1) ? "剩余电量--%" : "剩余电量"+safeUnbox(viewmodel.battery) + "%"}'
+                        android:textColor="#8B8B8B"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_battery"
+                        app:layout_constraintLeft_toRightOf="@+id/iv_battery"
+                        app:layout_constraintTop_toTopOf="@+id/iv_battery" />
+
+
+                    <TextView
+                        android:id="@+id/txt_connect_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp8"
+                        android:text="@{viewmodel.isMqttConnectStatus?@string/string_connected:@string/string_connecting1}"
+                        android:textColor="#8B8B8B"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_battery"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/iv_battery" />
+
+                    <TextView
+                        android:id="@+id/txt_signal_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp5"
+                        android:text="2G"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_battery"
+                        app:layout_constraintRight_toLeftOf="@+id/txt_connect_status"
+                        app:layout_constraintTop_toTopOf="@+id/iv_battery" />
+
+                    <ImageView
+                        android:id="@+id/iv_connect_status"
+                        android:layout_width="@dimen/dp15"
+                        android:layout_height="13dp"
+                        android:layout_marginRight="@dimen/dp5"
+                        android:src="@{viewmodel.isMqttConnectStatus?@drawable/icon_wifi:@drawable/icon_wifi_gray}"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_battery"
+                        app:layout_constraintRight_toLeftOf="@+id/txt_signal_type"
+                        app:layout_constraintTop_toTopOf="@+id/iv_battery" />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <ImageView
+                    android:id="@+id/id_introduce"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginRight="6dp"
+                    android:src="@drawable/tip_icon"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/id_connect_status_container" />
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/id_circle_container"
+                    android:layout_width="239dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/id_introduce">
+
+                    <com.proton.runbear.view.MeasureStatusView
+                        android:id="@+id/id_status_circle"
+                        android:layout_width="match_parent"
+                        android:layout_height="210dp"
+                        android:layout_centerHorizontal="true"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <LinearLayout
+                        android:id="@+id/id_temp_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="50dp"
+                        android:orientation="vertical"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center"
+                            android:text='@{viewmodel.measureTips,default="11111111111"}'
+                            android:textColor="#ef6a58"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="bottom"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/id_current_temp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{ Utils.getFormartTempStr(viewmodel.currentTemp)}"
+                                android:textColor="@{Color.parseColor(Utils.getCurrentTempColor(viewmodel.currentTemp))}"
+                                android:textSize="60sp" />
+
+                            <TextView
+                                android:id="@+id/id_current_temp_unit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:text="@{Utils.getTempUnit()}"
+                                android:textColor="@color/color_gray_33"
+                                android:textSize="19sp"
+                                android:visibility="@{(viewmodel.needShowPreheating &amp;&amp; viewmodel.connectStatus == 2) ? View.GONE : View.VISIBLE}" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/id_highest_temp_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="10dp"
+                                android:layout_height="23dp"
+                                android:src="@drawable/icon_highest_temp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:text="@string/string_highest_temp"
+                                android:textColor="#333"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/id_highest_temp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="3dp"
+                                android:layout_marginRight="3dp"
+                                android:maxLength="5"
+                                android:text='@{Utils.getFormartTempStr(viewmodel.highestTemp)}'
+                                android:textColor="#FF0D00"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:id="@+id/id_highest_temp_unit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="@{Utils.getTempUnit()}"
+                                android:textColor="#333"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="119dp"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="28dp"
+                        android:background="@{viewmodel.connectStatus!=2?(@drawable/main_round_yellow_19):(@drawable/main_round_red_19)}"
+                        android:gravity="center"
+                        android:onClick="@{()->viewmodel.clickConnectBluetoothBtn()}"
+                        android:text="@{Utils.getConnectStr(viewmodel.connectStatus)}"
+                        android:textColor="@color/white"
+                        android:textSize="17sp"
+                        app:layout_constraintLeft_toLeftOf="@+id/id_temp_container"
+                        app:layout_constraintRight_toRightOf="@+id/id_temp_container"
+                        app:layout_constraintTop_toBottomOf="@+id/id_temp_container" />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <ImageView
+                    android:id="@+id/iv_setting"
+                    android:layout_width="46dp"
+                    android:layout_height="45dp"
+                    android:padding="11dp"
+                    android:src="@drawable/set_icon"
+                    app:layout_constraintBottom_toBottomOf="@+id/id_circle_container"
+                    app:layout_constraintLeft_toRightOf="@+id/id_circle_container" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="19dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="19dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/id_circle_container">
+
+                    <com.proton.runbear.view.TempCurveView2
+                        android:id="@+id/id_curve_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="#F4F4F4" />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp20">
+
+                        <ImageView
+                            android:id="@+id/iv_patch_device"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="80dp"
+                            android:src="@drawable/battery_icon"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txt_patch_mac"
+                            style="@style/style_12sp_gray33"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp10"
+                            android:text="@{TextUtils.isEmpty(viewmodel.device.get().getMacaddress())?@string/string_not_connnect_patch:viewmodel.device.get().getMacaddress()}"
+                            app:layout_constraintBottom_toBottomOf="@+id/iv_patch_device"
+                            app:layout_constraintLeft_toRightOf="@+id/iv_patch_device"
+                            app:layout_constraintTop_toTopOf="@+id/iv_patch_device" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:text="(设备编码)"
+                            android:textColor="@color/color_main"
+                            android:textSize="10sp"
+                            app:layout_constraintLeft_toLeftOf="@+id/txt_patch_mac"
+                            app:layout_constraintTop_toBottomOf="@+id/txt_patch_mac" />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                    <Space
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/id_tips"
+                        style="@style/style_16sp_gray33"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp20"
+                        android:layout_marginBottom="25dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/string_tip"
+                        app:layout_constraintTop_toBottomOf="@+id/id_curve_view" />
+
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </ScrollView>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</layout>
