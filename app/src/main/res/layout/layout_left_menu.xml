@@ -12,7 +12,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@drawable/measure_bg"
         android:clickable="true"
         android:gravity="center">
 
@@ -35,27 +35,15 @@
                 app:roundingBorderColor="@android:color/white"
                 app:roundingBorderWidth="4dp" />
 
-            <LinearLayout
+            <ImageView
                 android:id="@+id/id_login_out"
                 android:layout_width="wrap_content"
                 android:layout_height="31dp"
+                android:src="@drawable/login_out"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/drawable_white_bg_with_circle"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/string_to_loginOut"
-                    android:textColor="#fff"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                android:layout_marginBottom="20dp"
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -70,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:left_menu_normal_img="@drawable/icon_left_menu_measure_normal"
-                    app:left_menu_select_img="@drawable/icon_left_menu_measure_selected"
+                    app:left_menu_select_img="@drawable/icon_left_menu_measure_normal"
                     app:left_menu_text="@string/string_measure" />
 
                 <com.proton.runbear.view.LeftMenuItemView
@@ -79,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     app:left_menu_normal_img="@drawable/icon_left_menu_report_normal"
-                    app:left_menu_select_img="@drawable/icon_left_menu_report_select"
+                    app:left_menu_select_img="@drawable/icon_left_menu_report_normal"
                     app:left_menu_text="@string/string_help" />
 
                 <Space
@@ -116,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     app:left_menu_normal_img="@drawable/icon_left_menu_myprofile_normal"
-                    app:left_menu_select_img="@drawable/icon_left_menu_myprofile_selected"
+                    app:left_menu_select_img="@drawable/icon_left_menu_myprofile_normal"
                     app:left_menu_text="@string/string_profile_manage" />
                 <!--设备管理-->
                 <com.proton.runbear.view.LeftMenuItemView
@@ -125,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     app:left_menu_normal_img="@drawable/icon_left_menu_devicemanage_selected_normal"
-                    app:left_menu_select_img="@drawable/icon_left_menu_devicemanage_selected_selected"
+                    app:left_menu_select_img="@drawable/icon_left_menu_devicemanage_selected_normal"
                     app:left_menu_text="@string/string_bluetooth_device_manage" />
 
                 <com.proton.runbear.view.LeftMenuItemView

@@ -411,6 +411,7 @@ public class SettingFragment extends BaseViewModelFragment<FragmentManagerCenter
     private void openMsgSet() {
         //消息设置
         if (!binding.idVsMsgSet.isInflated() || msgSetOpenView.getVisibility() == View.GONE) {
+
             //展开
             if (msgSetOpenView == null) {
                 ViewStub msgSetVs = binding.idVsMsgSet.getViewStub();

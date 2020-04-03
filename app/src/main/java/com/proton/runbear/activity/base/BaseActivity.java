@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baidu.mobstat.StatService;
@@ -481,13 +482,14 @@ public abstract class BaseActivity<DB extends ViewDataBinding> extends AppCompat
         if (null != findViewById(R.id.toolbar)) {
             Toolbar toolbar = findViewById(R.id.toolbar);
             toolbar.setTitle("");
-            if (getBackIcon() != -1) {
-                toolbar.setNavigationIcon(getBackIcon());
+            ImageView ivBack = findViewById(R.id.iv_back);
+            if (ivBack!=null) {
+                ivBack.setImageResource(getBackIcon());
+                ivBack.setOnClickListener(v->onBackPressed());
+                ivBack.setVisibility(showBackBtn()?View.VISIBLE:View.GONE);
             }
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(showBackBtn());
             getSupportActionBar().setHomeButtonEnabled(true);
-            toolbar.setNavigationOnClickListener(v -> onBackPressed());
         }
     }
 
@@ -496,7 +498,7 @@ public abstract class BaseActivity<DB extends ViewDataBinding> extends AppCompat
     }
 
     protected boolean showBackBtn() {
-        return true;
+        return false;
     }
 
     @Override

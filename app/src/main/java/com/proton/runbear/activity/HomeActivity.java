@@ -51,6 +51,7 @@ import com.proton.runbear.utils.StatusBarUtil;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.view.AppNotificationDialog;
 import com.proton.runbear.view.TutorialDialogFragment;
+import com.proton.runbear.view.WarmDialogVertical;
 import com.proton.temp.connector.TempConnectorManager;
 import com.wms.logger.Logger;
 import com.wms.utils.CommonUtils;
@@ -166,13 +167,14 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         binding.idMenuLeft.idMenuMeasure.setSelect();
         binding.idMenuLeft.idMenuMeasure.setOnClickListener(v -> showMeasureFragment());
 
-        binding.idMenuLeft.idLoginOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                App.get().logout();
-                IntentUtils.goToLogin(mContext);
-            }
-        });
+        binding.idMenuLeft.idLoginOut.setOnClickListener(v -> new WarmDialogVertical(HomeActivity.this)
+                .setTopText(R.string.string_to_loginOut)
+                .setContent("退出后不会删除任何历史数据,下次登录依然可以使用本账号")
+                .setConfirmListener(v1 -> {
+                    App.get().logout();
+                    IntentUtils.goToLogin(mContext);
+                })
+                .show());
 
         //测量报告
         binding.idMenuLeft.idMenuHelp.setOnClickListener(v -> showHelpFragment());
@@ -414,7 +416,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         if (profile != null) {
             binding.idMenuLeft.idProfileImg.setImageURI(profile.getAvatar());
         } else {
-            binding.idMenuLeft.idProfileImg.setImageURI(AppConfigs.DEFAULT_AVATOR_URL);
+            binding.idMenuLeft.idProfileImg.setImageResource(R.drawable.icon_default_profile);
         }
     }
 

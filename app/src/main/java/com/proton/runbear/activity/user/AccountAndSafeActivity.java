@@ -14,7 +14,7 @@ import com.proton.runbear.utils.AlipayLogin;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.JSONUtils;
-import com.proton.runbear.view.WarmDialogHorizental;
+import com.proton.runbear.view.WarmDialogVertical;
 import com.wms.logger.Logger;
 
 import java.util.Map;
@@ -123,7 +123,7 @@ public class AccountAndSafeActivity extends BaseActivity<ActivityAccountAndSafeB
         } else if (type == alipayType) {
             content = "确定要解除账号与支付宝的关联吗?";
         }
-        WarmDialogHorizental dialogHorizental = new WarmDialogHorizental(this);
+        WarmDialogVertical dialogHorizental = new WarmDialogVertical(this);
         dialogHorizental.setTopText(R.string.string_unbind);
         dialogHorizental.setConfirmText("解除绑定");
         dialogHorizental.setContent(content);

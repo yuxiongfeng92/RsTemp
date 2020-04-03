@@ -122,8 +122,8 @@
     <string name="string_his_name">Ta的名字</string>
     <string name="string_boy">男</string>
     <string name="string_girl">女</string>
-    <string name="string_birth_date">Ta多大了</string>
-    <string name="string_add_profile">添加新档案</string>
+    <string name="string_birth_date">请选择出生日期</string>
+    <string name="string_add_profile">添加病人档案</string>
     <string name="string_set_avatar">设置头像</string>
     <string name="string_cancel">取消</string>
     <string name="string_name_profile_tip">请填写档案姓名</string>

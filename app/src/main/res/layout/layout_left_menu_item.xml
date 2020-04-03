@@ -11,6 +11,7 @@
         android:id="@+id/id_img"
         android:layout_width="61dp"
         android:layout_height="61dp"
+        android:padding="10dp"
         android:src="@drawable/icon_left_menu_temp_select"/>
 
     <TextView

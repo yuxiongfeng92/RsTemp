@@ -82,7 +82,7 @@ public class GlobalWebActivity extends BaseActivity<ActivityGlobalWebBinding> {
 
     @Override
     protected boolean showBackBtn() {
-        return !backBtnClose;
+        return true;
     }
 
     @Override

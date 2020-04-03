@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.proton.runbear.R;
 
-public class WarmDialogHorizental extends Dialog implements SystemDialog {
+public class WarmDialogVertical extends Dialog implements SystemDialog {
 
     private TextView mTopText;
     private TextView mConfirmText;
@@ -21,7 +21,7 @@ public class WarmDialogHorizental extends Dialog implements SystemDialog {
     private TextView mContent;
     private Activity hostActivity;
 
-    public WarmDialogHorizental(@NonNull Activity activity) {
+    public WarmDialogVertical(@NonNull Activity activity) {
         super(activity);
         hostActivity = activity;
         initDialog();
@@ -29,7 +29,7 @@ public class WarmDialogHorizental extends Dialog implements SystemDialog {
 
     private void initDialog() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.layout_warm_horizental_dialog);
+        setContentView(R.layout.layout_warm_vertical_dialog);
         Window dialogWindow = getWindow();
         if (dialogWindow != null) {
             WindowManager.LayoutParams lp = dialogWindow.getAttributes();
@@ -55,63 +55,63 @@ public class WarmDialogHorizental extends Dialog implements SystemDialog {
         setCancelListener(null);
     }
 
-    public WarmDialogHorizental setTopColor(@ColorInt int color) {
+    public WarmDialogVertical setTopColor(@ColorInt int color) {
         mTopText.setBackgroundColor(color);
         return this;
     }
 
-    public WarmDialogHorizental setTopText(int text) {
+    public WarmDialogVertical setTopText(int text) {
         mTopText.setText(text);
         return this;
     }
 
-    public WarmDialogHorizental setConfirmText(int text) {
+    public WarmDialogVertical setConfirmText(int text) {
         mConfirmText.setText(text);
         return this;
     }
 
-    public WarmDialogHorizental setCancelText(int text) {
+    public WarmDialogVertical setCancelText(int text) {
         mCancelText.setText(text);
         return this;
     }
 
-    public WarmDialogHorizental setContent(int text) {
+    public WarmDialogVertical setContent(int text) {
         mContent.setText(text);
         return this;
     }
 
-    public WarmDialogHorizental setContent(String text) {
+    public WarmDialogVertical setContent(String text) {
         mContent.setText(text);
         return this;
     }
 
-    public WarmDialogHorizental setContentColor(int color) {
+    public WarmDialogVertical setContentColor(int color) {
         mContent.setTextColor(color);
         return this;
     }
 
-    public WarmDialogHorizental setConfirmText(String text) {
+    public WarmDialogVertical setConfirmText(String text) {
         mConfirmText.setText(text);
         return this;
     }
 
-    public WarmDialogHorizental setCancelText(String text) {
+    public WarmDialogVertical setCancelText(String text) {
         mCancelText.setText(text);
         return this;
     }
 
 
-    public WarmDialogHorizental hideConfirmBtn() {
+    public WarmDialogVertical hideConfirmBtn() {
         mConfirmText.setVisibility(View.GONE);
         return this;
     }
 
-    public WarmDialogHorizental hideCancelBtn() {
+    public WarmDialogVertical hideCancelBtn() {
         mCancelText.setVisibility(View.GONE);
         return this;
     }
 
-    public WarmDialogHorizental setConfirmListener(View.OnClickListener listener) {
+    public WarmDialogVertical setConfirmListener(View.OnClickListener listener) {
         mConfirmText.setOnClickListener(v -> {
             dismiss();
             if (listener != null) {
@@ -121,7 +121,7 @@ public class WarmDialogHorizental extends Dialog implements SystemDialog {
         return this;
     }
 
-    public WarmDialogHorizental setCancelListener(View.OnClickListener listener) {
+    public WarmDialogVertical setCancelListener(View.OnClickListener listener) {
         mCancelText.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onClick(v);
@@ -131,7 +131,7 @@ public class WarmDialogHorizental extends Dialog implements SystemDialog {
         return this;
     }
 
-    public WarmDialogHorizental setConfirmTextColor(int color) {
+    public WarmDialogVertical setConfirmTextColor(int color) {
         mConfirmText.setTextColor(color);
         return this;
     }

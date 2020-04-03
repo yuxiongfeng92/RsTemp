@@ -10,7 +10,7 @@
         android:id="@+id/id_top_text"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="#30b8ff"
+        android:background="@color/color_main"
         android:gravity="center"
         android:text="@string/string_warm_tips"
         android:textColor="#fff"
@@ -35,7 +35,7 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:text="@string/string_confirm"
-        android:textColor="#30b8ff"
+        android:textColor="@color/color_main"
         android:textSize="14sp"/>
 
     <View
@@ -47,7 +47,7 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:text="@string/string_cancel"
-        android:textColor="#30b8ff"
+        android:textColor="@color/color_main"
         android:textSize="14sp"/>
 
 </LinearLayout>

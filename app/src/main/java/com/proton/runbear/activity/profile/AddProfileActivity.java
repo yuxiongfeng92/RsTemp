@@ -2,11 +2,15 @@ package com.proton.runbear.activity.profile;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewStub;
 
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
@@ -16,6 +20,8 @@ import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.component.App;
 import com.proton.runbear.constant.AppConfigs;
 import com.proton.runbear.databinding.ActivityAddProfileBinding;
+import com.proton.runbear.databinding.AddAdditionalBaseInfoLayoutBinding;
+import com.proton.runbear.databinding.CaseHistoryLayoutBinding;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
@@ -47,7 +53,7 @@ import io.reactivex.schedulers.Schedulers;
  * from String  从哪个页面进来 [firstLogin: 首次注册登录进来]、[chooseProfile: 实时测量选择宝宝]、[measureSave: 实时测量页保存报告]
  * </>
  * <resultCode>
- * 1——>MainActiviy
+ * 1——>MainActivity
  * </>
  */
 public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> implements OnDateSetListener {
@@ -62,10 +68,18 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
     private boolean canSkip;
     private int isAttachAddNew;
 
+    /**
+     * 消息设置打开view
+     */
+    private View additionalSetOpenView;
+    private View caseHistorySetOpenView;
+    private AddAdditionalBaseInfoLayoutBinding additionalBaseInfoLayoutBinding;
+    private CaseHistoryLayoutBinding caseHistoryLayoutBinding;
+
     @Override
     protected void init() {
         super.init();
-        isAttachAddNew=getIntent().getIntExtra("isAttachAddNew",0);
+        isAttachAddNew = getIntent().getIntExtra("isAttachAddNew", 0);
         long minMillSeconds = 0;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//时间格式化类
         try {
@@ -175,6 +189,64 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
         //添加档案
         binding.idBtnFinish.setOnClickListener(v -> addProfileRequest());
         binding.getRoot().setOnClickListener(v -> Utils.hideKeyboard(mContext, binding.getRoot()));
+
+        /**
+         * 基本信息
+         */
+        binding.layMsgSetting.setOnClickListener(v -> openAdditionalInfoSet());
+        binding.ivAdditionalSetDown.setOnClickListener(v -> openAdditionalInfoSet());
+        /**
+         * 病史
+         */
+        binding.layCaseHistorySetting.setOnClickListener(v -> openCaseHistorySet());
+        binding.ivCaseHistorySetDown.setOnClickListener(v -> openCaseHistorySet());
+
+    }
+
+    /**
+     * 打开基本信息设置
+     */
+    private void openAdditionalInfoSet() {
+        //展开
+        if (!binding.idVsAdditionalSet.isInflated() || additionalSetOpenView.getVisibility() == View.GONE) {
+
+            if (additionalSetOpenView == null) {
+                ViewStub msgSetVs = binding.idVsAdditionalSet.getViewStub();
+                additionalSetOpenView = msgSetVs.inflate();
+                additionalBaseInfoLayoutBinding = DataBindingUtil.bind(additionalSetOpenView);
+            } else {
+                additionalSetOpenView.setVisibility(View.VISIBLE);
+            }
+            binding.ivAdditionalSetDown.setImageResource(R.drawable.icon_setarrow_on);
+            binding.layMsgSetting.setBackgroundColor(Color.parseColor("#eeeeee"));
+        } else {
+            //关闭
+            additionalSetOpenView.setVisibility(View.GONE);
+            binding.ivAdditionalSetDown.setImageResource(R.drawable.icon_setarrow_off);
+            binding.layMsgSetting.setBackgroundColor(Color.parseColor("#ffffff"));
+        }
+    }
+
+    /**
+     * 打开病史设置
+     */
+    private void openCaseHistorySet() {
+        //展开
+        if (!binding.idVsCaseHistorySet.isInflated() || caseHistorySetOpenView.getVisibility() == View.GONE) {
+            if (caseHistorySetOpenView == null) {
+                ViewStub caseHistorySetVS = binding.idVsCaseHistorySet.getViewStub();
+                caseHistorySetOpenView = caseHistorySetVS.inflate();
+                caseHistoryLayoutBinding = DataBindingUtil.bind(caseHistorySetOpenView);
+            } else {
+                caseHistorySetOpenView.setVisibility(View.VISIBLE);
+            }
+            binding.layCaseHistorySetting.setBackgroundColor(Color.parseColor("#eeeeee"));
+            binding.ivCaseHistorySetDown.setImageResource(R.drawable.icon_setarrow_on);
+        } else {
+            caseHistorySetOpenView.setVisibility(View.GONE);
+            binding.ivCaseHistorySetDown.setImageResource(R.drawable.icon_setarrow_off);
+            binding.layCaseHistorySetting.setBackgroundColor(Color.parseColor("#ffffff"));
+        }
     }
 
     private void addProfileRequest() {
