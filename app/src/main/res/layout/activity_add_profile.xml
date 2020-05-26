@@ -12,6 +12,7 @@
             layout="@layout/include_top_navigation" />
 
         <ScrollView
+            android:id="@+id/id_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none">
@@ -181,8 +182,8 @@
                         android:padding="2dp"
                         android:src="@drawable/age_img" />
 
-                    <EditText
-                        android:id="@+id/id_et_profile_addbirthdate"
+                    <TextView
+                        android:id="@+id/id_select_birthday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"

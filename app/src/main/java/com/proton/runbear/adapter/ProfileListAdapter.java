@@ -39,7 +39,7 @@ public class ProfileListAdapter extends CommonAdapter<ProfileBean> {
         //头像
         ((SimpleDraweeView) holder.getView(R.id.id_profile_sdv_avatar)).setImageURI(profileBean.getAvatar());
         //用户名
-        ((TextView) holder.getView(R.id.id_tv_profile_name)).setText(profileBean.getRealname());
+        ((TextView) holder.getView(R.id.id_tv_profile_name)).setText(profileBean.getUsername());
         //年龄
         String birthDay = profileBean.getBirthday();
         if (!TextUtils.isEmpty(birthDay)) {

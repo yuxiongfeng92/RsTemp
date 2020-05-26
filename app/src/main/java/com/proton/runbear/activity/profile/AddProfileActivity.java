@@ -18,10 +18,10 @@ import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.component.App;
-import com.proton.runbear.constant.AppConfigs;
 import com.proton.runbear.databinding.ActivityAddProfileBinding;
 import com.proton.runbear.databinding.AddAdditionalBaseInfoLayoutBinding;
 import com.proton.runbear.databinding.CaseHistoryLayoutBinding;
+import com.proton.runbear.net.bean.AddProfileReq;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
@@ -41,7 +41,6 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -49,12 +48,6 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * 增加档案类
- * <传入extra>
- * from String  从哪个页面进来 [firstLogin: 首次注册登录进来]、[chooseProfile: 实时测量选择宝宝]、[measureSave: 实时测量页保存报告]
- * </>
- * <resultCode>
- * 1——>MainActivity
- * </>
  */
 public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> implements OnDateSetListener {
     private static final int CHOOSE_PICTURE = 0;
@@ -66,7 +59,6 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
     private Uri tempUri;
     private File mCameraFile = new File(FileUtils.getDataCache(), "image.jpg");
     private boolean canSkip;
-    private int isAttachAddNew;
 
     /**
      * 消息设置打开view
@@ -79,7 +71,6 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
     @Override
     protected void init() {
         super.init();
-        isAttachAddNew = getIntent().getIntExtra("isAttachAddNew", 0);
         long minMillSeconds = 0;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//时间格式化类
         try {
@@ -185,7 +176,7 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
             showChoosePicDialog();
         });
         //选择出生日期
-        binding.idEtProfileAddbirthdate.setOnClickListener(v -> mDialogYearMonthDay.show(getSupportFragmentManager(), ""));
+        binding.idSelectBirthday.setOnClickListener(v -> mDialogYearMonthDay.show(getSupportFragmentManager(), ""));
         //添加档案
         binding.idBtnFinish.setOnClickListener(v -> addProfileRequest());
         binding.getRoot().setOnClickListener(v -> Utils.hideKeyboard(mContext, binding.getRoot()));
@@ -200,7 +191,6 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
          */
         binding.layCaseHistorySetting.setOnClickListener(v -> openCaseHistorySet());
         binding.ivCaseHistorySetDown.setOnClickListener(v -> openCaseHistorySet());
-
     }
 
     /**
@@ -250,45 +240,44 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
     }
 
     private void addProfileRequest() {
-        HashMap<String, String> map = new HashMap<>();
-        if (TextUtils.isEmpty(ossAvatorUri)) {
-            ossAvatorUri = AppConfigs.DEFAULT_AVATOR_URL;
-        } else {
-            ossAvatorUri = OSSUtils.getSaveUrl(ossAvatorUri);
-        }
-        map.put("avatar", ossAvatorUri);
+
+        AddProfileReq addProfileReq=new AddProfileReq();
+//        if (TextUtils.isEmpty(ossAvatorUri)) {
+//            ossAvatorUri = AppConfigs.DEFAULT_AVATOR_URL;
+//        } else {
+//            ossAvatorUri = OSSUtils.getSaveUrl(ossAvatorUri);
+//        }
+//        map.put("avatar", ossAvatorUri);
         //姓名
         String name = binding.idEtProfileaAddname.getText().toString().trim();
         if (TextUtils.isEmpty(name)) {
             BlackToast.show(R.string.string_name_profile_tip);
             return;
         } else {
-            map.put("realname", name);
-            map.put("title", name);
+            addProfileReq.setPatientName(name);
         }
         //性别
         if (binding.idRbProfileBoy.isChecked()) {
-            map.put("gender", "1");// 1男
+            addProfileReq.setSex(1);//男
         } else if (binding.idRbProfileGirl.isChecked()) {
-            map.put("gender", "2");//2 女
+            addProfileReq.setSex(2);//女
         }
         //生日
-        String birthday = binding.idEtProfileAddbirthdate.getText().toString().trim();
+        String birthday = binding.idSelectBirthday.getText().toString().trim();
         if (TextUtils.isEmpty(birthday)) {
             BlackToast.show(R.string.string_choose_birthday);
             return;
         } else {
-            map.put("birthday", birthday);
+            addProfileReq.setBirthdate(birthday);
         }
         showDialog();
-        requestAddProfile(map);
-
+        requestAddProfile(addProfileReq);
     }
 
     /**
      * 从哪个页面进来添加档案
      */
-    private void requestAddProfile(HashMap<String, String> map) {
+    private void requestAddProfile(AddProfileReq req) {
         if (isAddingProfile) return;
         isAddingProfile = true;
         ProfileCenter.addProfile(new NetCallBack<ProfileBean>() {
@@ -304,7 +293,6 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
             public void onSucceed(ProfileBean data) {
                 dismissDialog();
                 BlackToast.show(R.string.string_profile_add);
-                data.setIsAttachAddNew(isAttachAddNew);
                 if (!TextUtils.isEmpty(App.get().getLastScanDeviceId())) {
                     //上次扫描了直接绑定
                     bindDevice(data.getProfileId());
@@ -326,7 +314,7 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
                 }
                 isAddingProfile = false;
             }
-        }, map);
+        }, req);
     }
 
     private void bindDevice(long profileId) {
@@ -400,6 +388,6 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
 
     @Override
     public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
-        binding.idEtProfileAddbirthdate.setText(DateUtils.dateStrToYMD(millseconds));
+        binding.idSelectBirthday.setText(DateUtils.dateStrToYMD(millseconds));
     }
 }

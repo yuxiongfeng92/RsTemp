@@ -33,14 +33,11 @@ import com.proton.runbear.activity.report.PrePDFActivity;
 import com.proton.runbear.activity.report.ReportDetailActivity;
 import com.proton.runbear.activity.report.ReportLandscapChartActivity;
 import com.proton.runbear.activity.report.SomOneMeasureReportActivity;
-import com.proton.runbear.activity.user.ForgetPwdActivity;
 import com.proton.runbear.activity.user.LoginActivity;
-import com.proton.runbear.activity.user.LoginFirstActivity;
-import com.proton.runbear.activity.user.LoginInternationalActivity;
 import com.proton.runbear.activity.user.NewProfileStep1Activity;
 import com.proton.runbear.activity.user.NewProfileStep2Activity;
 import com.proton.runbear.activity.user.NewProfileStep3Activity;
-import com.proton.runbear.activity.user.RegistActivity;
+import com.proton.runbear.activity.user.RegisterActivity;
 import com.proton.runbear.fragment.devicemanage.DeviceManageFragment;
 import com.proton.runbear.fragment.home.HealthyTipsFragment;
 import com.proton.runbear.fragment.home.ReportFragment;
@@ -63,17 +60,11 @@ public class PageUtils {
         if (UserGuideActivity.class.getName().equalsIgnoreCase(name)) {
             return "引导页";
         }
-        if (LoginFirstActivity.class.getName().equalsIgnoreCase(name)) {
-            return "登录注册";
-        }
         if (LoginActivity.class.getName().equalsIgnoreCase(name)) {
             return "登录";
         }
-        if (RegistActivity.class.getName().equalsIgnoreCase(name)) {
+        if (RegisterActivity.class.getName().equalsIgnoreCase(name)) {
             return "注册";
-        }
-        if (ForgetPwdActivity.class.getName().equalsIgnoreCase(name)) {
-            return "找回密码";
         }
         if (HomeActivity.class.getName().equalsIgnoreCase(name)) {
             return "首页";
@@ -205,9 +196,6 @@ public class PageUtils {
         }
         if (AddReportNotesRemarkActivity.class.getName().equalsIgnoreCase(name)) {
             return "随手记备注";
-        }
-        if (LoginInternationalActivity.class.getName().equalsIgnoreCase(name)) {
-            return "国际版登录";
         }
         return "";
     }

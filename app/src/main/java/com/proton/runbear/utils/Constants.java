@@ -5,14 +5,9 @@ package com.proton.runbear.utils;
  */
 
 public class Constants {
-    public static final String APITOKEN = "apitoken";
-    public static final String APIUID = "apiuid";
+    public static final String APITOKEN = "token";
+    public static final String APIUID = "GuarderID";
 
-    /**
-     * 国际版-登录
-     */
-    public static final String EMAIL_UID="uid";
-    public static final String EMAIL_TOKEN="token";
     /**
      * 失败
      */

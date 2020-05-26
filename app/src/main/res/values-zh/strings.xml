@@ -21,6 +21,7 @@
     <string name="string_slogon">科技·健康·关爱</string>
     <string name="string_company">杭州质子科技有限公司</string>
     <string name="string_copyright">Copyright© 2016 ProtonTek. All rights reserved.</string>
+    <string name="string_input_your_username">输入您的用户名</string>
     <string name="string_input_your_phone">输入您的手机号</string>
     <string name="string_input_your_email">输入您的邮件地址</string>
     <string name="string_input_password">请输入密码</string>
@@ -48,7 +49,9 @@
     <string name="string_email_not_correct">请输入正确有效的邮件地址</string>
     <string name="string_get_code_success">验证码发送成功</string>
     <string name="string_registing">注册中</string>
+    <string name="string_username_not_be_null">用户名不能为空</string>
     <string name="string_code_can_not_be_null">验证码不能为空</string>
+    <string name="string_code_invalid">验证码无效</string>
     <string name="string_temp_unit">单位设置</string>
     <string name="string_msg_set">消息设置</string>
     <string name="string_clear_cache">清除缓存</string>

@@ -39,7 +39,7 @@ public class NewProfileStep3Activity extends BaseViewModelActivity<ActivityNewPr
         viewmodel.stepNum.set(3);
         //初始化界面
         if (profile != null) {
-            viewmodel.name.set(profile.getRealname());
+            viewmodel.name.set(profile.getUsername());
             viewmodel.age.set(profile.getAge());
             String avatorUrl = profile.getAvatar();
             if (!TextUtils.isEmpty(avatorUrl)) {

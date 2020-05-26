@@ -45,7 +45,7 @@ public abstract class NetSubscriber<T> implements Observer<T> {
         Logger.w(e.toString());
 
         ResultPair resultPair = new ResultPair();
-        resultPair.setRet(Constants.FAIL);
+        resultPair.setErrorMessage(Constants.FAIL);
 
         if (e instanceof NoRouteToHostException) {
             resultPair.setData(UIUtils.getString(R.string.string_network_error));

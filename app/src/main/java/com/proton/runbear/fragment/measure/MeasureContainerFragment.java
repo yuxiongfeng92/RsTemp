@@ -112,7 +112,7 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
         if (hasMeasureItem()) {
             return;
         }
-        if (App.get().isLogined()) {
+        if (!App.get().isLogined()) {
             //未登录不显示档案界面
             BlackToast.show("未登陆");
             IntentUtils.goToLogin(mContext);
@@ -122,16 +122,12 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
             mChooseProfileFragment = MeasureChooseProfileFragment.newInstance();
         }
         //档案选择
-        mChooseProfileFragment.setOnChooseProfileListener(new MeasureChooseProfileFragment.OnChooseProfileListener() {
-            @Override
-            public void onClickProfile(ProfileBean profile) {
-                /**
-                 * 先设置档案信息，连接之前需要设置设备信息
-                 */
-                MeasureBean measureBean = new MeasureBean(profile);
-                showMeasuring(measureBean);
-            }
-
+        mChooseProfileFragment.setOnChooseProfileListener(profile -> {
+            /**
+             * 先设置档案信息，连接之前需要设置设备信息
+             */
+            MeasureBean measureBean = new MeasureBean(profile);
+            showMeasuring(measureBean);
         });
         showFragment(mChooseProfileFragment);
     }

@@ -22,7 +22,6 @@ import com.nineoldandroids.view.ViewHelper;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.bean.MeasureBean;
-import com.proton.runbear.bean.MessageBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.component.NetChangeReceiver;
 import com.proton.runbear.constant.AppConfigs;
@@ -39,22 +38,18 @@ import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.bean.UpdateFirmwareBean;
 import com.proton.runbear.net.callback.NetCallBack;
+import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
-import com.proton.runbear.net.center.MeasureCenter;
-import com.proton.runbear.net.center.MeasureReportCenter;
 import com.proton.runbear.net.center.UserCenter;
-import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.HttpUrls;
 import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.SpUtils;
 import com.proton.runbear.utils.StatusBarUtil;
 import com.proton.runbear.utils.Utils;
-import com.proton.runbear.view.AppNotificationDialog;
 import com.proton.runbear.view.TutorialDialogFragment;
 import com.proton.runbear.view.WarmDialogVertical;
 import com.proton.temp.connector.TempConnectorManager;
 import com.wms.logger.Logger;
-import com.wms.utils.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,8 +79,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         super.init();
         initDrawerLayout();
         checkNotificationPermission();
-        MeasureReportCenter.getAliyunToken();
-        MeasureCenter.getAlgorithmConfig(null);
+//        MeasureReportCenter.getAliyunToken();
+//        MeasureCenter.getAlgorithmConfig(null);
 //        getFireware();
 //        showTutorialDialog();
         showMeasureFragment();
@@ -111,55 +106,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         });
     }
 
-    @Override
-    protected void initData() {
-        super.initData();
-        UserCenter.getNewestMsg(new NetCallBack<List<MessageBean>>() {
-            @Override
-            public void onSucceed(List<MessageBean> datas) {
-                if (!CommonUtils.listIsEmpty(datas)) {
-                    for (MessageBean data : datas) {
-                        //正在显示的消息不在显示
-                        boolean isExist = false;
-                        for (Long messageId : mShowingDialog) {
-                            if (data.getMessageId() == messageId) {
-                                isExist = true;
-                            }
-                        }
-
-                        if (isExist) continue;
-                        AppNotificationDialog dialog = new AppNotificationDialog(ActivityManager.currentActivity())
-                                .setTitle(data.getTitle())
-                                .setConfirmText(data.getButtonContent())
-                                .setContent(data.getContent())
-                                .setCloseable(data.isClosable())
-                                .setCloseListener(v -> markMsgAsRead(data))
-                                .setDescription(data.getDescription());
-                        dialog.setCancelable(false);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.setConfirmListener(dialog1 -> {
-                            mShowingDialog.remove(data.getMessageId());
-                            markMsgAsRead(data);
-                            if (data.getJumpStatus() == 1) {
-                                IntentUtils.goToWeb(mContext, data.getUrl());
-                            }
-                        });
-                        mShowingDialog.add(data.getMessageId());
-                        dialog.show();
-                    }
-                }
-            }
-        });
-    }
-
-    private void markMsgAsRead(MessageBean data) {
-        UserCenter.markMsgAsRead(data.getMessageId(), data.getFlag(), new NetCallBack<String>() {
-            @Override
-            public void onSucceed(String data) {
-                Logger.w("标记成功");
-            }
-        });
-    }
 
     @Override
     protected void initView() {
@@ -170,16 +116,29 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         binding.idMenuLeft.idLoginOut.setOnClickListener(v -> new WarmDialogVertical(HomeActivity.this)
                 .setTopText(R.string.string_to_loginOut)
                 .setContent("退出后不会删除任何历史数据,下次登录依然可以使用本账号")
-                .setConfirmListener(v1 -> {
-                    App.get().logout();
-                    IntentUtils.goToLogin(mContext);
-                })
-                .show());
+                .setConfirmListener(v1 -> UserCenter.logout(new NetCallBack<Boolean>() {
+                    @Override
+                    public void noNet() {
+                        super.noNet();
+                        Logger.w("当前没有网络");
+                    }
+
+                    @Override
+                    public void onSucceed(Boolean data) {
+                        Logger.w("调用退出登录api成功");
+                        App.get().logout();
+                        IntentUtils.goToLogin(mContext);
+                    }
+
+                    @Override
+                    public void onFailed(ResultPair resultPair) {
+                        super.onFailed(resultPair);
+                        Logger.w(resultPair.getData());
+                    }
+                })).show());
 
         //测量报告
         binding.idMenuLeft.idMenuHelp.setOnClickListener(v -> showHelpFragment());
-
-
         //健康贴士
         binding.idMenuLeft.idMenuTips.setOnClickListener(v -> showHealthyTipsFragment());
         //设备管理

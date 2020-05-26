@@ -83,7 +83,7 @@ public class MeasureCardsFragment extends BaseFragment<FragmentMeasureCardsBindi
 
             if (measureInfo != null && measureInfo.getMacaddress().equalsIgnoreCase(measureBean.getMacaddress())
                     && measureInfo.getProfile().getProfileId() == measureBean.getProfile().getProfileId()) {
-                Logger.w("已经添加了该测量:" + measureInfo.getMacaddress() + "," + measureInfo.getProfile().getRealname());
+                Logger.w("已经添加了该测量:" + measureInfo.getMacaddress() + "," + measureInfo.getProfile().getUsername());
                 return;
             }
         }

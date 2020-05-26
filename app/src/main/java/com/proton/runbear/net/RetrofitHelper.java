@@ -27,6 +27,7 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitHelper {
@@ -77,7 +78,6 @@ public class RetrofitHelper {
                 .addHeader("model", App.get().getSystemInfo());
         if (!TextUtils.isEmpty(requestToken) && !TextUtils.isEmpty(requestUid)) {
             builder.addHeader(Constants.APITOKEN, requestToken);
-            builder.addHeader(Constants.APIUID, requestUid);
         }
         return chain.proceed(builder.build());
     }
@@ -119,6 +119,7 @@ public class RetrofitHelper {
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.SERVER_PATH)
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
                 .build();

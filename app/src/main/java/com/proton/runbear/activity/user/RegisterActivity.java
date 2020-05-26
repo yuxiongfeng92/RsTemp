@@ -6,13 +6,13 @@ import com.proton.runbear.R;
 import com.proton.runbear.activity.base.BaseViewModelActivity;
 import com.proton.runbear.databinding.ActivityRegistBinding;
 import com.proton.runbear.utils.Utils;
-import com.proton.runbear.viewmodel.user.LoginViewModel2;
+import com.proton.runbear.viewmodel.user.LoginViewModel;
 
 /**
  * Created by wangmengsi on 2018/2/27.
  */
 
-public class RegistActivity extends BaseViewModelActivity<ActivityRegistBinding, LoginViewModel2> {
+public class RegisterActivity extends BaseViewModelActivity<ActivityRegistBinding, LoginViewModel> {
 
     @Override
     protected int inflateContentView() {
@@ -33,8 +33,8 @@ public class RegistActivity extends BaseViewModelActivity<ActivityRegistBinding,
     }
 
     @Override
-    protected LoginViewModel2 getViewModel() {
-        return ViewModelProviders.of(this).get(LoginViewModel2.class);
+    protected LoginViewModel getViewModel() {
+        return ViewModelProviders.of(this).get(LoginViewModel.class);
     }
 
     @Override

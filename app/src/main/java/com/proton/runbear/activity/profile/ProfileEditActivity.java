@@ -153,7 +153,7 @@ public class ProfileEditActivity extends BaseActivity<ActivityProfileEditBinding
             binding.idSdvProfileAvatar.setImageURI(ossAvatorUri);
         }
         //设置姓名
-        binding.idTvRealName.setText(profileBean.getRealname() + "");
+        binding.idTvRealName.setText(profileBean.getUsername() + "");
         //设置性别
         if (1 == profileBean.getGender()) {
             binding.idTvSex.setText(getResources().getString(R.string.string_boy));

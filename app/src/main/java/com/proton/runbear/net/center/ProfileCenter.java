@@ -3,6 +3,7 @@ package com.proton.runbear.net.center;
 import com.google.gson.reflect.TypeToken;
 import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.net.RetrofitHelper;
+import com.proton.runbear.net.bean.AddProfileReq;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.NetSubscriber;
@@ -16,9 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by wangmengsi on 2018/02/03.
- */
 
 public class ProfileCenter extends DataCenter {
 
@@ -51,8 +49,8 @@ public class ProfileCenter extends DataCenter {
                 });
     }
 
-    public static void addProfile(NetCallBack<ProfileBean> resultPairNetCallBack, Map<String, String> map) {
-        RetrofitHelper.getProfileApi().addProfile(map).map(
+    public static void addProfile(NetCallBack<ProfileBean> resultPairNetCallBack, AddProfileReq req) {
+        RetrofitHelper.getProfileApi().addProfile("application/json", req).map(
                 json -> {
                     Logger.json(json);
                     ResultPair resultPair = parseResult(json);
@@ -104,7 +102,6 @@ public class ProfileCenter extends DataCenter {
             ResultPair resultPair = parseResult(json);
             if (resultPair != null && resultPair.isSuccess()) {
                 ProfileBean profileBean = JSONUtils.getObj(resultPair.getData(), ProfileBean.class);
-                profileBean.setCreated(Long.parseLong(map.get("created")));
                 ProfileManager.update(profileBean);
                 return profileBean;
             } else {

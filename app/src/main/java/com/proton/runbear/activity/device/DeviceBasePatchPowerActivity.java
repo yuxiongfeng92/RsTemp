@@ -158,7 +158,7 @@ public class DeviceBasePatchPowerActivity extends BaseActivity<ActivityDeviceBas
 
     @Override
     public void onBackPressed() {
-        if (!App.get().isNewUser()) {
+        /*if (!App.get().isNewUser()) {
             MessageEvent messageEvent = new MessageEvent(MessageEvent.EventType.ADD_NEW_DEVICE_BIND);
             if (profileBean != null) {
                 messageEvent.setObject(profileBean);
@@ -166,6 +166,6 @@ public class DeviceBasePatchPowerActivity extends BaseActivity<ActivityDeviceBas
             EventBusManager.getInstance().post(messageEvent);
 
             super.onBackPressed();
-        }
+        }*/
     }
 }

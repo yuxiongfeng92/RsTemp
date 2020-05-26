@@ -167,7 +167,7 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
 
                 IShareMedia shareMedia = new ShareWebMedia();
                 ((ShareWebMedia) shareMedia).setWebPageUrl(data);
-                ((ShareWebMedia) shareMedia).setDescription(getResString(R.string.string_invite_to_checkMeasureReport) + mMeasureInfo.getProfile().getRealname() + getResString(R.string.string_one_temp) + "\n此链接24小时内有效");
+                ((ShareWebMedia) shareMedia).setDescription(getResString(R.string.string_invite_to_checkMeasureReport) + mMeasureInfo.getProfile().getUsername() + getResString(R.string.string_one_temp) + "\n此链接24小时内有效");
                 ((ShareWebMedia) shareMedia).setTitle(getResString(R.string.stirng_carePatch_shrare));
                 mSocialApi.doShare(getActivity(), PlatformType.WEIXIN, shareMedia, new ShareListener() {
                     @Override

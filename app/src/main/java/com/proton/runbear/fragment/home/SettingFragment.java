@@ -21,7 +21,6 @@ import com.proton.runbear.activity.common.GlobalWebActivity;
 import com.proton.runbear.activity.managecenter.AboutProtonActivity;
 import com.proton.runbear.activity.managecenter.FeedBackActivity;
 import com.proton.runbear.activity.managecenter.MsgCenterActivity;
-import com.proton.runbear.activity.user.AccountAndSafeActivity;
 import com.proton.runbear.activity.user.LoginActivity;
 import com.proton.runbear.activity.user.RemindBellSelectActivity;
 import com.proton.runbear.component.App;
@@ -377,31 +376,6 @@ public class SettingFragment extends BaseViewModelFragment<FragmentManagerCenter
             case R.id.id_check_update:
                 Utils.checkUpdate(getActivity(), true);
                 break;
-            case R.id.id_account_safe:
-                //账号与安全
-                startActivity(new Intent(getActivity(), AccountAndSafeActivity.class));
-                break;
-
-        }
-    }
-
-    /****************
-     * 发起添加群流程。群号：卡帕奇体温贴用户群1(517778251) 的 key 为： 0Xt2-CdDomqPGIE6fYr_IzYo5aqe0fDJ
-     * 调用 joinQQGroup(0Xt2-CdDomqPGIE6fYr_IzYo5aqe0fDJ) 即可发起手Q客户端申请加群 卡帕奇体温贴用户群1(517778251)
-     *
-     * @param key 由官网生成的key
-     * @return 返回true表示呼起手Q成功，返回fals表示呼起失败
-     ******************/
-    public boolean joinQQGroup(String key) {
-        Intent intent = new Intent();
-        intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D" + key));
-        // 此Flag可根据具体产品需要自定义，如设置，则在加群界面按返回，返回手Q主界面，不设置，按返回会返回到呼起产品界面    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        try {
-            startActivity(intent);
-            return true;
-        } catch (Exception e) {
-            // 未安装手Q或安装的版本不支持
-            return false;
         }
     }
 

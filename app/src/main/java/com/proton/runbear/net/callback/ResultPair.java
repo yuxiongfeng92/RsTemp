@@ -5,43 +5,63 @@ import com.proton.runbear.utils.Constants;
 
 public class ResultPair {
 
-    private String ret = Constants.FAIL;
-    private String data = "";
+    private String Data = "";
+    private String ErrorMessage = Constants.FAIL;
+    private boolean Success;
+    private int Code;
 
     public ResultPair() {
     }
 
-    public ResultPair(String data) {
-        this.data = data;
-    }
-
-    public ResultPair(String ret, String data) {
-        this.ret = ret;
-        this.data = data;
+    public ResultPair(String data, String errorMessage, boolean success, int code) {
+        Data = data;
+        ErrorMessage = errorMessage;
+        Success = success;
+        Code = code;
     }
 
     public boolean isSuccess() {
-        return Constants.SUCCESS.equalsIgnoreCase(ret);
+        return Success;
+    }
+
+    public String getErrorMessage() {
+        return ErrorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        ErrorMessage = errorMessage;
+    }
+
+    public void setSuccess(boolean success) {
+        Success = success;
+    }
+
+    public int getCode() {
+        return Code;
+    }
+
+    public void setCode(int code) {
+        Code = code;
     }
 
     public String getRet() {
-        return ret;
+        return ErrorMessage;
     }
 
-    public void setRet(String ret) {
-        this.ret = ret;
-    }
 
     public String getData() {
-        return data;
+        return Data;
     }
 
     public void setData(String data) {
-        this.data = data;
+        this.Data = data;
     }
 
     @Override
     public String toString() {
-        return "ret : " + ret + " \n data : " + data;
+        return "ResultPair{" +
+                "Data='" + Data + '\'' +
+                ", ErrorMessage='" + ErrorMessage + '\'' +
+                '}';
     }
 }

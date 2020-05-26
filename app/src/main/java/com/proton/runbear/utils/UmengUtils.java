@@ -28,14 +28,14 @@ public class UmengUtils {
                 //注册成功会返回device token
                 deviceToken = token;
                 Logger.w("友盟deviceToken:", deviceToken);
-                if (App.get().isLogined()) {
-                    //登录直接设置
-                    UserCenter.setUmengToken(deviceToken, new NetCallBack<Boolean>() {
-                        @Override
-                        public void onSucceed(Boolean data) {
-                        }
-                    });
-                }
+//                if (App.get().isLogined()) {
+//                    //登录直接设置
+//                    UserCenter.setUmengToken(deviceToken, new NetCallBack<Boolean>() {
+//                        @Override
+//                        public void onSucceed(Boolean data) {
+//                        }
+//                    });
+//                }
             }
 
             @Override

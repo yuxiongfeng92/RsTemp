@@ -13,7 +13,7 @@ import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.HomeActivity;
-import com.proton.runbear.activity.user.LoginFirstActivity;
+import com.proton.runbear.activity.user.LoginActivity;
 import com.proton.runbear.activity.user.NewProfileStep1Activity;
 import com.proton.runbear.activity.user.NewProfileStep2Activity;
 import com.proton.runbear.activity.user.NewProfileStep3Activity;
@@ -77,7 +77,7 @@ public class AddProfileViewModel extends BaseViewModel implements OnDateSetListe
     public void goOverProfilFirstStep() {
         startActivity(HomeActivity.class);
         //关闭第一个登录页面
-        ActivityManager.finishActivity(LoginFirstActivity.class);
+        ActivityManager.finishActivity(LoginActivity.class);
     }
 
     /**
@@ -155,7 +155,7 @@ public class AddProfileViewModel extends BaseViewModel implements OnDateSetListe
     public void noMoreAddProfile() {
         //没有设备类型则选择设备
         startActivity(HomeActivity.class);
-        ActivityManager.finishActivity(LoginFirstActivity.class);
+        ActivityManager.finishActivity(LoginActivity.class);
         finishActivity();
     }
 
@@ -194,7 +194,7 @@ public class AddProfileViewModel extends BaseViewModel implements OnDateSetListe
                     BlackToast.show(resultPair.getData());
                 }
             }
-        }, map);
+        }, null);
     }
 
     /**

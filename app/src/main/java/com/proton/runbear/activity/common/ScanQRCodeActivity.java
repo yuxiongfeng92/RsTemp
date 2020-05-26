@@ -40,10 +40,6 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
     private CaptureFragment captureFragment;
     private String deviceType;
     private String macaddress;
-    /**
-     * 当前activity是否依附在AddNewDeviceActivity  1:是依附在addNewDeviceActivity   0：依附在homeActivity
-     */
-    private int isAttachAddNew;
 
 
     @Override
@@ -58,7 +54,6 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
         go2ScanDevice = getIntent().getBooleanExtra("go2ScanDevice", false);
         if (mProfile != null) {
             App.get().getHasScanQRCode().add(mProfile.getProfileId());
-            isAttachAddNew=mProfile.getIsAttachAddNew();
         }
         showScanFragment();
     }
@@ -81,7 +76,8 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
         getSupportFragmentManager().beginTransaction().replace(R.id.id_qrcode_container, captureFragment).commit();
     }
 
-    /**w
+    /**
+     * w
      * 二维码格式
      * http://www.protontek.com/device/temp?type=P03&macId=0C:61:CF:C7:E7:0E&sn=18051601003
      */
@@ -223,7 +219,7 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
             @Override
             public void onSucceed(Boolean data) {
                 dismissDialog();
-                mProfile.setMacaddress(macaddress);
+                mProfile.setMacAddress(macaddress);
                 finishOrGoToWeb();
                 Logger.w("更新分享设备成功");
             }
@@ -245,7 +241,7 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
 //        }
         if (DeviceType.valueOf(deviceType) == DeviceType.P03) {
 //            IntentUtils.goToWeb(mContext, HttpUrls.URL_SCAN_HELP + "?profileId=" + (mProfile == null ? "-1" : mProfile.getProfileId()), true);
-            IntentUtils.goToDockerSetNetwork(mContext,false,"",mProfile);
+            IntentUtils.goToDockerSetNetwork(mContext, false, "", mProfile);
             finish();
         } else {
             EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.DEVICE_BIND_SUCCESS, mProfile));
@@ -275,11 +271,7 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
         binding.idNoQrcode.setOnClickListener(v -> {
             if (ActivityManager.hasActivity(HomeActivity.class)) {
                 if (go2ScanDevice) {
-                    if (isAttachAddNew==1) {
-                        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.ADD_NEW_DEVICE_BIND, mProfile));
-                    }else {
-                        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.DEVICE_BIND_SUCCESS, mProfile));
-                    }
+                    EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.DEVICE_BIND_SUCCESS, mProfile));
                 } else {
                     unbind();
                 }
@@ -295,7 +287,7 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
             @Override
             public void onSucceed(Boolean data) {
                 if (data) {
-                    mProfile.setMacaddress("");
+                    mProfile.setMacAddress("");
                     EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.UNBIND_DEVICE_SUCCESS, mProfile));
                 }
             }

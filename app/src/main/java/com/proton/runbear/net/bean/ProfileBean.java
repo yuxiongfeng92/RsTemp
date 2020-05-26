@@ -15,52 +15,40 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by luochune on 2018/3/16.
  * 档案管理实体对象
  */
 
 public class ProfileBean extends LitePalSupport implements Serializable {
-    /**
-     * id : 1524
-     * title : 宝宝
-     * realname : 宝宝
-     * gender : 2
-     * avatar : http://vdpics.oss-cn-hangzhou.aliyuncs.com/2017/10/vu1508494452807435.jpg
-     * birthday : 2017-01-02
-     * height : null
-     * weight : null
-     * isdefault : false
-     * lastreport : null
-     * shareto : null
-     * creator : 811
-     * created : 1496360214000
-     * status : 1
-     * deleted : false
-     * profiletype : 1
-     * openId : oKkYFwv0MH4dQZ55XUFyl9bLBexQ
-     */
 
-    @SerializedName("id")
+    @SerializedName("PID")
     private long profileId = -1;
-    private String realname;
+
+    @SerializedName("PatientID")
+    private long uid;
+
+    @SerializedName("PatientName")
+    private String username;
+
+    @SerializedName("Sex")
     private int gender;
+
+    @SerializedName("ImageUrl")
     private String avatar;
+
+    @SerializedName("Birthdate")
     private String birthday;
-    private long created;
+
     @SerializedName("patchMac")
-    private String macaddress;
+    private String macAddress;
 
-    /**
-     * 当前activity是否依附在AddNewDeviceActivity  1:是依附在addNewDeviceActivity   0：依附在homeActivity
-     */
-    private int isAttachAddNew;
+    private long created;
 
-    public int getIsAttachAddNew() {
-        return isAttachAddNew;
+    public long getCreated() {
+        return created;
     }
 
-    public void setIsAttachAddNew(int isAttachAddNew) {
-        this.isAttachAddNew = isAttachAddNew;
+    public void setCreated(long created) {
+        this.created = created;
     }
 
     public long getProfileId() {
@@ -71,12 +59,12 @@ public class ProfileBean extends LitePalSupport implements Serializable {
         this.profileId = profileId;
     }
 
-    public String getRealname() {
-        return realname;
+    public String getUsername() {
+        return username;
     }
 
-    public void setRealname(String realname) {
-        this.realname = realname;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getGender() {
@@ -103,13 +91,6 @@ public class ProfileBean extends LitePalSupport implements Serializable {
         this.birthday = birthday;
     }
 
-    public long getCreated() {
-        return created;
-    }
-
-    public void setCreated(long created) {
-        this.created = created;
-    }
 
     public String getAge() {
         if (!TextUtils.isEmpty(birthday)) {
@@ -133,11 +114,11 @@ public class ProfileBean extends LitePalSupport implements Serializable {
         return "";
     }
 
-    public String getMacaddress() {
-        return macaddress;
+    public String getMacAddress() {
+        return macAddress;
     }
 
-    public void setMacaddress(String macaddress) {
-        this.macaddress = macaddress;
+    public void setMacAddress(String macaddress) {
+        this.macAddress = macaddress;
     }
 }

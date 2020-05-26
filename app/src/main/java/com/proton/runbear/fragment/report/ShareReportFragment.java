@@ -391,7 +391,7 @@ public class ShareReportFragment extends DialogFragment {
                     maxTempFloat = FormatUtils.c2F(maxTempFloat);
                     tempUnit = UIUtils.getString(R.string.string_temp_F);
                 }
-                pdfUtil.createPdf(ActivityManager.currentActivity(), profileBean.getRealname(), sex, profileBean.getAge(), maxTempFloat + "", fever, testTime, tempUnit, reportId);
+                pdfUtil.createPdf(ActivityManager.currentActivity(), profileBean.getUsername(), sex, profileBean.getAge(), maxTempFloat + "", fever, testTime, tempUnit, reportId);
                 return null;
             }
 

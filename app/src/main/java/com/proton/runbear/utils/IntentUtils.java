@@ -12,16 +12,8 @@ import com.proton.runbear.activity.device.DeviceBaseConnectingActivity;
 import com.proton.runbear.activity.device.DeviceBasePatchPowerActivity;
 import com.proton.runbear.activity.measure.AddNewDeviceActivity;
 import com.proton.runbear.activity.profile.ProfileEditActivity;
-import com.proton.runbear.activity.user.BindEmailActivity;
-import com.proton.runbear.activity.user.BindPhoneActivity;
-import com.proton.runbear.activity.user.ForgetPwdActivity;
-import com.proton.runbear.activity.user.LoginFirstActivity;
-import com.proton.runbear.activity.user.LoginInternationalActivity;
-import com.proton.runbear.activity.user.LoginInternationalByEmailActivity;
-import com.proton.runbear.activity.user.RegistActivity;
-import com.proton.runbear.activity.user.RegistInternationnalActivity;
-import com.proton.runbear.activity.user.InternationalVerifyEmailCodeActivity;
-import com.proton.runbear.activity.user.WeChatLoginActivity;
+import com.proton.runbear.activity.user.LoginActivity;
+import com.proton.runbear.activity.user.RegisterActivity;
 import com.proton.runbear.component.AliyunService;
 import com.proton.runbear.component.App;
 import com.proton.runbear.component.OfflineReportUploadService;
@@ -38,7 +30,7 @@ public class IntentUtils {
      * 登录界面
      */
     public static void goToLogin(Context context) {
-        Intent intent = new Intent(context, WeChatLoginActivity.class);
+        Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
         finishActivity(context);
     }
@@ -47,55 +39,9 @@ public class IntentUtils {
      * 注册界面
      */
     public static void goToRegist(Context context) {
-        Intent intent = new Intent(context, RegistActivity.class);
+        Intent intent = new Intent(context, RegisterActivity.class);
         context.startActivity(intent);
     }
-
-
-    /**
-     * 国际版--跳转到邮箱登录
-     */
-    public static void goToLoginByEmail(Context context) {
-        goToLoginByEmail(context, null, null);
-    }
-
-    /**
-     * 国际版--跳转到邮箱登录
-     */
-    public static void goToLoginByEmail(Context context, String email, String pwd) {
-        Intent intent = new Intent(context, LoginInternationalByEmailActivity.class);
-        intent.putExtra("email", email);
-        intent.putExtra("pwd", pwd);
-        context.startActivity(intent);
-    }
-
-    /**
-     * 国际版--跳转到邮箱注册
-     */
-    public static void goToRegistInternationnal(Context context) {
-        Intent intent = new Intent(context, RegistInternationnalActivity.class);
-        context.startActivity(intent);
-    }
-
-    /**
-     * 国际版--跳转到邮箱验证
-     */
-    public static void goToVerifyEmailCode(Context context, String email, String pwd, boolean isRegist) {
-        Intent intent = new Intent(context, InternationalVerifyEmailCodeActivity.class);
-        intent.putExtra("email", email);
-        intent.putExtra("pwd", pwd);
-        intent.putExtra("is_regist", isRegist);
-        context.startActivity(intent);
-    }
-
-    public static void goToVerifyEmailCode(Context context, String email, String certToken, boolean iSBindEmail, boolean isRegist) {
-        Intent intent = new Intent(context, InternationalVerifyEmailCodeActivity.class);
-        intent.putExtra("email", email);
-        intent.putExtra("email_bind", iSBindEmail);
-        intent.putExtra("cert_token", certToken);
-        context.startActivity(intent);
-    }
-
 
     private static void finishActivity(Context context) {
         if (context instanceof Activity) {
@@ -228,22 +174,6 @@ public class IntentUtils {
         goToScanQRCode(context, null);
     }
 
-    public static void goToInternalLogin(Context context) {
-        context.startActivity(new Intent(context, LoginInternationalActivity.class));
-    }
-
-    /**
-     * 绑定手机号
-     */
-    public static void goToBindPhone(Context context) {
-        context.startActivity(new Intent(context, BindPhoneActivity.class));
-    }
-
-    public static void goToBindEmail(Context context, String certToken) {
-        Intent intent = new Intent(context, BindEmailActivity.class);
-        intent.putExtra("cert_token", certToken);
-        context.startActivity(intent);
-    }
 
     /**
      * 修改档案
@@ -254,18 +184,6 @@ public class IntentUtils {
         context.startActivity(intent);
     }
 
-    /**
-     * 忘记密码
-     *
-     * @param context
-     */
-    public static void goToForgetPwdActivity(Context context) {
-        context.startActivity(new Intent(context, ForgetPwdActivity.class));
-    }
-
-    public static void goToForgetPwdActivity(Context context, boolean isFromAccountAndSafe) {
-        context.startActivity(new Intent(context, ForgetPwdActivity.class).putExtra("is_from_account_and_safe", isFromAccountAndSafe));
-    }
 
     /**
      * 对于8.0系统后台启动服务，java.lang.IllegalStateException: Not allowed to start service Intent xxx app is in background uid UidRecord

@@ -24,6 +24,7 @@ import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.runbear.net.bean.MessageEvent;
+import com.proton.runbear.net.bean.UserInfo;
 import com.proton.runbear.socailauth.PlatformConfig;
 import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.BlackToast;
@@ -153,7 +154,7 @@ public class App extends BlufiApp {
         NotificationUtils.initNotificationChannel(this);
         //初始化日志
         Logger.newBuilder()
-                .tag("proton_temp")
+                .tag("RS_log")
                 .showThreadInfo(false)
                 .methodCount(1)
                 .saveLogCount(7)
@@ -184,18 +185,10 @@ public class App extends BlufiApp {
         if (!BuildConfig.IS_INTERNAL) {
             StatService.setAppKey("f5f6af6091");
         }
-//        else {
-//            StatService.setAppKey("0cd528d30d");
-//        }
         StatService.setAppChannel(this, "新版", true);
         StatService.setDebugOn(BuildConfig.DEBUG);
-//        if (Utils.isMyTestPhone()) {
-//            LeakCanary.install(this);
-//        }
         ZXingLibrary.initDisplayOpinion(this);
         Logger.w("手机型号:", Build.MANUFACTURER, ":", Build.MODEL, "当前版本:", getVersion());
-
-//        SLSDatabaseManager.getInstance().setupDB(getApplicationContext());
     }
 
     public void initRefresh() {
@@ -205,12 +198,14 @@ public class App extends BlufiApp {
         SmartRefreshLayout.setDefaultRefreshFooterCreater((context, layout) -> new ClassicsFooter(context).setSpinnerStyle(SpinnerStyle.Translate));
     }
 
-    public String getApiUid() {
-        return SpUtils.getString(Constants.APIUID, "");
+    public String getToken() {
+        String token = SpUtils.getString(Constants.APITOKEN, "");
+        return token;
     }
 
-    public String getToken() {
-        return SpUtils.getString(Constants.APITOKEN, "");
+    public String getApiUid() {
+        String uid = SpUtils.getString(Constants.APIUID, "");
+        return uid;
     }
 
     public String getVersion() {
@@ -269,9 +264,9 @@ public class App extends BlufiApp {
      */
     private void clearCache() {
         ProfileManager.deleteAll();
+        //清空用户数据
         SpUtils.saveString(Constants.APITOKEN, "");
         SpUtils.saveString(Constants.APIUID, "");
-        SpUtils.saveString(Constants.ACCOUNT, "");
         //绑定设备类型清空
         SpUtils.saveString(AppConfigs.SP_KEY_EXPERIENCE_BIND_DEVICE, "");
         hasScanQRCode.clear();
@@ -295,7 +290,7 @@ public class App extends BlufiApp {
      * 是否已经登录
      */
     public boolean isLogined() {
-        return !TextUtils.isEmpty(getToken()) && !TextUtils.isEmpty(getApiUid());
+        return !TextUtils.isEmpty(getToken());
     }
 
     public boolean hasShowGpsWarm() {
@@ -512,17 +507,18 @@ public class App extends BlufiApp {
     public String getPhone() {
         return PreferenceUtils.getPrefString(get(), SPConstant.PHONE, "");
     }
+
     /**
      * 获取报警时间间隔
      *
      * @return
      */
     public long getAlarmDuration() {
-        return PreferenceUtils.getPrefLong(get(),Utils.getHighTempDurationSpKey(), 0);
+        return PreferenceUtils.getPrefLong(get(), Utils.getHighTempDurationSpKey(), 0);
     }
 
     public String getDeviceMac() {
-        return PreferenceUtils.getPrefString(get(),SPConstant.PATCH_MAC,"");
+        return PreferenceUtils.getPrefString(get(), SPConstant.PATCH_MAC, "");
     }
 
 }

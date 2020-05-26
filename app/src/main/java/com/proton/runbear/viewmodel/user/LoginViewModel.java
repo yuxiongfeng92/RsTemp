@@ -1,17 +1,16 @@
 package com.proton.runbear.viewmodel.user;
 
+import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
 
-import com.proton.runbear.BuildConfig;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.HomeActivity;
-import com.proton.runbear.bean.BindBean;
-import com.proton.runbear.bean.WechatUserInfo;
 import com.proton.runbear.component.App;
 import com.proton.runbear.net.bean.MessageEvent;
+import com.proton.runbear.net.bean.UserInfo;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.UserCenter;
@@ -20,12 +19,11 @@ import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.Constants;
 import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.IntentUtils;
+import com.proton.runbear.utils.JSONUtils;
 import com.proton.runbear.utils.SpUtils;
 import com.proton.runbear.utils.UIUtils;
-import com.proton.runbear.utils.UmengUtils;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.viewmodel.BaseViewModel;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.wms.logger.Logger;
 
 import cn.pedant.SweetAlert.Type;
@@ -38,10 +36,17 @@ import cn.pedant.SweetAlert.Type;
  * @UpdateDate: 2020/3/31 16:43
  */
 public class LoginViewModel extends BaseViewModel {
+
+    /**
+     * 用户名
+     */
+    public ObservableField<String> userName = new ObservableField<>("");
+
     /**
      * 手机号码
      */
     public ObservableField<String> phoneNum = new ObservableField<>("");
+
     /**
      * 验证码
      */
@@ -69,11 +74,21 @@ public class LoginViewModel extends BaseViewModel {
      */
     private CountDownTimer mCodeCountDownTimer;
 
-    /**
-     * 微信登录的checkToken
-     */
-    private String checkToken;
 
+    Observable.OnPropertyChangedCallback phoneChangeCallback = new Observable.OnPropertyChangedCallback() {
+        @Override
+        public void onPropertyChanged(Observable sender, int propertyId) {
+            if (!Utils.isMobilePhone(phoneNum.get()) || !Utils.isMobile(phoneNum.get())) {
+                isCanSendCode.set(false);
+            } else {
+                isCanSendCode.set(true);
+            }
+        }
+    };
+
+    public LoginViewModel() {
+        phoneNum.addOnPropertyChangedCallback(phoneChangeCallback);
+    }
 
     /**
      * 发送验证码的回调
@@ -113,86 +128,99 @@ public class LoginViewModel extends BaseViewModel {
     };
 
     /**
-     * 手机号绑定回调
+     * 发送绑定手机号验证码
      */
-    class BindCallback extends NetCallBack<BindBean> {
-
-        @Override
-        public void noNet() {
-            super.noNet();
-            BlackToast.show(R.string.string_please_check_your_network);
-        }
-
-        @Override
-        public void onSucceed(BindBean data) {
-            Logger.w(data.isBind() ? "绑定手机号成功" : "绑定手机号失败");
-            if (data.isBind()) {
-                SpUtils.saveString(Constants.ACCOUNT, data.getMobile());
-                SpUtils.saveString(Constants.APITOKEN, data.getToken());
-                SpUtils.saveString(Constants.APIUID, data.getUid());
-                if (!TextUtils.isEmpty(UmengUtils.getDeviceToken())) {
-                    UserCenter.setUmengToken(UmengUtils.getDeviceToken(), new NetCallBack<Boolean>() {
-                        @Override
-                        public void onSucceed(Boolean data) {
-                            Logger.w("友盟推送token设置成功");
-                        }
-                    });
-                }
-                CrashReport.setUserId(App.get().getApiUid());
-                doLoginSuccess();
-            } else {//防止绑定不成功，重复校验
-                checkToken = data.getCheckToken();
-                IntentUtils.goToBindPhone(getContext());
-            }
-        }
-
-        @Override
-        public void onFailed(ResultPair resultPair) {
-            BlackToast.show(resultPair.getData());
-            dismissDialog();
+    public void sendRegisterCode() {
+        if (checkCanSend(false, false)) {
+            UserCenter.sendSms(phoneNum.get(), mSendCodeCallback);
         }
     }
 
     /**
-     * 微信登录
+     * 注册
      */
-    public void weChatLogin(String code) {
+    public void register() {
+        if (checkCanSend(true, true)) {
+            UserCenter.register(userName.get(), phoneNum.get(), codeNum.get(), new NetCallBack<String>() {
+                @Override
+                public void noNet() {
+                    super.noNet();
+                    BlackToast.show(R.string.string_no_net);
+                }
 
-        if (BuildConfig.DEBUG) {
-            IntentUtils.goToBindPhone(getContext());
-            return;
+                @Override
+                public void onSucceed(String result) {
+                    Logger.w("注册成功,用户信息：", result);
+                    UserInfo userInfo = JSONUtils.getObj(result, UserInfo.class);
+                    SpUtils.saveString(Constants.APITOKEN, userInfo.getToken());
+                    SpUtils.saveString(Constants.APIUID, String.valueOf(userInfo.getAccount().getGuarderID()));
+                    doLoginSuccess();
+                }
+
+                @Override
+                public void onFailed(ResultPair resultPair) {
+                    super.onFailed(resultPair);
+                    BlackToast.show(resultPair.getData());
+                }
+            });
         }
+    }
 
-        UserCenter.wechatLogin(code, new NetCallBack<WechatUserInfo>() {
+    /**
+     * 发送登录验证码
+     */
+    public void sendLoginCode() {
+        if (checkCanSend(false, false)) {
+            UserCenter.sendSms(phoneNum.get(), mSendCodeCallback);
+        }
+    }
+
+    /**
+     * 登录
+     */
+    public void login() {
+        if (checkCanSend(true, false)) {
+            UserCenter.login(phoneNum.get(), codeNum.get(), new NetCallBack<String>() {
+                @Override
+                public void noNet() {
+                    super.noNet();
+                    BlackToast.show(R.string.string_no_net);
+                }
+
+                @Override
+                public void onSucceed(String result) {
+                    Logger.w("登录成功，result is :", result);
+                    UserInfo userInfo = JSONUtils.getObj(result, UserInfo.class);
+                    SpUtils.saveString(Constants.APITOKEN, userInfo.getToken());
+                    SpUtils.saveString(Constants.APIUID, String.valueOf(userInfo.getAccount().getGuarderID()));
+                    doLoginSuccess();
+                }
+
+                @Override
+                public void onFailed(ResultPair resultPair) {
+                    super.onFailed(resultPair);
+                    BlackToast.show(resultPair.getData());
+                }
+            });
+
+        }
+    }
+
+    /**
+     * 退出登录
+     */
+    public void logout() {
+        UserCenter.logout(new NetCallBack<Boolean>() {
             @Override
             public void noNet() {
                 super.noNet();
-                BlackToast.show(R.string.string_please_check_your_network);
+                BlackToast.show(R.string.string_no_net);
             }
 
             @Override
-            public void onSucceed(WechatUserInfo wechatUserInfo) {
-                Logger.w("微信登录成功", wechatUserInfo.toString());
-                if (wechatUserInfo.isBind()) {
-                    Logger.w("已绑定手机号，直接进入首页");
-                    SpUtils.saveString(Constants.APITOKEN, wechatUserInfo.getToken());
-                    SpUtils.saveString(Constants.APIUID, wechatUserInfo.getUid());
-                    SpUtils.saveString(Constants.ACCOUNT, wechatUserInfo.getMobile());
-                    if (!TextUtils.isEmpty(UmengUtils.getDeviceToken())) {
-                        UserCenter.setUmengToken(UmengUtils.getDeviceToken(), new NetCallBack<Boolean>() {
-                            @Override
-                            public void onSucceed(Boolean data) {
-                                Logger.w("友盟推送token设置成功");
-                            }
-                        });
-                    }
-                    CrashReport.setUserId(App.get().getApiUid());
-                    doLoginSuccess();
-                } else {
-                    Logger.w("没有绑定手机号。。。");
-                    checkToken = wechatUserInfo.getCheckToken();
-                    IntentUtils.goToBindPhone(getContext());
-                }
+            public void onSucceed(Boolean data) {
+                Logger.w("退出登录成功");
+                App.get().logout();
             }
 
             @Override
@@ -203,22 +231,21 @@ public class LoginViewModel extends BaseViewModel {
         });
     }
 
+
     /**
-     * 发送绑定手机号验证码
+     * 跳转到登录页面
      */
-    public void sendBindCode() {
-        if (checkCanBind(false)) {
-            UserCenter.sendBindCode(phoneNum.get(), checkToken, mSendCodeCallback);
-        }
+    public void goToLogin() {
+        IntentUtils.goToLogin(getContext());
+        finishActivity();
     }
 
     /**
-     * 绑定手机号
+     * 跳转到注册页面
      */
-    public void bindPhone() {
-        if (checkCanBind(true)) {
-            UserCenter.bindPhone(phoneNum.get(), codeNum.get(), checkToken, new LoginViewModel.BindCallback());
-        }
+    public void goToRegister() {
+        IntentUtils.goToRegist(getContext());
+        finishActivity();
     }
 
     /**
@@ -269,7 +296,15 @@ public class LoginViewModel extends BaseViewModel {
     /**
      * 检查是否能绑定
      */
-    private boolean checkCanBind(boolean checkCode) {
+    private boolean checkCanSend(boolean checkCode, boolean checkRegister) {
+
+        if (checkRegister) {
+            if (TextUtils.isEmpty(userName.get())) {
+                BlackToast.show(R.string.string_username_not_be_null);
+                return false;
+            }
+        }
+
         if (!Utils.isMobilePhone(phoneNum.get())) {
             BlackToast.show(R.string.string_phone_not_correct);
             return false;
@@ -278,32 +313,16 @@ public class LoginViewModel extends BaseViewModel {
             BlackToast.show(R.string.string_phone_not_correct);
             return false;
         }
+
         if (checkCode) {
             if (TextUtils.isEmpty(codeNum.get())) {
                 BlackToast.show(R.string.string_code_can_not_be_null);
                 return false;
             }
-        }
-        return true;
-    }
-
-    /**
-     * 校验是否满足点击绑定手机号按钮的条件
-     *
-     * @param phone
-     * @param code
-     * @return
-     */
-    public boolean checkCanBindPhone(String phone, String code) {
-        if (!Utils.isMobilePhone(phone)) {
-            return false;
-        }
-        if (!Utils.isMobile(phone)) {
-            return false;
-        }
-
-        if (TextUtils.isEmpty(code) || code.length() < 6) {
-            return false;
+            if (codeNum.get().length() < 6) {
+                BlackToast.show(R.string.string_code_invalid);
+                return false;
+            }
         }
         return true;
     }
@@ -314,7 +333,7 @@ public class LoginViewModel extends BaseViewModel {
     private void doLoginSuccess() {
         showDialog(R.string.string_login_success, Type.SUCCESS_MSG_TYPE);
         //开启阿里云服务
-        IntentUtils.startAliyunService(getContext());
+//        IntentUtils.startAliyunService(getContext());
         //通知需要因为登录状态而刷新的地方
         EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.LOGIN));
         getDialog().setOnDismissListener(dialog -> {
@@ -324,5 +343,14 @@ public class LoginViewModel extends BaseViewModel {
 
         });
         dismissDialog();
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (mCodeCountDownTimer != null) {
+            mCodeCountDownTimer.cancel();
+        }
+
     }
 }

@@ -8,7 +8,7 @@
     <string name="string_message_center">Message Center</string>
     <string name="string_setting_title">Settings</string>
     <!--首页侧边栏-->
-
+    <string name="string_input_your_username">please input your username</string>
     <string name="string_click_refresh">Refresh</string>
     <string name="string_help">Help</string>
     <string name="string_help_text">CarePatch lack of permissions.\n\nPlease click\"Settings\"-\"Permissions\"-Open the required permissions.</string>
@@ -584,8 +584,8 @@
     <string name="string_update_verify">3、update verify</string>
     <string name="string_keep_arm_clamp_2">Arm clamp, better temperature prediction</string>
     <string name="string_captch_unable">hardware failure\nPlease contact customer service</string>
-
-
+    <string name="string_code_invalid">验证码无效</string>
+    <string name="string_username_not_be_null">用户名不能为空</string>
     <string name="string_bluetooth_unopen">蓝牙未开启</string>
     <string name="string_open_bluetooth_tip">开启蓝牙功能，能帮助您更\n快速完成配网哦</string>
     <string name="string_reset_charge">点击确认将重置您的底座</string>

@@ -42,10 +42,6 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
     private OnChooseProfileListener onChooseProfileListener;
     private List<ProfileBean> mProfiles = new ArrayList<>();
     private List<ShareBean> mShares = new ArrayList<>();
-    /**
-     * 当前activity是否依附在AddNewDeviceActivity  1:是依附在addNewDeviceActivity   0：依附在homeActivity
-     */
-    private int isAttachAddNew;
 
     public static MeasureChooseProfileFragment newInstance() {
         return new MeasureChooseProfileFragment();
@@ -117,12 +113,12 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
             @Override
             public void convert(CommonViewHolder holder, ProfileBean profileBean) {
                 EllipsizeTextView nameText = holder.getView(R.id.id_name);
-                nameText.setText(profileBean.getRealname());
+                nameText.setText(profileBean.getUsername());
                 holder.setText(R.id.id_age, profileBean.getAge());
                 SimpleDraweeView avatarImg = holder.getView(R.id.id_avatar);
                 avatarImg.setImageURI(profileBean.getAvatar());
 
-                holder.setText(R.id.id_macadress, TextUtils.isEmpty(profileBean.getMacaddress()) ? getString(R.string.string_not_bind_patch) : getString(R.string.string_has_bind_patch) + Utils.getShowMac(profileBean.getMacaddress()));
+                holder.setText(R.id.id_macadress, TextUtils.isEmpty(profileBean.getMacAddress()) ? getString(R.string.string_not_bind_patch) : getString(R.string.string_has_bind_patch) + Utils.getShowMac(profileBean.getMacAddress()));
 
                 holder.getView(R.id.id_measure).setOnClickListener(v -> {
                     if (onChooseProfileListener != null) {
@@ -130,14 +126,7 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                     }
                 });
 
-
                 holder.getView(R.id.id_rebind).setOnClickListener(v -> {
-                            if (getActivity().getClass().getSimpleName().equalsIgnoreCase(AddNewDeviceActivity.class.getSimpleName())) {
-                                isAttachAddNew = 1;
-                            } else {
-                                isAttachAddNew = 0;
-                            }
-                            profileBean.setIsAttachAddNew(isAttachAddNew);
                             IntentUtils.goToScanQRCode(mContext, profileBean);
                         }
                 );
@@ -151,15 +140,9 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
     protected void initView() {
         super.initView();
         binding.idAddProfile.setOnClickListener(v -> {
-            if (getActivity().getClass().getSimpleName().equalsIgnoreCase(AddNewDeviceActivity.class.getSimpleName())) {
-                isAttachAddNew = 1;
-            } else {
-                isAttachAddNew = 0;
-            }
             //新增档案
             getActivity().startActivityForResult(new Intent(getActivity(), AddProfileActivity.class)
                             .putExtra("needScanQRCode", true)
-                            .putExtra("isAttachAddNew", isAttachAddNew)
                     , 10000);
         });
 
@@ -180,9 +163,9 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
     protected void initData() {
         super.initData();
         viewmodel.getProfileList();
-        if (!BuildConfig.IS_INTERNAL) {
-            viewmodel.getSharedList();
-        }
+//        if (!BuildConfig.IS_INTERNAL) {
+//            viewmodel.getSharedList();
+//        }
     }
 
     @Override

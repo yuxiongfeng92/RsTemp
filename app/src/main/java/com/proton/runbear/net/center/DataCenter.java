@@ -17,8 +17,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class DataCenter {
 
-    protected static final String RET_F = Constants.FAIL;
-
     public static boolean isSuccess(String ret) {
         return Constants.SUCCESS.equalsIgnoreCase(ret);
     }
@@ -43,14 +41,14 @@ public class DataCenter {
             if (!data.contains("1")) {
                 //token与uid匹配错误，需要重新登录
                 ResultPair resultPair = new ResultPair();
-                resultPair.setRet(Constants.FAIL);
+                resultPair.setErrorMessage(Constants.FAIL);
                 resultPair.setData("");
                 App.get().kickOff();
                 return resultPair;
             } else {
                 //未登录
                 ResultPair resultPair = new ResultPair();
-                resultPair.setRet(Constants.SUCCESS);
+                resultPair.setErrorMessage(Constants.SUCCESS);
                 resultPair.setData("");
                 return resultPair;
             }
@@ -61,26 +59,28 @@ public class DataCenter {
             response = new JSONObject(data);
         } catch (JSONException e) {
             ResultPair resultPair = new ResultPair();
-            resultPair.setRet(Constants.FAIL);
+            resultPair.setErrorMessage(Constants.FAIL);
             resultPair.setData(UIUtils.getString(R.string.string_parse_data_failed));
             return resultPair;
         }
 
         ResultPair resultPair = new ResultPair();
-        resultPair.setRet(Constants.FAIL);
+        resultPair.setErrorMessage(Constants.FAIL);
+
         try {
-            resultPair.setRet(response.getString("ret"));
+            resultPair.setErrorMessage(response.getString("ErrorMessage"));
+            resultPair.setData(response.getString("Data"));
+            resultPair.setSuccess(response.getBoolean("Success"));
+            int code = response.getInt("Code");
+            resultPair.setCode(code);
+            if (code == 10005) {//token失效,重新登录
+                App.get().kickOff();
+            }
         } catch (JSONException e) {
-            resultPair.setRet(Constants.FAIL);
+            resultPair.setErrorMessage(Constants.FAIL);
             resultPair.setData(UIUtils.getString(R.string.string_parse_data_failed));
         }
 
-        try {
-            resultPair.setData(response.getString("data"));
-        } catch (JSONException e) {
-            resultPair.setRet(Constants.FAIL);
-            resultPair.setData(UIUtils.getString(R.string.string_parse_data_failed));
-        }
         return resultPair;
     }
 }

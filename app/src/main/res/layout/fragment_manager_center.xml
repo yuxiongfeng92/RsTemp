@@ -496,41 +496,6 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/id_account_safe"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/btn_height"
-                    android:background="@drawable/btn_click_bg"
-                    android:gravity="center_vertical"
-                    android:onClick="@{(view)->clickListener.onClick(view)}"
-                    android:orientation="horizontal"
-                    android:paddingLeft="@dimen/item_layout_left_margin"
-                    android:paddingRight="@dimen/item_layout_right_margin"
-                    android:visibility="@{BuildConfig.IS_INTERNAL ? View.GONE : View.VISIBLE}">
-
-                    <ImageView
-                        android:layout_width="23dp"
-                        android:layout_height="23dp"
-                        android:layout_marginRight="14dp"
-                        android:src="@drawable/safe"/>
-
-                    <TextView
-                        style="@style/style_16sp_gray34"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:maxLines="1"
-                        android:text="@string/string_account_safe"/>
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/icon_setarrow_right"/>
-
-                </LinearLayout>
-
-
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

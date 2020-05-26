@@ -90,8 +90,10 @@ android {
                     "umeng_appkey"   : isInternational ? "5ca5ca460cafb289900015e2" : "58465f15aed1792368000841",
                     "umeng_secret"   : isInternational ? "bdf0d0e06388b6a145f7b886235e40c7" : "6fd48f38087afbda14b4f09e45bdb53e",
             ]
+            //测试服
+//            buildConfigField "String", "SERVER_PATH", '"http://btmstest.runbear.cn/api/"'
             //正式服
-            buildConfigField "String", "SERVER_PATH", '"http://btmstest.runbear.cn/api/"'
+            buildConfigField "String", "SERVER_PATH", '"http://btms.runbear.cn/api/"'
             buildConfigField "String", "PROTON_SERVER_PATH", '"http://www.protontek.com:80/vcare-api/"'
             //正式服
             buildConfigField 'String', "KAFAKA_SERVER_PATH", '"http://120.55.191.212/kafka-api/"'
@@ -158,6 +160,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'

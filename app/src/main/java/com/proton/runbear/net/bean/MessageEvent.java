@@ -185,10 +185,6 @@ public class MessageEvent {
          */
         UNBIND_DEVICE_SUCCESS,
         /**
-         * 新设备界面点击重新绑定
-         */
-        ADD_NEW_DEVICE_BIND,
-        /**
          * 获取首页消息
          */
         HOME_GET_MSG,

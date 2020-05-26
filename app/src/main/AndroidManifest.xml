@@ -38,12 +38,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".activity.user.RemindBellSelectActivity" />
-        <activity android:name=".activity.user.AccountAndSafeActivity" />
-        <activity android:name=".activity.user.BindEmailActivity" />
-        <activity android:name=".activity.user.ForgetPwdInternationalActivity" />
-        <activity android:name=".activity.user.LoginInternationalByEmailActivity" />
-        <activity android:name=".activity.user.InternationalVerifyEmailCodeActivity" />
-        <activity android:name=".activity.user.RegistInternationnalActivity" />
 
         <meta-data
             android:name="android.max_aspect"
@@ -91,16 +85,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.user.LoginFirstActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
             android:name=".activity.user.LoginActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.user.RegistActivity"
+            android:name=".activity.user.RegisterActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
@@ -113,10 +102,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.managecenter.DeviceUpdateMsgActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.user.ForgetPwdActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
@@ -264,10 +249,7 @@
         <activity
             android:name=".activity.common.ScanQRCodeActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.user.LoginInternationalActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" /> <!-- Mqtt Service -->
+
         <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service
             android:name=".component.PushService"
@@ -311,9 +293,6 @@
             android:exported="false"
             android:screenOrientation="behind"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
-            android:name=".activity.user.BindPhoneActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.device.FirewareUpdateFailActivity"
             android:screenOrientation="portrait" />

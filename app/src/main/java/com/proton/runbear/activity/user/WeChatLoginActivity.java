@@ -59,7 +59,7 @@ public class WeChatLoginActivity extends BaseViewModelActivity<ActivityWechatLog
         public void onComplete(PlatformType platform_type, Map<String, String> map) {
             String code = map.get("code");
             Logger.w("微信登录code :", code);
-            viewmodel.weChatLogin(code);
+//            viewmodel.weChatLogin(code);
         }
 
         @Override
