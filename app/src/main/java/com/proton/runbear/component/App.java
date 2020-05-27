@@ -189,6 +189,8 @@ public class App extends BlufiApp {
         StatService.setDebugOn(BuildConfig.DEBUG);
         ZXingLibrary.initDisplayOpinion(this);
         Logger.w("手机型号:", Build.MANUFACTURER, ":", Build.MODEL, "当前版本:", getVersion());
+
+        Logger.w("current token is :", getToken(), " ,uid is :", getApiUid(), " ,phone is :", getPhone(), " ,macAddress is :", getDeviceMac());
     }
 
     public void initRefresh() {
@@ -207,6 +209,11 @@ public class App extends BlufiApp {
         String uid = SpUtils.getString(Constants.APIUID, "");
         return uid;
     }
+
+    public String getPhone() {
+        return SpUtils.getString(Constants.PHONE, "");
+    }
+
 
     public String getVersion() {
         if (TextUtils.isEmpty(version)) {
@@ -267,8 +274,8 @@ public class App extends BlufiApp {
         //清空用户数据
         SpUtils.saveString(Constants.APITOKEN, "");
         SpUtils.saveString(Constants.APIUID, "");
-        //绑定设备类型清空
-        SpUtils.saveString(AppConfigs.SP_KEY_EXPERIENCE_BIND_DEVICE, "");
+        SpUtils.saveString(Constants.PHONE, "");
+        SpUtils.saveString(Constants.BIND_MAC, "");
         hasScanQRCode.clear();
         hasShowBackgroundTip = false;
     }
@@ -502,10 +509,6 @@ public class App extends BlufiApp {
         String mac = patchMac.replace(":", "");
         Logger.w("上传缓存温度的topic ： ", "tempcache/" + orgId + "/" + mac);
         return "tempcache/" + orgId + "/" + mac;
-    }
-
-    public String getPhone() {
-        return PreferenceUtils.getPrefString(get(), SPConstant.PHONE, "");
     }
 
     /**

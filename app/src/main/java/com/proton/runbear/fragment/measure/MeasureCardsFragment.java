@@ -89,12 +89,7 @@ public class MeasureCardsFragment extends BaseFragment<FragmentMeasureCardsBindi
         }
 
         MeasureFragment fragment = MeasureFragment.newInstance(measureBean);
-        fragment.setOnMeasureListener(new MeasureFragment.OnMeasureListener() {
-            @Override
-            public void closeCard() {
-                removeMeasureItem(fragment);
-            }
-        });
+        fragment.setOnMeasureListener(() -> removeMeasureItem(fragment));
         mMeasuringFragment.add(0, fragment);
         initViewPager();
     }
@@ -118,14 +113,6 @@ public class MeasureCardsFragment extends BaseFragment<FragmentMeasureCardsBindi
 
     public boolean hasMeasureItem() {
         return mMeasuringFragment.size() > 0;
-    }
-
-    public void closeAllCards() {
-        for (Fragment fragment : new ArrayList<>(mMeasuringFragment)) {
-            if (fragment instanceof MeasureFragment) {
-                ((MeasureFragment) fragment).closeCard();
-            }
-        }
     }
 
     protected void clearWarmPrefrence(String macaddress) {

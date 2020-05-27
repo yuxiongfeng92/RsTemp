@@ -213,7 +213,9 @@ public class MessageEvent {
         /**
          * 配置信息为空
          */
-        CONFIG_NULL
+        CONFIG_NULL,
+
+        WAKE,
 
     }
 }

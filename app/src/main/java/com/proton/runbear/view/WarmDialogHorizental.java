@@ -2,6 +2,7 @@ package com.proton.runbear.view;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -14,18 +15,18 @@ import android.widget.TextView;
 import com.proton.runbear.R;
 
 /**
- * Created by wangmengsi on 2018/04/18.
+ * Created by yuxiongfeng
  */
-public class WarmDialog extends Dialog implements SystemDialog {
+public class WarmDialogHorizental extends Dialog implements SystemDialog {
 
     private TextView mTopText;
     private TextView mConfirmText;
     private TextView mCancelText;
-    private TextView mFirstBtn;
     private TextView mContent;
     private Activity hostActivity;
 
-    public WarmDialog(@NonNull Activity activity) {
+
+    public WarmDialogHorizental(@NonNull Activity activity) {
         super(activity);
         hostActivity = activity;
         initDialog();
@@ -33,17 +34,17 @@ public class WarmDialog extends Dialog implements SystemDialog {
 
     private void initDialog() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.layout_warm_dialog);
+        setContentView(R.layout.layout_warm_horizental_dialog);
         Window dialogWindow = getWindow();
         if (dialogWindow != null) {
             WindowManager.LayoutParams lp = dialogWindow.getAttributes();
             DisplayMetrics d = getContext().getResources().getDisplayMetrics();
-            lp.width = (int) (d.widthPixels * 0.8);
+            lp.width = (int) (d.widthPixels * 0.7);
             lp.dimAmount = 0.3F;
             dialogWindow.setAttributes(lp);
             lp.gravity = Gravity.CENTER;
-            dialogWindow.setBackgroundDrawableResource(R.color.transparent);
             dialogWindow.setWindowAnimations(R.style.style_warm_animation);
+            dialogWindow.setBackgroundDrawableResource(R.color.transparent);
         }
         setCanceledOnTouchOutside(false);
         setCancelable(false);
@@ -56,89 +57,64 @@ public class WarmDialog extends Dialog implements SystemDialog {
         mConfirmText = findViewById(R.id.id_confirm_text);
         mCancelText = findViewById(R.id.id_cancel_text);
         mContent = findViewById(R.id.id_content);
-        mFirstBtn = findViewById(R.id.id_first_btn);
         setConfirmListener(null);
         setCancelListener(null);
     }
 
-    public WarmDialog setTopBackGround(int drawable) {
-        mTopText.setBackground(hostActivity.getResources().getDrawable(drawable));
+    public WarmDialogHorizental setTopColor(@ColorInt int color) {
+        mTopText.setBackgroundColor(color);
         return this;
     }
 
-    public WarmDialog setTopText(int text) {
+    public WarmDialogHorizental setTopText(int text) {
         mTopText.setText(text);
         return this;
     }
 
-    public WarmDialog setTopText(String text) {
-        mTopText.setText(text);
-        return this;
-    }
-
-    public WarmDialog setConfirmText(int text) {
+    public WarmDialogHorizental setConfirmText(int text) {
         mConfirmText.setText(text);
         return this;
     }
 
-    public WarmDialog setCancelText(int text) {
+    public WarmDialogHorizental setCancelText(int text) {
         mCancelText.setText(text);
         return this;
     }
 
-    public WarmDialog setContent(int text) {
+    public WarmDialogHorizental setContent(int text) {
         mContent.setText(text);
         return this;
     }
 
-    public WarmDialog setContent(String text) {
+    public WarmDialogHorizental setContent(String text) {
         mContent.setText(text);
         return this;
     }
 
-    public WarmDialog setConfirmText(String text) {
+    public WarmDialogHorizental setContentColor(int color) {
+        mContent.setTextColor(color);
+        return this;
+    }
+
+    public WarmDialogHorizental setConfirmText(String text) {
         mConfirmText.setText(text);
         return this;
     }
 
-    public WarmDialog setCancelText(String text) {
+    public WarmDialogHorizental setCancelText(String text) {
         mCancelText.setText(text);
         return this;
     }
 
-    public WarmDialog setFirstBtnText(String text) {
-        mFirstBtn.setText(text);
-        return this;
-    }
 
-    public WarmDialog hideConfirmBtn() {
+    public WarmDialogHorizental hideConfirmBtn() {
         mConfirmText.setVisibility(View.GONE);
         return this;
     }
 
-    public WarmDialog hideCancelBtn() {
-        mCancelText.setVisibility(View.GONE);
-        findViewById(R.id.id_second_divider).setVisibility(View.GONE);
-        return this;
-    }
 
-    public WarmDialog showFirstBtn() {
-        mFirstBtn.setVisibility(View.VISIBLE);
-        findViewById(R.id.id_first_divider).setVisibility(View.VISIBLE);
-        return this;
-    }
 
-    public WarmDialog setFirstBtnListener(View.OnClickListener listener) {
-        mFirstBtn.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onClick(v);
-            }
-            dismiss();
-        });
-        return this;
-    }
-
-    public WarmDialog setConfirmListener(View.OnClickListener listener) {
+    public WarmDialogHorizental setConfirmListener(View.OnClickListener listener) {
         mConfirmText.setOnClickListener(v -> {
             dismiss();
             if (listener != null) {
@@ -148,7 +124,7 @@ public class WarmDialog extends Dialog implements SystemDialog {
         return this;
     }
 
-    public WarmDialog setCancelListener(View.OnClickListener listener) {
+    public WarmDialogHorizental setCancelListener(View.OnClickListener listener) {
         mCancelText.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onClick(v);
@@ -158,15 +134,10 @@ public class WarmDialog extends Dialog implements SystemDialog {
         return this;
     }
 
-    public WarmDialog setConfirmTextColor(int color) {
+    public WarmDialogHorizental setConfirmTextColor(int color) {
         mConfirmText.setTextColor(color);
         return this;
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        dismiss();
-//    }
 
     @Override
     public Activity getHostActivity() {

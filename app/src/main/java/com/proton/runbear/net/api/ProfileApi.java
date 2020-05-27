@@ -1,6 +1,8 @@
 package com.proton.runbear.net.api;
 
 import com.proton.runbear.net.bean.AddProfileReq;
+import com.proton.runbear.net.bean.DeleteProfileReq;
+import com.proton.runbear.net.bean.UpdateProfileReq;
 
 import java.util.Map;
 
@@ -38,18 +40,24 @@ public interface ProfileApi {
      */
     String getProfileList = "docment/findbyaccount";
 
-
     @POST(addProfile)
     Observable<String> addProfile(@Header("Content-Type") String contentType, @Body AddProfileReq req);
 
     @POST(deleteProfile)
-    Observable<String> deleteProfile(@QueryMap Map<String, Object> map);
+    Observable<String> deleteProfile(@Header("Content-Type") String contentType, @Body DeleteProfileReq req);
 
+    /**
+     * 编辑档案
+     *
+     * @param contentType
+     * @param req
+     * @return
+     */
     @POST(editProfile)
-    Observable<String> editProfile(@QueryMap Map<String, String> map);
+    Observable<String> editProfile(@Header("Content-Type") String contentType, @Body UpdateProfileReq req);
 
     @GET(queryProfileById)
-    Observable<String> getProfileById(@QueryMap Map<String, String> map);
+    Observable<String> getProfileById(@QueryMap Map<String, Long> map);
 
     @GET(getProfileList)
     Observable<String> getProfileFileList();

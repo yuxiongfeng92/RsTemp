@@ -29,7 +29,7 @@
     <color name="color_orange_ff8">#ff8171</color>
     <color name="color_gray_cc">#CCCCCC</color>
     <color name="color_orange_ff6">#ff6c59</color>
-    <color name="color_temp_normal">#00b9ff</color>
+    <color name="color_temp_normal">@color/color_main</color>
     <color name="color_gray_2a">#2a2a2a</color>
     <color name="divider">#ddd</color>
     <color name="color_orange_fc">#fc6d5d</color>
@@ -60,5 +60,8 @@
     <color name="color_gray_f4">#f4f4f4</color>
 
     <color name="color_search_fail">#FF706C</color>
+
+    <!--灰色等级三级  分割线  -->
+    <color name="color_gray_line">#cccccc</color>
 
 </resources>

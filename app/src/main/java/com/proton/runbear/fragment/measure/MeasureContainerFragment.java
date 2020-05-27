@@ -21,6 +21,8 @@ import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.LongClickUtils;
 import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.view.InstructionDialog;
+import com.proton.temp.connector.bean.DeviceBean;
+import com.wms.logger.Logger;
 
 /**
  * Created by wangmengsi on 2018/2/28.
@@ -30,11 +32,12 @@ import com.proton.runbear.view.InstructionDialog;
 public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureContainerBinding> {
 
     private MeasureChooseProfileFragment mChooseProfileFragment;
+    private MeasureScanDeviceFragment mScanDeviceFragment;
+
     private BaseFragment mCurrentFragment;
     private MeasureCardsFragment mMeasuringFragment;
     private OnMeasureContainerListener onMeasureContainerListener;
     private boolean isAddDevice;
-    private boolean isUnbindInto;
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public static MeasureContainerFragment newInstance(boolean isAddDevice) {
@@ -122,14 +125,49 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
             mChooseProfileFragment = MeasureChooseProfileFragment.newInstance();
         }
         //档案选择
-        mChooseProfileFragment.setOnChooseProfileListener(profile -> {
-            /**
-             * 先设置档案信息，连接之前需要设置设备信息
-             */
-            MeasureBean measureBean = new MeasureBean(profile);
-            showMeasuring(measureBean);
+        mChooseProfileFragment.setOnChooseProfileListener(new MeasureChooseProfileFragment.OnChooseProfileListener() {
+            @Override
+            public void reBindDevice(ProfileBean profile) {//重新绑定设备，进入搜索页面，因为润生体温贴没有二维码
+                showScanDevice(profile);
+            }
+
+            @Override
+            public void onClickProfile(ProfileBean profile) {
+                /**
+                 * 先设置档案信息，连接之前需要设置设备信息
+                 */
+                MeasureBean measureBean = new MeasureBean(profile);
+                showMeasuring(measureBean);
+            }
         });
+
         showFragment(mChooseProfileFragment);
+    }
+
+    /**
+     * 选定档案测温
+     */
+    public void showScanDevice(ProfileBean profile) {
+
+        if (mScanDeviceFragment == null) {
+            mScanDeviceFragment = MeasureScanDeviceFragment.newInstance(profile);
+        } else {
+            mScanDeviceFragment.setProfile(profile);
+        }
+        mScanDeviceFragment.setOnScanDeviceListener(new MeasureScanDeviceFragment.OnScanDeviceListener() {
+            @Override
+            public void onBindResult(DeviceBean device) {
+                profile.setMacAddress(device.getMacaddress());
+                MeasureBean measureBean = new MeasureBean(profile);
+                showMeasuring(measureBean);
+            }
+
+            @Override
+            public void onSwitchProfile() {//切换档案
+                showChooseProfile();
+            }
+        });
+        showFragment(mScanDeviceFragment);
     }
 
 
@@ -137,6 +175,11 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
      * 显示正在测量界面
      */
     public void showMeasuring(MeasureBean measureBean) {
+        if (TextUtils.isEmpty(measureBean.getProfile().getMacAddress())) {
+            Logger.w("体温贴mac不能为空，需要先绑定体温贴");
+            showScanDevice(measureBean.getProfile());
+            return;
+        }
         if (measureBean == null || measureBean.getProfile() == null) return;
         if (mMeasuringFragment == null) {
             mMeasuringFragment = MeasureCardsFragment.newInstance();
@@ -221,12 +264,6 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
     @Override
     public void onMessageEvent(MessageEvent event) {
         super.onMessageEvent(event);
-    }
-
-    public void closeAllCards() {
-        if (mMeasuringFragment != null) {
-            mMeasuringFragment.closeAllCards();
-        }
     }
 
     public void setOnMeasureContainerListener(OnMeasureContainerListener onMeasureContainerListener) {

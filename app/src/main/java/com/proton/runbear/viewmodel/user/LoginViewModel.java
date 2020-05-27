@@ -154,6 +154,7 @@ public class LoginViewModel extends BaseViewModel {
                     UserInfo userInfo = JSONUtils.getObj(result, UserInfo.class);
                     SpUtils.saveString(Constants.APITOKEN, userInfo.getToken());
                     SpUtils.saveString(Constants.APIUID, String.valueOf(userInfo.getAccount().getGuarderID()));
+                    SpUtils.saveString(Constants.PHONE,userInfo.getAccount().getPhone());
                     doLoginSuccess();
                 }
 
@@ -193,6 +194,7 @@ public class LoginViewModel extends BaseViewModel {
                     UserInfo userInfo = JSONUtils.getObj(result, UserInfo.class);
                     SpUtils.saveString(Constants.APITOKEN, userInfo.getToken());
                     SpUtils.saveString(Constants.APIUID, String.valueOf(userInfo.getAccount().getGuarderID()));
+                    SpUtils.saveString(Constants.PHONE,userInfo.getAccount().getPhone());
                     doLoginSuccess();
                 }
 

@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.proton.runbear.R;
+import com.wms.logger.Logger;
 
 /**
  * Created by wangmengsi on 2018/3/22.
@@ -49,6 +50,7 @@ public class MeasureStatusView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
+        Logger.w("width is :",width);
         width = width - 2 * mCircleWidth;
         setMeasuredDimension(width, width);
     }

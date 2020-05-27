@@ -26,7 +26,6 @@ import com.wms.adapter.CommonViewHolder;
 import java.util.List;
 
 /**
- * Created by luochune on 2018/3/21.
  * 档案管理
  */
 

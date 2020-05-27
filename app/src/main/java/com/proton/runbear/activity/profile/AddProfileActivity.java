@@ -30,7 +30,6 @@ import com.proton.runbear.net.center.ProfileCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.DateUtils;
 import com.proton.runbear.utils.FileUtils;
-import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.utils.net.OSSUtils;
 import com.sinping.iosdialog.dialog.widget.ActionSheetDialog;
@@ -55,7 +54,6 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
     protected Uri cropUri = Uri.fromFile(new File(FileUtils.getAvatar()));
     private String ossAvatorUri;
     private TimePickerDialog mDialogYearMonthDay;
-    private boolean isAddingProfile;
     private Uri tempUri;
     private File mCameraFile = new File(FileUtils.getDataCache(), "image.jpg");
     private boolean canSkip;
@@ -171,10 +169,11 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
     @Override
     protected void setListener() {
         super.setListener();
-        binding.idSdvProfileAddavator.setOnClickListener(v -> {
+       /* binding.idSdvProfileAddavator.setOnClickListener(v -> {
             //添加头像
             showChoosePicDialog();
-        });
+        });*/
+       binding.idSdvProfileAddavator.setImageResource(R.drawable.icon_default_profile);
         //选择出生日期
         binding.idSelectBirthday.setOnClickListener(v -> mDialogYearMonthDay.show(getSupportFragmentManager(), ""));
         //添加档案
@@ -278,14 +277,11 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
      * 从哪个页面进来添加档案
      */
     private void requestAddProfile(AddProfileReq req) {
-        if (isAddingProfile) return;
-        isAddingProfile = true;
         ProfileCenter.addProfile(new NetCallBack<ProfileBean>() {
             @Override
             public void noNet() {
                 super.noNet();
                 dismissDialog();
-                isAddingProfile = false;
                 BlackToast.show(R.string.string_no_net);
             }
 
@@ -293,15 +289,14 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
             public void onSucceed(ProfileBean data) {
                 dismissDialog();
                 BlackToast.show(R.string.string_profile_add);
-                if (!TextUtils.isEmpty(App.get().getLastScanDeviceId())) {
-                    //上次扫描了直接绑定
-                    bindDevice(data.getProfileId());
-                } else {
-                    if (getIntent().getBooleanExtra("needScanQRCode", false)) {
-                        IntentUtils.goToScanQRCode(mContext, data, true);
-                    }
-                }
-                isAddingProfile = false;
+//                if (!TextUtils.isEmpty(App.get().getLastScanDeviceId())) {
+//                    //上次扫描了直接绑定
+//                    bindDevice(data.getProfileId());
+//                } else {
+//                    if (getIntent().getBooleanExtra("needScanQRCode", false)) {
+//                        IntentUtils.goToScanQRCode(mContext, data, true);
+//                    }
+//                }
                 finish();
             }
 
@@ -312,36 +307,8 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
                 if (resultPair != null && resultPair.getData() != null) {
                     BlackToast.show(resultPair.getData());
                 }
-                isAddingProfile = false;
             }
         }, req);
-    }
-
-    private void bindDevice(long profileId) {
-        DeviceCenter.editShareProfile(String.valueOf(profileId), App.get().getLastScanDeviceId(), false, new NetCallBack<Boolean>() {
-
-            @Override
-            public void noNet() {
-                super.noNet();
-                dismissDialog();
-                BlackToast.show(R.string.string_no_net);
-            }
-
-            @Override
-            public void onSucceed(Boolean data) {
-                dismissDialog();
-                finish();
-                Logger.w("更新分享设备成功");
-                App.get().setLastScanDeviceId("");
-            }
-
-            @Override
-            public void onFailed(ResultPair resultPair) {
-                super.onFailed(resultPair);
-                dismissDialog();
-                BlackToast.show(R.string.string_bind_fail);
-            }
-        });
     }
 
     /**

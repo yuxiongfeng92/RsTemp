@@ -15,6 +15,7 @@ import com.proton.runbear.fragment.base.BaseFragment;
 public class MeasureFragment extends BaseFragment<FragmentMeasureBinding> {
     public MeasureBean mMeasureInfo;
     private MeasureItemFragment mMeasuringItemFragment;
+
     private BaseMeasureFragment mCurrentFragment;
     private OnMeasureListener onMeasureListener;
 
@@ -36,26 +37,12 @@ public class MeasureFragment extends BaseFragment<FragmentMeasureBinding> {
         mMeasureInfo = (MeasureBean) getArguments().getSerializable("measureInfo");
         showMeasuring(mMeasureInfo);
     }
-
     /**
      * 显示正在测量界面
      */
     public void showMeasuring(MeasureBean measureBean) {
         if (mMeasuringItemFragment == null) {
             mMeasuringItemFragment = MeasureItemFragment.newInstance(measureBean);
-            mMeasuringItemFragment.setOnMeasureItemListener(new MeasureItemFragment.OnMeasureItemListener() {
-                @Override
-                public void closeCard(MeasureItemFragment fragment) {
-                    if (onMeasureListener != null) {
-                        onMeasureListener.closeCard();
-                    }
-                }
-
-                @Override
-                public void remeasure(MeasureBean measureBean) {
-                    showMeasuring(measureBean);
-                }
-            });
         }
         showFragment(mMeasuringItemFragment);
     }
@@ -78,19 +65,6 @@ public class MeasureFragment extends BaseFragment<FragmentMeasureBinding> {
         mCurrentFragment = fragment;
     }
 
-    /**
-     * 连接设备
-     */
-    private void connectDevice() {
-
-    }
-
-
-    public void closeCard() {
-        if (mCurrentFragment != null) {
-            mCurrentFragment.closeCardOnly();
-        }
-    }
 
     public void setOnMeasureListener(OnMeasureListener onMeasureListener) {
         this.onMeasureListener = onMeasureListener;

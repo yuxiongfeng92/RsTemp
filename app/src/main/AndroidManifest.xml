@@ -197,14 +197,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.measure.NurseSuggestBaseInfoActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.measure.NurseSuggestDescribeActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.measure.DrugRecordActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

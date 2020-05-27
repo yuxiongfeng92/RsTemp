@@ -58,6 +58,7 @@
                 android:layout_width="7dp"
                 android:layout_height="13dp"
                 android:layout_marginLeft="@dimen/base"
+                android:visibility="invisible"
                 android:src="@drawable/icon_gray_right_arrow"/>
         </LinearLayout>
 

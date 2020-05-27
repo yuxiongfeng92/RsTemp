@@ -13,57 +13,6 @@
     android:paddingRight="15dp"
     android:paddingBottom="15dp">
 
-<!--    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp">
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/id_avatar"
-            android:layout_width="45dp"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:visibility="visible"
-            app:failureImage="@drawable/icon_default_profile"
-            app:placeholderImage="@drawable/icon_default_profile"
-            app:roundAsCircle="true"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toEndOf="@id/id_avatar"
-            android:orientation="vertical">
-
-            <EllipsizeTextView
-                android:id="@+id/id_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:ellipsize_maxLength="6"
-                app:ellipsize_text="11111111111"
-                app:ellipsize_textColor="#1698ff"
-                app:ellipsize_textSize="18sp"/>
-
-            <TextView
-                android:id="@+id/id_age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#b3b3b3"
-                android:textSize="15sp"/>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/id_macadress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="已绑定体温贴4A:08"
-            android:textColor="#b3b3b3"
-            android:textSize="12sp"/>
-    </RelativeLayout>-->
-
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -88,7 +37,7 @@
             android:layout_height="wrap_content"
             app:ellipsize_maxLength="6"
             app:ellipsize_text="11111111111"
-            app:ellipsize_textColor="#1698ff"
+            app:ellipsize_textColor="@color/color_main"
             app:ellipsize_textSize="18sp"
             app:layout_constraintLeft_toRightOf="@+id/id_avatar"
             app:layout_constraintTop_toTopOf="parent"

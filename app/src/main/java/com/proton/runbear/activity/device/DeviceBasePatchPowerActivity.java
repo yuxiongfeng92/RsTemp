@@ -93,7 +93,6 @@ public class DeviceBasePatchPowerActivity extends BaseActivity<ActivityDeviceBas
                         .setTopText(R.string.string_close_measure_card)
                         .setContent(R.string.string_continue_set_net_will_close_card)
                         .setConfirmListener(v1 -> {
-                            Utils.closeAllCards();
                             goToSetNetwork();
                         }).show();
                 return;

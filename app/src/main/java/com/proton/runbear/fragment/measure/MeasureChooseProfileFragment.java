@@ -8,12 +8,9 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.proton.runbear.BuildConfig;
 import com.proton.runbear.R;
-import com.proton.runbear.activity.measure.AddNewDeviceActivity;
 import com.proton.runbear.activity.profile.AddProfileActivity;
 import com.proton.runbear.bean.MeasureBean;
-import com.proton.runbear.bean.ShareBean;
 import com.proton.runbear.databinding.FragmentMeasureChooseProfileBinding;
 import com.proton.runbear.fragment.base.BaseViewModelFragment;
 import com.proton.runbear.net.bean.MessageEvent;
@@ -41,7 +38,6 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
 
     private OnChooseProfileListener onChooseProfileListener;
     private List<ProfileBean> mProfiles = new ArrayList<>();
-    private List<ShareBean> mShares = new ArrayList<>();
 
     public static MeasureChooseProfileFragment newInstance() {
         return new MeasureChooseProfileFragment();
@@ -67,36 +63,6 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                 mProfiles.addAll(viewmodel.profileList.get());
                 filterMeasuringProfile();
                 initProfileRecycler();
-            }
-        });
-
-        viewmodel.shareList.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                mShares.clear();
-                mShares.addAll(viewmodel.shareList.get());
-                initShareRecycler();
-            }
-        });
-    }
-
-    private void initShareRecycler() {
-        binding.idRefreshLayout.finishRefresh();
-        if (CommonUtils.listIsEmpty(mShares)) {
-            binding.idShareLayout.setVisibility(View.GONE);
-            return;
-        }
-        binding.idShareLayout.setVisibility(View.VISIBLE);
-        binding.idShareRecyclerview.setLayoutManager(new LinearLayoutManager(mContext));
-        binding.idShareRecyclerview.setAdapter(new CommonAdapter<ShareBean>(mContext, mShares, R.layout.item_choose_share) {
-            @Override
-            public void convert(CommonViewHolder holder, ShareBean shareBean) {
-                EllipsizeTextView nameText = holder.getView(R.id.id_name);
-                nameText.setText(shareBean.getRealName());
-
-                holder.setText(R.id.id_age, getResources().getQuantityString(R.plurals.string_sui, shareBean.getAge(), shareBean.getAge()));
-                SimpleDraweeView avatarImg = holder.getView(R.id.id_avatar);
-                avatarImg.setImageURI(shareBean.getAvatar());
             }
         });
     }
@@ -127,10 +93,11 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                 });
 
                 holder.getView(R.id.id_rebind).setOnClickListener(v -> {
-                            IntentUtils.goToScanQRCode(mContext, profileBean);
-                        }
-                );
-
+                    if (onChooseProfileListener != null) {
+                        onChooseProfileListener.reBindDevice(profileBean);
+                    }
+//                    IntentUtils.goToScanQRCode(mContext, profileBean);
+                });
                 holder.getView(R.id.id_lay_profile_edit).setOnClickListener(v -> IntentUtils.goToEditProfile(mContext, profileBean));
             }
         });
@@ -148,9 +115,6 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
 
         initRefreshLayout(binding.idRefreshLayout, refreshlayout -> {
             viewmodel.getProfileList(true);
-            if (!BuildConfig.IS_INTERNAL) {
-                viewmodel.getSharedList();
-            }
         });
     }
 
@@ -163,9 +127,6 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
     protected void initData() {
         super.initData();
         viewmodel.getProfileList();
-//        if (!BuildConfig.IS_INTERNAL) {
-//            viewmodel.getSharedList();
-//        }
     }
 
     @Override
@@ -236,8 +197,9 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
         }
     }
 
-
     public interface OnChooseProfileListener {
+        void reBindDevice(ProfileBean profile);
+
         void onClickProfile(ProfileBean profile);
     }
 }

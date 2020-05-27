@@ -16,19 +16,22 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.proton.runbear.R;
-import com.proton.runbear.bean.AliyunToken;
 import com.proton.runbear.bean.MeasureBean;
-import com.proton.runbear.bean.ReportBean;
-import com.proton.runbear.bean.ShareToMqttBean;
+import com.proton.runbear.bean.rs.ShareBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.net.bean.ConfigInfo;
+import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
-import com.proton.runbear.net.center.MeasureReportCenter;
+import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.BatteryChangeUtil;
+import com.proton.runbear.utils.Constants;
+import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.MQTTShareManager;
 import com.proton.runbear.utils.SPConstant;
+import com.proton.runbear.utils.Settings;
+import com.proton.runbear.utils.SpUtils;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.view.WarmDialog;
 import com.proton.runbear.viewmodel.BaseViewModel;
@@ -59,26 +62,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Created by wangmengsi on 2018/3/22.
+ * 测量viewModel
  */
-
 public class MeasureViewModel extends BaseViewModel {
 
-    /**
-     * 体温贴mac地址
-     */
-    public ObservableField<String> patchMacAddress = new ObservableField<>("");
-
-    /**
-     * 连接设备前设置这个值，方便管理数据
-     */
     public ObservableField<MeasureBean> measureInfo = new ObservableField<>();
-
-    /**
-     * 保存报告
-     */
-    public ObservableField<ReportBean> saveReport = new ObservableField<>();
-
 
     public ObservableField<DeviceBean> device = new ObservableField<>();
     /**
@@ -239,6 +227,8 @@ public class MeasureViewModel extends BaseViewModel {
 
         @Override
         public void receiveReconnectTimes(int retryCount, int leftCount) {
+            //测量准备尝试一次就提示
+
             //重连过程中需要检测蓝牙是否开启
             if (!BluetoothUtils.isBluetoothOpened()) {
                 Logger.w("重连过程中发现蓝牙关闭。。。");
@@ -481,29 +471,16 @@ public class MeasureViewModel extends BaseViewModel {
     }
 
     /**
-     * 连接体温贴的外部逻辑
+     * 连接设备
      */
     public void connectDevice() {
-
-        if (measureInfo.get().getProfile() == null) {
-            Logger.w("档案信息不能为空");
-            return;
-        }
-
-        if (measureInfo.get().getDevice() == null) {
-            Logger.w("设备信息不能为空");
+        if (configInfo.get() == null || configInfo.get().getStatus().equalsIgnoreCase("error") || TextUtils.isEmpty(configInfo.get().getPatchMac())) {
             return;
         }
         connectDevice(Integer.MAX_VALUE);
     }
 
-
-    /**
-     * 底层连接体温贴的逻辑
-     *
-     * @param retryCount
-     */
-    private void connectDevice(int retryCount) {
+    public void connectDevice(int retryCount) {
         if (!getConnectorManager().isConnected()) {
             if (connectStatus.get() == 1) {
                 connectStatus.notifyChange();
@@ -511,9 +488,9 @@ public class MeasureViewModel extends BaseViewModel {
                 connectStatus.set(1);
             }
         }
-
         getConnectorManager()
                 .setReconnectCount(retryCount)
+                .setConnectTimeoutTime(60000)
                 .setEnableCacheTemp(!App.get().getConfigInfo().isFirst())
                 .addAlgorithmStatusListener(mAlgorithmStatusListener)
                 .connect(mConnectorListener, mDataListener, true);
@@ -528,7 +505,7 @@ public class MeasureViewModel extends BaseViewModel {
     }
 
     public TempConnectorManager getConnectorManager() {
-        return TempConnectorManager.getInstance(measureInfo.get().getDevice());
+        return TempConnectorManager.getInstance(device.get());
     }
 
     /**
@@ -553,7 +530,7 @@ public class MeasureViewModel extends BaseViewModel {
             return;
         }
 
-        ShareToMqttBean shareBean = new ShareToMqttBean();
+        ShareBean shareBean = new ShareBean();
         shareBean.setPackageNum(packageNum++);
         shareBean.setTotalSize(algorithmTemps.size());
         shareBean.setHeartRate(heartRate.get());
@@ -574,7 +551,7 @@ public class MeasureViewModel extends BaseViewModel {
         shareBean.setDamaged(isDamaged.get());
         shareBean.setGesture(lastGesture);
         shareBean.setMeasureStatus(lastMeasureStatus);
-        Logger.w("mqtt数据准备发送,包序:" + (packageNum - 1) + ",数据大小:", algorithmTemps.size(), ",是否联网:", NetUtils.isConnected(App.get()), ",是否为4G信号:", !NetUtils.isWifi(App.get()));
+        Logger.w("mqtt数据准备发送,包序:" + (packageNum - 1) + ",数据大小:", algorithmTemps.size(), ",是否联网:", NetUtils.isConnected(getContext()), ",是否为4G信号:", !NetUtils.isWifi(getContext()));
         algorithmTemps.clear();
         rawTemps.clear();
         MQTTShareManager.getInstance().publish(App.get().getRawTempUploadTopic(), shareBean, mqttCallback);
@@ -585,10 +562,10 @@ public class MeasureViewModel extends BaseViewModel {
      */
     private void uploadCacheData() {
         //isFirst为true表示不需要上传缓存温度
-//        if (App.get().getConfigInfo().isFirst()) {
-//            refreshConfigInfo();
-//            return;
-//        }
+        if (App.get().getConfigInfo().isFirst()) {
+            App.get().getConfigInfo().setFirst(false);
+            return;
+        }
         if (CommonUtils.listIsEmpty(cacheTempList.get())) return;
 
         int status = cacheTempList.get().get(cacheTempList.get().size() - 1).getMeasureStatus();
@@ -615,7 +592,7 @@ public class MeasureViewModel extends BaseViewModel {
             cacheTempList.get().clear();
             return;
         }
-        ShareToMqttBean shareBean = new ShareToMqttBean();
+        ShareBean shareBean = new ShareBean();
         shareBean.setPackageNum(packageNum++);
         shareBean.setTotalSize(cacheTempList.get().size());
         shareBean.setTemp(algorithmCacheTemps);
@@ -633,7 +610,7 @@ public class MeasureViewModel extends BaseViewModel {
         shareBean.setWatchBattery(Utils.getBattery());
         shareBean.setAlgorithmVersion(App.get().getAlgorithmVersion());
         shareBean.setDamaged(isDamaged.get());
-        Logger.w("mqtt数据准备发送,包序:" + (packageNum - 1) + ",数据大小:", algorithmTemps.size(), ",是否联网:", NetUtils.isConnected(App.get()), ",是否为4G信号:", !NetUtils.isWifi(App.get()));
+        Logger.w("mqtt数据准备发送,包序:" + (packageNum - 1) + ",数据大小:", algorithmTemps.size(), ",是否联网:", NetUtils.isConnected(getContext()), ",是否为4G信号:", !NetUtils.isWifi(getContext()));
         rawCacheTemps.clear();
         algorithmCacheTemps.clear();
         cacheTempList.get().clear();
@@ -649,10 +626,11 @@ public class MeasureViewModel extends BaseViewModel {
          */
         if (connectStatus.get() == 0 || connectStatus.get() == 3) {
             needShowSearchDeviceDialog.set(true);
-//            getConfigInfo();
+            getConfigInfo();
         } else if (connectStatus.get() == 2) {//已连接，点击则断开蓝牙
+
             new WarmDialog(ActivityManager.currentActivity())
-                    .setTopText(R.string.agentweb_tips)
+                    .setTopText(R.string.string_warm_tips)
                     .setContent("确定断开蓝牙连接？")
                     .setConfirmListener(v -> disConnect())
                     .show();
@@ -733,11 +711,10 @@ public class MeasureViewModel extends BaseViewModel {
         }, 15000, interval * 1000);
     }
 
-    /*    *//**
+    /**
      * 获取润生服务器上的配置信息
-     *//*
+     */
     public void getConfigInfo() {
-
         measureTips.set("正在获取\n配置信息");
         MeasureCenter.fetchConfigInfo(App.get().getPhone(), new NetCallBack<ConfigInfo>() {
             @Override
@@ -747,16 +724,15 @@ public class MeasureViewModel extends BaseViewModel {
 
             @Override
             public void onSucceed(ConfigInfo config) {
-                if (config == null || config.getStatus().equalsIgnoreCase("error")) {
-                    PreferenceUtils.setPrefString(getContext(), SPConstant.PHONE, "");
+                if (config == null || config.getStatus().equalsIgnoreCase("error")) {//获取配置信息失败，重新登录
+                    SpUtils.saveString(Constants.PHONE, "");
                     //重置报警设置
-                    PreferenceUtils.setSettingLong(getContext(), Utils.getHighTempDurationSpKey(), 0);
-                    PreferenceUtils.setSettingLong(getContext(), Utils.getHighTempWarmSpKey(App.get().getPhone()), 0);
+                    SpUtils.saveLong(Utils.getHighTempDurationSpKey(), 0);
+                    SpUtils.saveLong(Utils.getHighTempWarmSpKey(App.get().getPhone()), 0);
                     Utils.goToLogin(ActivityManager.getTopActivity());
                     EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.CONFIG_NULL).setMsg(config.getErrodMsg()));
                     return;
                 }
-
                 App.get().setConfigInfo(config);
                 configInfo.set(config);
 
@@ -772,7 +748,7 @@ public class MeasureViewModel extends BaseViewModel {
                 long alarmInterval = configInfo.get().getSettings().getClearAlarmInterval();
                 Logger.w("服务器上的报警周期: ", alarmInterval);
                 if (App.get().getAlarmDuration() == 0) {
-                    PreferenceUtils.setSettingLong(getContext(), Utils.getHighTempDurationSpKey(), alarmInterval <= 0 ? Settings.HIGH_TEMP_ALARM_DURATION_DEFAULT : alarmInterval);
+                    SpUtils.saveLong(Utils.getHighTempDurationSpKey(), alarmInterval <= 0 ? Settings.HIGH_TEMP_ALARM_DURATION_DEFAULT : alarmInterval);
                 }
                 device.set(new DeviceBean(App.get().getDeviceMac()));
                 connectStatus.set(1);
@@ -795,27 +771,6 @@ public class MeasureViewModel extends BaseViewModel {
             }
         });
     }
-
-    *//**
-     * 缓存数据请求完毕,刷新配置信息
-     *//*
-    private void refreshConfigInfo() {
-
-        MeasureCenter.fetchConfigInfo(App.get().getPhone(), new NetCallBack<ConfigInfo>() {
-
-            @Override
-            public void noNet() {
-                super.noNet();
-                BlackToast.show(R.string.string_no_net);
-            }
-
-            @Override
-            public void onSucceed(ConfigInfo config) {
-                configInfo.set(config);
-            }
-        });
-    }*/
-
 
     /**
      * 清空状态
@@ -891,49 +846,5 @@ public class MeasureViewModel extends BaseViewModel {
         return ConnectionType.BLUETOOTH;
     }
 
-
-    /**
-     * 保存报告数据
-     */
-    public void saveReport() {
-
-        //上传json
-        MeasureReportCenter.getAliyunToken(new NetCallBack<AliyunToken>() {
-            @Override
-            public void noNet() {
-                uploadReport();
-            }
-
-            @Override
-            public void onSucceed(AliyunToken data) {
-                uploadReport();
-            }
-
-            @Override
-            public void onFailed(ResultPair resultPair) {
-                uploadReport();
-            }
-        });
-    }
-
-
-    /**
-     * 保存报告失败
-     */
-    public void doSaveReportFail() {
-        dismissDialog();
-        if (saveReport.get() == null) {
-            saveReport.notifyChange();
-        } else {
-            saveReport.set(null);
-        }
-    }
-
-    /**
-     * 上传报告
-     */
-    private void uploadReport() {
-        Logger.w("开始上传报告");
-    }
 
 }

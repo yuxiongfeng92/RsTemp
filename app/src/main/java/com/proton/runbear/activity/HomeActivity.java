@@ -34,12 +34,14 @@ import com.proton.runbear.fragment.home.SettingFragment;
 import com.proton.runbear.fragment.measure.MeasureContainerFragment;
 import com.proton.runbear.fragment.profile.ProfileFragment;
 import com.proton.runbear.fragment.report.ReportsFragment;
+import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.bean.UpdateFirmwareBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
+import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.net.center.UserCenter;
 import com.proton.runbear.utils.HttpUrls;
 import com.proton.runbear.utils.IntentUtils;
@@ -85,6 +87,28 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 //        showTutorialDialog();
         showMeasureFragment();
         Utils.checkUpdate(this, false);
+        getConfigInfo();
+    }
+
+    /**
+     * 获取配置信息
+     */
+    private void getConfigInfo() {
+        if (TextUtils.isEmpty(App.get().getPhone())) {
+            Logger.w("phone is null,can't getConfigInfo");
+            return;
+        }
+        MeasureCenter.fetchConfigInfo(App.get().getPhone(), new NetCallBack<ConfigInfo>() {
+            @Override
+            public void onSucceed(ConfigInfo configInfo) {
+                if (configInfo != null) {
+                    Logger.w("获取配置信息成功");
+                    App.get().setConfigInfo(configInfo);
+                } else {
+                    Logger.w("配置信息为空");
+                }
+            }
+        });
     }
 
     /**
@@ -105,7 +129,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             }
         });
     }
-
 
     @Override
     protected void initView() {
@@ -473,11 +496,5 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
-    }
-
-    public void closeAllCards() {
-        if (mMeasureFragment != null) {
-            mMeasureFragment.closeAllCards();
-        }
     }
 }

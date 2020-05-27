@@ -1,9 +1,8 @@
 package com.proton.runbear.net.center;
 
+import android.text.TextUtils;
+
 import com.google.gson.reflect.TypeToken;
-import com.proton.runbear.bean.DeviceOnlineBean;
-import com.proton.runbear.component.App;
-import com.proton.runbear.net.KafkaRetrofitHelper;
 import com.proton.runbear.net.RetrofitHelper;
 import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.runbear.net.bean.ShareHistoryBean;
@@ -15,19 +14,11 @@ import com.proton.runbear.utils.JSONUtils;
 import com.wms.logger.Logger;
 
 import java.lang.reflect.Type;
-import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.WeakHashMap;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-
-
 /**
- * Created by luochune on 2018/4/26.
  * 测量请求
  */
 
@@ -37,9 +28,10 @@ public class MeasureCenter extends DataCenter {
         WeakHashMap<String, String> params = new WeakHashMap<>();
         params.put("phone", phone);
         RetrofitHelper.getMeasureCenterApi().getConfigInfo(params)
-                .map(new Function<String, ConfigInfo>() {
-                    @Override
-                    public ConfigInfo apply(String s) throws Exception {
+                .map(s -> {
+                    if (TextUtils.isEmpty(s)) {
+                        throw new ParseResultException("配置信息为空");
+                    } else {
                         ResultPair resultPair = parseResult(s);
                         if (resultPair.isSuccess()) {
                             ConfigInfo configInfo = JSONUtils.getObj(resultPair.getData(), ConfigInfo.class);
@@ -56,96 +48,6 @@ public class MeasureCenter extends DataCenter {
                     }
                 });
 
-    }
-
-    /**
-     * 检查贴是否在用
-     */
-    public static void checkPatchIsMeasuring(String patchMac, NetCallBack<DeviceOnlineBean> netCallBack) {
-      /*  HashMap<String, String> map = new HashMap<>();
-        map.put("patchMac", patchMac);
-        RetrofitHelper.getMeasureCenterApi().checkPatchIsMeasuring(map).map(json -> {
-            Logger.json(json);
-            ResultPair resultPair = parseResult(json);
-            if (resultPair != null && resultPair.isSuccess()) {
-                return JSONUtils.getObj(resultPair.getData(), DeviceOnlineBean.class);
-            } else {
-                throw new ParseResultException(json);
-            }
-        }).compose(threadTrans()).subscribe(new NetSubscriber<DeviceOnlineBean>(netCallBack) {
-            @Override
-            public void onNext(DeviceOnlineBean mqttOnlineBean) {
-                netCallBack.onSucceed(mqttOnlineBean);
-            }
-        });*/
-
-        HashMap<String, String> map = new HashMap<>();
-        map.put("patchMac", patchMac);
-        RetrofitHelper.getMeasureCenterApi().checkPatchIsMeasuring(map).map(json -> {
-            Logger.json(json);
-            ResultPair resultPair = parseResult(json);
-            if (resultPair != null && resultPair.isSuccess()) {
-                return JSONUtils.getObj(resultPair.getData(), DeviceOnlineBean.class);
-            } else {
-                throw new ParseResultException(json);
-            }
-        }).compose(threadTrans()).subscribe(new Observer<DeviceOnlineBean>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Logger.w("onSubscribe");
-            }
-
-            @Override
-            public void onNext(DeviceOnlineBean deviceOnlineBean) {
-                Logger.w("onNext");
-                netCallBack.onSucceed(deviceOnlineBean);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Logger.w("onError");
-                if (e instanceof SocketTimeoutException) {
-                    netCallBack.onTimeOut();
-                }
-            }
-
-            @Override
-            public void onComplete() {
-                Logger.w("onComplete");
-            }
-        });
-
-
-    }
-
-    /**
-     * 检查mqtt是否在线
-     */
-    public static void checkMqttIsOnline(String clientId, NetCallBack<Boolean> netCallBack) {
-        HashMap<String, String> map = new HashMap<>();
-        if (clientId.contains(":")) {
-            clientId = clientId.replace(":", "");
-        }
-        map.put("clientId", clientId);
-        KafkaRetrofitHelper.getMeasureCenterApi().checkMqttisLine(map).map(json -> {
-            Logger.json(json);
-            ResultPair resultPair = parseResult(json);
-            if (resultPair != null && resultPair.isSuccess()) {
-                boolean isOnline = "1".equals(JSONUtils.getString(resultPair.getData(), "online"));
-                if (isOnline) {
-                    return true;
-                } else {
-                    throw new ParseResultException(json);
-                }
-            } else {
-                throw new ParseResultException(json);
-            }
-        }).compose(threadTrans()).subscribe(new NetSubscriber<Boolean>(netCallBack) {
-            @Override
-            public void onNext(Boolean mqttOnlineBean) {
-                netCallBack.onSucceed(mqttOnlineBean);
-            }
-        });
     }
 
     /**
@@ -241,59 +143,4 @@ public class MeasureCenter extends DataCenter {
         });
     }
 
-    /**
-     * 获取算法配置
-     *
-     * @param callBack
-     */
-    public static void getAlgorithmConfig(NetCallBack<String> callBack) {
-        RetrofitHelper.getMeasureCenterApi().getAlgorithmConfig()
-                .map(s -> {
-                    ResultPair resultPair = parseResult(s);
-                    if (resultPair.isSuccess()) {
-                        long duration = Long.parseLong(JSONUtils.getString(resultPair.getData(), "duration"));
-                        float percentage = Float.parseFloat(JSONUtils.getString(resultPair.getData(), "percentage"));
-                        App.get().setDuration(duration);
-                        App.get().setPercentage(percentage);
-                        return resultPair.getData();
-                    } else {
-                        throw new ParseResultException(resultPair.getData());
-                    }
-                })
-                .compose(threadTrans())
-                .subscribe(new NetSubscriber<String>(callBack) {
-                    @Override
-                    public void onNext(String s) {
-                        if (callBack != null) {
-                            callBack.onSucceed(s);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * 获取算法配置
-     *
-     * @param callBack
-     */
-    public static void getDockerAlgorithmVersion(String dockerMac, NetCallBack<String> callBack) {
-        Map<String, String> params = new HashMap<>();
-        params.put("dockerMac", dockerMac);
-        RetrofitHelper.getMeasureCenterApi().getDockerAlgorithmVersion(params)
-                .map(s -> {
-                    ResultPair resultPair = parseResult(s);
-                    if (resultPair.isSuccess()) {
-                        return resultPair.getData();
-                    } else {
-                        throw new ParseResultException(resultPair.getData());
-                    }
-                })
-                .compose(threadTrans())
-                .subscribe(new NetSubscriber<String>(callBack) {
-                    @Override
-                    public void onNext(String s) {
-                        callBack.onSucceed(s);
-                    }
-                });
-    }
 }

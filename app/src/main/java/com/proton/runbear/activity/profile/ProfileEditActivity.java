@@ -21,6 +21,7 @@ import com.proton.runbear.constant.AppConfigs;
 import com.proton.runbear.databinding.ActivityProfileEditBinding;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
+import com.proton.runbear.net.bean.UpdateProfileReq;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.ProfileCenter;
@@ -28,7 +29,6 @@ import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.DateUtils;
 import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.FileUtils;
-import com.proton.runbear.utils.Utils;
 import com.proton.runbear.utils.net.OSSUtils;
 import com.sinping.iosdialog.dialog.widget.ActionSheetDialog;
 import com.yalantis.ucrop.UCrop;
@@ -37,7 +37,6 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -161,9 +160,10 @@ public class ProfileEditActivity extends BaseActivity<ActivityProfileEditBinding
             binding.idTvSex.setText(getResources().getString(R.string.string_girl));
         }
         //设置生日
-        binding.idTvBirthday.setText(profileBean.getBirthday() + "");
+        binding.idTvBirthday.setText(profileBean.getBirthday().substring(0, 10) + "");
         //档案id 国际版本不显示档案编码
-        binding.idTvProfileCode.setText(Utils.getShareId(profileBean.getProfileId()));
+//        binding.idTvProfileCode.setText(Utils.getShareId(profileBean.getProfileId()));
+        binding.idTvProfileCode.setText(profileBean.getProfileId() + "");
         long minMillSeconds = 0;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//时间格式化类
         try {
@@ -203,10 +203,15 @@ public class ProfileEditActivity extends BaseActivity<ActivityProfileEditBinding
     }
 
     @Override
+    protected boolean showBackBtn() {
+        return true;
+    }
+
+    @Override
     protected void setListener() {
         super.setListener();
         //编辑头像
-        binding.idLayProfileAvatar.setOnClickListener(v -> showChoosePicDialog());
+//        binding.idLayProfileAvatar.setOnClickListener(v -> showChoosePicDialog());
         //编辑姓名
         binding.idLayProfileName.setOnClickListener(v -> startActivityForResult(new Intent(this, ProfileNameEditActivity.class).putExtra("name", binding.idTvRealName.getText().toString()), PROFILE_EDIT_REQUEST_CODE));
         binding.idLayProfileBirthday.setOnClickListener(v -> mDialogYearMonthDay.show(getSupportFragmentManager(), ""));
@@ -267,6 +272,8 @@ public class ProfileEditActivity extends BaseActivity<ActivityProfileEditBinding
      */
     private void submitEditProfile() {
         showDialog(getResources().getString(R.string.string_submit_data));
+        UpdateProfileReq req = new UpdateProfileReq();
+
         if (TextUtils.isEmpty(ossAvatorUri)) {
             ossAvatorUri = AppConfigs.DEFAULT_AVATOR_URL;
         } else {
@@ -281,28 +288,26 @@ public class ProfileEditActivity extends BaseActivity<ActivityProfileEditBinding
         String sexStr = binding.idTvSex.getText().toString();
         String birthday = binding.idTvBirthday.getText().toString();
         //上传档案
-        HashMap<String, String> map = new HashMap<>();
-        map.put("title", realName);
-        map.put("realname", realName);
+        req.setPatientID(profileId + "");
+        req.setPID(profileId + "");
+        req.setPatientName(realName);
         if (sexStr.equals(getString(R.string.string_boy))) {
-            map.put("gender", "1");
+            req.setSex(1);
         } else if (sexStr.equals(getString(R.string.string_girl))) {
-            map.put("gender", "2");
+            req.setSex(2);
         }
-        map.put("birthday", birthday);
-        map.put("avatar", ossAvatorUri);
-        map.put("profileid", profileId + "");
-        map.put("created", String.valueOf(profileBean.getCreated()));
-        requestEditProfile(map);
+        req.setBirthdate(birthday);
+//        req.setImageUrl(ossAvatorUri);
+        requestEditProfile(req);
     }
 
     /**
      * 提交编辑档案
      *
-     * @param map 编辑参数
+     * @param req 编辑参数
      */
-    private void requestEditProfile(HashMap<String, String> map) {
-        ProfileCenter.editProfile(map, new NetCallBack<ProfileBean>() {
+    private void requestEditProfile(UpdateProfileReq req) {
+        ProfileCenter.editProfile(req, new NetCallBack<ProfileBean>() {
             @Override
             public void noNet() {
                 super.noNet();
@@ -315,7 +320,7 @@ public class ProfileEditActivity extends BaseActivity<ActivityProfileEditBinding
                 //档案编辑成功
                 dismissDialog();
                 //回调到主页面
-                EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.PROFILE_CHANGE,"isEdit",data));
+                EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.PROFILE_CHANGE, "isEdit", data));
                 setResult(RESULT_OK);
                 finish();
             }

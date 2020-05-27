@@ -22,7 +22,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                <com.facebook.drawee.view.SimpleDraweeView
+                    xmlns:fresco="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/id_sdv_profile_addavator"
                     android:layout_width="112dp"
                     android:layout_height="112dp"
@@ -41,6 +42,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/dp15"
                     android:text="点击添加头像"
+                    android:visibility="invisible"
                     android:textColor="@color/color_main"
                     android:textSize="@dimen/ps16" />
 

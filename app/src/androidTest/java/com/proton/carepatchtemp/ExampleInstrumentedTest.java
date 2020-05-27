@@ -12,6 +12,10 @@ import com.wms.utils.DensityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -59,33 +63,6 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void test() {
-//        String json = FileUtils.readFile("/sdcard/temp.json", "UTF-8").toString();
-//        String temp = JSONUtils.getString(json, "rawData");
-//        String sample = JSONUtils.getString(json, "sample");
-//        String[] temps = temp.substring(1, temp.length() - 1).split(",");
-//        String[] samples = sample.substring(1, sample.length() - 1).split(",");
-//
-//        int size = temps.length;
-//
-//        AlgorithmManager manager = AlgorithmManager.getInstance("111");
-//        StringBuilder result = new StringBuilder();
-//        manager.setAlgorithmListener(new AlgorithmListener() {
-//            int count = 0;
-//
-//            @Override
-//            public void onComplete(float processTemp, int measureStatus, int sample) {
-//                super.onComplete(processTemp, measureStatus, sample);
-//                count++;
-//                result.append(processTemp).append(",");
-//                if (count == size) {
-//                    Logger.w("算法:" + result.toString());
-//                }
-//            }
-//        });
-//        manager.setAlgorithmStatus(0);
-//        for (int i = 0; i < temps.length; i++) {
-//            manager.doAlgorithm1_5(Float.parseFloat(temps[i]), Integer.parseInt(samples[i]));
-//        }
-//        manager.setAlgorithmStatus(2);
+
     }
 }

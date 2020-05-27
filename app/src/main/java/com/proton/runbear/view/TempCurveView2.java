@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -22,13 +21,11 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.proton.runbear.R;
 import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.utils.Utils;
 import com.proton.temp.connector.bean.TempDataBean;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +37,9 @@ import java.util.List;
  */
 
 public class TempCurveView2 extends FrameLayout {
-    public LineChart mLineChart;
+    private List<Entry> entries = new ArrayList<>();
+    private LineChart mLineChart;
+    private LineDataSet mDataSet;
     private LineData mLineData;
     /**
      * 最大温度
@@ -60,19 +59,10 @@ public class TempCurveView2 extends FrameLayout {
     /**
      * 温度曲线类型
      */
-    private InstructionConstant chartType = InstructionConstant.aa;
+    private InstructionConstant chartType = InstructionConstant.bb;
 
-    /**
-     * 原始温度
-     */
     public static final String REAL_LABEL = "实时温度";
-    /**
-     * 算法温度，显示给用户的温度
-     */
     public static final String ALGORITHM_LABEL = "算法温度";
-
-    public static final String ALGORITHM_STATUS_LABEL = "算法状态";
-    public static final String ALGORITHM_GESTURE_LABEL = "算法姿势";
 
     public TempCurveView2(@NonNull Context context) {
         this(context, null);
@@ -87,7 +77,6 @@ public class TempCurveView2 extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.layout_temp_curve, this);
         mLineChart = findViewById(R.id.id_line_chart);
         initLineChart();
-        initLineData();
     }
 
     /**
@@ -99,24 +88,33 @@ public class TempCurveView2 extends FrameLayout {
         this.chartType = chartType;
         switch (chartType) {
             case aa://算法温度曲线
-                initDataSet(ALGORITHM_LABEL, R.color.color_algorithm_temp);
-                mLineChart.getAxisRight().setEnabled(false);
+                initDataSet(ALGORITHM_LABEL, R.color.color_temp_high);
                 break;
             case ab://算法温度+真实温度曲线
-                initDataSet(ALGORITHM_LABEL, R.color.color_algorithm_temp);
-                initDataSet(REAL_LABEL, R.color.color_real_temp);
-                initDataSet(ALGORITHM_STATUS_LABEL, R.color.color_algorithm_status);
-                initDataSet(ALGORITHM_GESTURE_LABEL, R.color.black);
-                mLineChart.getAxisRight().setEnabled(true);
+                initDataSet(ALGORITHM_LABEL, R.color.color_temp_high);
+                initDataSet(REAL_LABEL, R.color.color_main);
                 break;
             case bb://真实温度曲线
-                initDataSet(REAL_LABEL, R.color.color_real_temp);
-                initDataSet(ALGORITHM_STATUS_LABEL, R.color.color_algorithm_status);
-                initDataSet(ALGORITHM_GESTURE_LABEL, R.color.black);
-                mLineChart.getAxisRight().setEnabled(true);
+                initLineData();
                 break;
         }
         addMarkView();
+    }
+
+    public LineChart getLineChart() {
+        if (mLineChart != null) {
+            return mLineChart;
+        }
+        return null;
+    }
+
+    /**
+     * 设置最小温度值
+     */
+    public void setMinTemp(float temp) {
+        YAxis leftAxis = mLineChart.getAxisLeft();
+        leftAxis.setAxisMinimum(temp);
+        mLineChart.invalidate();
     }
 
     @SuppressLint("SetTextI18n")
@@ -143,15 +141,35 @@ public class TempCurveView2 extends FrameLayout {
     }
 
     private void initLineData() {
+        mDataSet = new LineDataSet(entries, REAL_LABEL);
+        Drawable fillDrawable = ContextCompat.getDrawable(getContext(), R.drawable.drawable_line_chart);
+        fillDrawable.setAlpha(120);
+        mDataSet.setFillDrawable(fillDrawable);
+        mDataSet.setDrawFilled(true);
+        mDataSet.setDrawCircles(false);
+        mDataSet.disableDashedLine();
+        mDataSet.setColor(Color.TRANSPARENT);
+        mDataSet.setCircleColor(Color.BLACK);
+        mDataSet.setLineWidth(0f);
+        mDataSet.setCircleRadius(3f);
+        mDataSet.setDrawCircleHole(false);
+        mDataSet.setDrawValues(false);
+        mDataSet.setDrawFilled(true);
+        mDataSet.setFormLineWidth(1f);
+        mDataSet.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+        mDataSet.setFormSize(15.f);
+        mDataSet.setHighLightColor(Color.BLACK);
+        mDataSet.enableDashedHighlightLine(10f, 10f, 0f);
         if (mLineData == null) {
             mLineData = new LineData();
-            mLineData.setDrawValues(false);
         }
+        mLineData.addDataSet(mDataSet);
+        mLineData.setDrawValues(false);
         mLineChart.setData(mLineData);
     }
 
     private void initLineChart() {
-        mLineChart.setBackgroundColor(Color.WHITE);
+        mLineChart.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_gray_f4));
         mLineChart.setDragEnabled(true);
         mLineChart.setScaleEnabled(true);
         mLineChart.setPinchZoom(false);
@@ -175,28 +193,19 @@ public class TempCurveView2 extends FrameLayout {
                 return "";
             }
         });
-
         YAxis leftAxis = mLineChart.getAxisLeft();
         leftAxis.setAxisMaximum(42.0f);
-        leftAxis.setAxisMinimum(30.0f);
+//        leftAxis.setAxisMinimum(30.0f);
+        leftAxis.setAxisMinimum(20.0f);
         leftAxis.enableGridDashedLine(dip2px(10), dip2px(10), 0);
         leftAxis.setDrawZeroLine(false);
         leftAxis.setDrawLimitLinesBehindData(true);
         leftAxis.setDrawGridLines(true);
         leftAxis.setGridColor(Color.parseColor("#E8E8E8"));
         leftAxis.setDrawLabels(true);
-        leftAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return Utils.getTempAndUnit(value);
-            }
-        });
-
-        YAxis rightAxis = mLineChart.getAxisRight();
-        rightAxis.setEnabled(false);
-        rightAxis.setAxisMinimum(0f);
-        rightAxis.setAxisMaximum(15f);
-
+        leftAxis.setValueFormatter((value, axis) -> Utils.getTempAndUnit(value));
+//        addMarkView();
+        mLineChart.getAxisRight().setEnabled(false);
         mLineChart.getViewPortHandler().setMaximumScaleX(1);
         mLineChart.getViewPortHandler().setMaximumScaleY(1);
         mLineChart.getLegend().setEnabled(false);
@@ -206,37 +215,21 @@ public class TempCurveView2 extends FrameLayout {
 
     private void addMarkView() {
         final DecimalFormat tempFormat = new DecimalFormat("###.00");
-        CurveMarkView markView = new CurveMarkView(getContext(), chartType == InstructionConstant.bb ? 15 : 0);
+        CurveMarkView markView = new CurveMarkView(getContext(), chartType == InstructionConstant.bb ? 0 : 0);
 //        final NewMarkerView markView = new NewMarkerView(getContext());
         markView.setOnMarkViewListener((timeText, tempText, e) -> {
-            String chartLabel = (String) e.getData();
-            if (chartLabel.equalsIgnoreCase(REAL_LABEL) || chartLabel.equalsIgnoreCase(ALGORITHM_LABEL)) {
-                timeText.setText(getContext().getString(R.string.string_time) + format.format(mTempList.get((int) e.getX()).getTime()));
-                tempText.setText(getContext().getString(R.string.string_temp) + Utils.getTempAndUnit(tempFormat.format(e.getY())));
-            } else if (chartLabel.equalsIgnoreCase(ALGORITHM_STATUS_LABEL)) {
-                timeText.setText(getContext().getString(R.string.string_time) + format.format(mTempList.get((int) e.getX()).getTime()));
-                tempText.setText(getContext().getString(R.string.string_algorithm_status) + getBigDecimalStatus((e.getY() - 30) * 1.25));
-            } else if (chartLabel.equalsIgnoreCase(ALGORITHM_GESTURE_LABEL)) {
-                timeText.setText(getContext().getString(R.string.string_time) + format.format(mTempList.get((int) e.getX()).getTime()));
-                tempText.setText(getContext().getString(R.string.string_algorithm_gesture) + getBigDecimalStatus((e.getY() - 30) * 1.25));
-            }
+            timeText.setText(getContext().getString(R.string.string_time) + format.format(mTempList.get((int) e.getX()).getTime()));
+            tempText.setText(getContext().getString(R.string.string_temp) + Utils.getTempAndUnit(tempFormat.format(e.getY())));
         });
         markView.setChartView(mLineChart); // For bounds control
         mLineChart.setMarker(markView); // Set the marker to the chart
     }
 
-
-    public void addDatas(List<TempDataBean> datas, float highWarmTemp, float loweWarmTemp) {
-
+    public void addDatas(List<TempDataBean> datas) {
         LineDataSet dataSetReal = (LineDataSet) mLineData.getDataSetByLabel(REAL_LABEL, true);
         LineDataSet dataSetAlgorithm = (LineDataSet) mLineData.getDataSetByLabel(ALGORITHM_LABEL, true);
-
-        LineDataSet dataSetAlgorithmStatus = (LineDataSet) mLineData.getDataSetByLabel(ALGORITHM_STATUS_LABEL, true);
-        LineDataSet dataSetAlgorithmGesture = (LineDataSet) mLineData.getDataSetByLabel(ALGORITHM_GESTURE_LABEL, true);
-
-
         if (datas == null || datas.size() <= 0) {
-//            entries.clear();
+            entries.clear();
             mLineChart.clear();
             return;
         }
@@ -244,22 +237,15 @@ public class TempCurveView2 extends FrameLayout {
             mTempList.add(dataBean);
             addEntry(dataBean, dataSetReal);
             addEntry(dataBean, dataSetAlgorithm);
-            addEntry(dataBean, dataSetAlgorithmStatus);
-            addEntry(dataBean, dataSetAlgorithmGesture);
         }
 
-        mHighestTemp = highWarmTemp;
-        mLowestTemp = loweWarmTemp;
-        addLineLimit();
         mLineData.notifyDataChanged();
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
     }
 
-    public void addData(float data, float algorithmTemp, int status, int gesture) {
+    public void addData(float data, float algorithmTemp) {
         TempDataBean tempDataBean = new TempDataBean(System.currentTimeMillis(), data, algorithmTemp);
-        tempDataBean.setMeasureStatus(status);
-        tempDataBean.setGesture(gesture);
         mTempList.add(tempDataBean);
         if (chartType != InstructionConstant.bb) {
             LineDataSet dataSetAlgorithm = (LineDataSet) mLineData.getDataSetByLabel(ALGORITHM_LABEL, true);
@@ -268,13 +254,9 @@ public class TempCurveView2 extends FrameLayout {
 
         if (chartType != InstructionConstant.aa) {
             LineDataSet dataSetReal = (LineDataSet) mLineData.getDataSetByLabel(REAL_LABEL, true);
-            LineDataSet dataSetAlgorightmStatus = (LineDataSet) mLineData.getDataSetByLabel(ALGORITHM_STATUS_LABEL, true);
-            LineDataSet dataSetAlgorighmGesture = (LineDataSet) mLineData.getDataSetByLabel(ALGORITHM_GESTURE_LABEL, true);
             addEntry(tempDataBean, dataSetReal);
-            addEntry(tempDataBean, dataSetAlgorightmStatus);
-            addEntry(tempDataBean, dataSetAlgorighmGesture);
         }
-        addLineLimit();
+//        addLineLimit();
         mLineData.notifyDataChanged();
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
@@ -287,13 +269,9 @@ public class TempCurveView2 extends FrameLayout {
         }
         String label = dataSet.getLabel();
         if (label.equalsIgnoreCase(REAL_LABEL)) {
-            dataSet.addEntry(new Entry(dataSet.getEntryCount(), data.getTemp(), REAL_LABEL));
+            dataSet.addEntry(new Entry(dataSet.getEntryCount(), data.getTemp()));
         } else if (label.equalsIgnoreCase(ALGORITHM_LABEL)) {
-            dataSet.addEntry(new Entry(dataSet.getEntryCount(), data.getAlgorithmTemp(), ALGORITHM_LABEL));
-        } else if (label.equalsIgnoreCase(ALGORITHM_STATUS_LABEL)) {
-            dataSet.addEntry(new Entry(dataSet.getEntryCount(), statusOrGestureSwitch(data.getMeasureStatus()), ALGORITHM_STATUS_LABEL));
-        } else if (label.equalsIgnoreCase(ALGORITHM_GESTURE_LABEL)) {
-            dataSet.addEntry(new Entry(dataSet.getEntryCount(), statusOrGestureSwitch(data.getGesture()), ALGORITHM_GESTURE_LABEL));
+            dataSet.addEntry(new Entry(dataSet.getEntryCount(), data.getAlgorithmTemp()));
         }
     }
 
@@ -306,69 +284,31 @@ public class TempCurveView2 extends FrameLayout {
      * 初始化算法温度曲线数据
      */
     private void initDataSet(String lable, int color) {
-        //图例
+
         Legend legend = mLineChart.getLegend();
-        legend.setForm(Legend.LegendForm.LINE);
+        legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setEnabled(true);
 
-        //数据
-        LineDataSet mDataSet = new LineDataSet(null, lable);
-        mDataSet.setDrawCircles(false);
-        mDataSet.setDrawCircleHole(false);
-        mDataSet.setDrawValues(false);//是否显示折线上的数据
-        mDataSet.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-        mDataSet.setFormSize(15.f);
-        mDataSet.enableDashedHighlightLine(10f, 10f, 0f);
-        if (chartType == InstructionConstant.aa) {
-            Drawable fillDrawable = ContextCompat.getDrawable(getContext(), R.drawable.drawable_line_chart);
-            fillDrawable.setAlpha(120);
-            mDataSet.setFillDrawable(fillDrawable);
-            mDataSet.setDrawFilled(true);
-            legend.setEnabled(false);
-            mDataSet.setFormLineWidth(1f);
-            mDataSet.disableDashedLine();
-            mDataSet.setColor(Color.TRANSPARENT);
-            mDataSet.setCircleColor(Color.BLACK);
-            mDataSet.setLineWidth(0f);
-            mDataSet.setCircleRadius(3f);
-            mDataSet.setDrawFilled(true);
-            mDataSet.setHighLightColor(Color.BLACK);
-        } else {
-            legend.setEnabled(true);
-            mDataSet.setFormLineWidth(3f);
-            mDataSet.setColor(ContextCompat.getColor(getContext(), color));
-            mDataSet.setCircleColor(Color.BLACK);
-            if (lable.equalsIgnoreCase(ALGORITHM_GESTURE_LABEL) || lable.equalsIgnoreCase(ALGORITHM_STATUS_LABEL)) {
-                mDataSet.setMode(LineDataSet.Mode.STEPPED);
-            } else {
-                mDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
-            }
+        List<Entry> mValue = new ArrayList<>();
+        LineDataSet lineDataSet = new LineDataSet(mValue, lable);
+        lineDataSet.setDrawValues(true);
+        lineDataSet.setDrawCircles(false);
+        lineDataSet.setColor(ContextCompat.getColor(getContext(), color));
+        lineDataSet.setCircleColor(Color.BLACK);
+        lineDataSet.setDrawCircleHole(false);
+        lineDataSet.setDrawValues(false);//是否显示折线上的数据
+        lineDataSet.setFormLineWidth(3f);
+        lineDataSet.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+        lineDataSet.setFormSize(15.f);
+        lineDataSet.enableDashedHighlightLine(10f, 10f, 0f);
+        lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        if (mLineData == null) {
+            mLineData = new LineData();
         }
-        mLineData.addDataSet(mDataSet);
+        mLineData.addDataSet(lineDataSet);
+        mLineChart.setData(mLineData);
     }
-
-    /**
-     * 把状态和姿势的权限整体向上移动
-     *
-     * @param data
-     * @return
-     */
-    private float statusOrGestureSwitch(int data) {
-        float percent = 12 / 15f;
-        return 30 + data * percent;
-    }
-
-    /**
-     * 姿势、状态取整
-     *
-     * @param staOrGes
-     * @return
-     */
-    private int getBigDecimalStatus(double staOrGes) {
-        BigDecimal bigDecimal = new BigDecimal(staOrGes).setScale(0, BigDecimal.ROUND_HALF_UP);
-        return bigDecimal.intValue();
-    }
-
 }

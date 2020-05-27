@@ -22,8 +22,6 @@ import com.proton.runbear.activity.managecenter.MsgCenterActivity;
 import com.proton.runbear.activity.measure.AddNewDeviceActivity;
 import com.proton.runbear.activity.measure.DeviceShareActivity;
 import com.proton.runbear.activity.measure.DrugRecordActivity;
-import com.proton.runbear.activity.measure.NurseSuggestBaseInfoActivity;
-import com.proton.runbear.activity.measure.NurseSuggestDescribeActivity;
 import com.proton.runbear.activity.profile.AddProfileActivity;
 import com.proton.runbear.activity.profile.ProfileEditActivity;
 import com.proton.runbear.activity.profile.ProfileNameEditActivity;
@@ -98,12 +96,6 @@ public class PageUtils {
         }
         if (AddNewDeviceActivity.class.getName().equalsIgnoreCase(name)) {
             return "新设备";
-        }
-        if (NurseSuggestBaseInfoActivity.class.getName().equalsIgnoreCase(name)) {
-            return "护理建议-基本信息";
-        }
-        if (NurseSuggestDescribeActivity.class.getName().equalsIgnoreCase(name)) {
-            return "护理建议";
         }
         if (DrugRecordActivity.class.getName().equalsIgnoreCase(name)) {
             return "用药记录列表";

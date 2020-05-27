@@ -56,7 +56,7 @@
                 android:ellipsize="end"
                 android:maxLength="10"
                 android:text="@{profile.username}"
-                android:textColor="#57b7f9"
+                android:textColor="@color/color_main"
                 android:textSize="15sp"/>
 
         </LinearLayout>

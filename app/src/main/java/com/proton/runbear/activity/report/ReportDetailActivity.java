@@ -1,5 +1,6 @@
 package com.proton.runbear.activity.report;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -59,7 +60,7 @@ import java.util.List;
  * String profileName 档案姓名
  * </>
  */
-public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBinding> implements AdapterChildClickListener, OnChartValueSelectedListener, ShareReportFragment.ShareReportListener {
+public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBinding> implements AdapterChildClickListener, OnChartValueSelectedListener {
     public static final String TAG = "ReportDetailActivity_chart";
     /**
      * 添加记录返回码
@@ -251,7 +252,7 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
                     Logger.w("");
                     runOnUiThread(() -> {
                         binding.idCurveView.setChartType(App.get().getInstructionConstant());
-                        binding.idCurveView.addDatas(allTemps, mWarmHighestTemp, mWarmLowestTemp);
+                        binding.idCurveView.addDatas(allTemps);
                         dismissDialog();
                     });
                 }
@@ -301,6 +302,7 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
         });
     }
 
+    @SuppressLint("StringFormatMatches")
     private void initMaxTempData() {
         //温度单位设置
         int tempUnit = SpUtils.getInt(AppConfigs.SP_KEY_TEMP_UNIT, AppConfigs.TEMP_UNIT_DEFAULT);
@@ -331,7 +333,7 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
                 break;
             case 2:
                 //中热
-                temTipTv.setText(String.format(getString(R.string.string_temp_high_fever), Utils.getTempAndUnit(37.00f), Utils.getTempAndUnit(38.00f), Utils.getTempAndUnit(40.00f)));
+                temTipTv.setText(String.format(getString(R.string.string_temp_high_fever), Utils.getTempAndUnit(37.00f), Utils.getTempAndUnit(38.00f), Utils.getTempAndUnit(40.00f), Utils.getTempAndUnit(38.00f)));
                 break;
             case 3:
                 //高热
@@ -359,28 +361,6 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
                 .putExtra("maxTemp", maxTemp)
                 .putExtra("reportUrlPath", reportUrlPath)
                 .putExtra("starttime", starttime)));
-        //分享
-        binding.idIncludeTop.idIvRightOperte.setOnClickListener(v -> {
-            ShareReportFragment shareReportFragment = new ShareReportFragment();
-            Bundle paramsBdle = new Bundle();
-            //报告id
-            paramsBdle.putString("reportId", reportId);
-            //测量起始时间
-            paramsBdle.putLong("starttime", starttime);
-            //测量结束时间
-            paramsBdle.putLong("endtime", endTime);
-            //档案id
-            paramsBdle.putLong("profileId", profileId);
-            //最高体温
-            paramsBdle.putString("maxTemp", maxTemp);
-            //档案测量姓名
-            paramsBdle.putString("profileName", profileName);
-            //报告详情
-            paramsBdle.putString("reportUrlPath", reportUrlPath);
-            shareReportFragment.setArguments(paramsBdle);
-            shareReportFragment.setShareReportListener(this);
-            shareReportFragment.show(getFragmentManager(), reportId);
-        });
     }
 
     @Override
@@ -448,22 +428,4 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
 
     }
 
-    /**
-     * 分享创建png图片文件(在子线程中操作)
-     */
-    @Override
-    public void createPng() {
-        Bitmap reportChartBp = binding.idCurveView.mLineChart.getChartBitmap();
-        FileOutputStream stream = null;
-        try {
-            stream = new FileOutputStream(FileUtils.getReport() + File.separator + reportId + ".png");
-            reportChartBp.compress(Bitmap.CompressFormat.PNG, 40, stream);
-            stream.flush();
-            stream.close();
-            //回收
-            reportChartBp = null;
-        } catch (Exception error) {
-            Logger.w(error.getMessage());
-        }
-    }
 }

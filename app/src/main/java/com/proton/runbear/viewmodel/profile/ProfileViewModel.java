@@ -3,21 +3,18 @@ package com.proton.runbear.viewmodel.profile;
 import android.databinding.ObservableField;
 
 import com.proton.runbear.R;
-import com.proton.runbear.bean.ShareBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
-import com.proton.runbear.net.center.DeviceCenter;
 import com.proton.runbear.net.center.ProfileCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.viewmodel.BaseViewModel;
 import com.wms.utils.CommonUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +24,6 @@ import java.util.List;
 public class ProfileViewModel extends BaseViewModel {
 
     public ObservableField<List<ProfileBean>> profileList = new ObservableField<>();
-    public ObservableField<List<ShareBean>> shareList = new ObservableField<>();
 
     public void getProfileList() {
         getProfileList(false);
@@ -78,6 +74,8 @@ public class ProfileViewModel extends BaseViewModel {
         });
     }
 
+
+
     /**
      * 删除档案
      */
@@ -107,23 +105,6 @@ public class ProfileViewModel extends BaseViewModel {
                 } else {
                     BlackToast.show(R.string.string_delete_failed);
                 }
-            }
-        });
-    }
-
-    public void getSharedList() {
-        DeviceCenter.getSharedList(new NetCallBack<List<ShareBean>>() {
-            @Override
-            public void onSucceed(List<ShareBean> data) {
-                if (!CommonUtils.listIsEmpty(data)) {
-                    shareList.set(data);
-                }
-            }
-
-            @Override
-            public void onFailed(ResultPair resultPair) {
-                super.onFailed(resultPair);
-                shareList.set(new ArrayList<>());
             }
         });
     }

@@ -207,6 +207,8 @@ dependencies {
     implementation files('libs/alipaySdk-20180601.jar')
     implementation files('libs/aliyun-log-sdk-android-2.1.0.jar')
     implementation 'com.yanzhenjie.permission:support:2.0.1'
+
+    implementation 'com.github.zyyoona7:wheelview:1.0.6'
 }
 
 if (isInternational) {

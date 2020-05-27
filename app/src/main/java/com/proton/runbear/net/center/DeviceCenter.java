@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import com.proton.runbear.R;
 import com.proton.runbear.bean.LastUseBean;
 import com.proton.runbear.bean.ScanDeviceInfoBean;
-import com.proton.runbear.bean.ShareBean;
 import com.proton.runbear.net.RetrofitHelper;
 import com.proton.runbear.net.bean.DeviceBean;
 import com.proton.runbear.net.bean.MessageEvent;
@@ -203,51 +202,7 @@ public class DeviceCenter {
         });
     }
 
-    /**
-     * 获取分享人列表
-     */
-    public static void getSharedList(NetCallBack<List<ShareBean>> callBack) {
-        RetrofitHelper.getManagerCenterApi().getSharedList()
-                .map(json -> {
-                    Logger.json(json);
-                    ResultPair resultPair = parseResult(json);
-                    if (resultPair.isSuccess()) {
-                        Type type = new TypeToken<ArrayList<ShareBean>>() {
-                        }.getType();
-                        return JSONUtils.<ShareBean>getObj(resultPair.getData(), type);
-                    } else {
-                        throw new ParseResultException(resultPair.getData());
-                    }
-                }).compose(threadTrans()).subscribe(new NetSubscriber<List<ShareBean>>(callBack) {
-            @Override
-            public void onNext(List<ShareBean> resultPair) {
-                callBack.onSucceed(resultPair);
-            }
-        });
-    }
 
-    public static void editShareProfile(String profileId, String deviceId, boolean needPush, NetCallBack<Boolean> callBack) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("profileid", profileId);
-        params.put("deviceid", deviceId);
-        params.put("push", String.valueOf(needPush));
-        RetrofitHelper.getManagerCenterApi().editShareProfile(params)
-                .map(json -> {
-                    Logger.json(json);
-                    ResultPair resultPair = parseResult(json);
-                    if (resultPair.isSuccess()) {
-                        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.BIND_DEVICE_SUCCESS));
-                        return resultPair.isSuccess();
-                    } else {
-                        throw new ParseResultException(resultPair.getData());
-                    }
-                }).compose(threadTrans()).subscribe(new NetSubscriber<Boolean>(callBack) {
-            @Override
-            public void onNext(Boolean resultPair) {
-                callBack.onSucceed(resultPair);
-            }
-        });
-    }
 
     public static void deleteDevice(int deviceId, NetCallBack<ResultPair> netCallBack) {
         HashMap<String, Object> params = new HashMap<>();

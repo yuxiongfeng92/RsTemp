@@ -17,6 +17,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -69,6 +70,8 @@ import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 
 /**
  * Created by wangmengsi on 2018/2/26.
@@ -644,9 +647,9 @@ public class Utils {
                 if (viewmodels.get(key) instanceof MeasureViewModel) {
                     //测量的viewmodel
                     MeasureViewModel viewModel = (MeasureViewModel) viewmodels.get(key);
-                    if (viewModel == null || TextUtils.isEmpty(viewModel.patchMacAddress.get()))
+                    if (viewModel == null || TextUtils.isEmpty(viewModel.measureInfo.get().getMacaddress()))
                         continue;
-                    if (viewModel.patchMacAddress.get().equalsIgnoreCase(macaddress)) return true;
+                    if (viewModel.measureInfo.get().getMacaddress().equalsIgnoreCase(macaddress)) return true;
                 }
             }
         }
@@ -782,15 +785,6 @@ public class Utils {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * 关闭所有的测量卡片
-     */
-    public static void closeAllCards() {
-        if (ActivityManager.findActivity(Settings.MEASURE_ACTIVITY) != null) {
-            ActivityManager.findActivity(Settings.MEASURE_ACTIVITY).closeAllCards();
         }
     }
 
@@ -1132,6 +1126,16 @@ public class Utils {
         Uri data = Uri.parse("tel:" + phoneNum);
         intent.setData(data);
         context.startActivity(intent);
+    }
+
+    /**
+     * 设置recyclerview删除动画
+     */
+    public static void setRecyclerViewDeleteAnimation(RecyclerView mRecyclerView) {
+        SlideInRightAnimator animator = new SlideInRightAnimator();
+        animator.setRemoveDuration(400);
+        animator.setAddDuration(400);
+        mRecyclerView.setItemAnimator(animator);
     }
 
 

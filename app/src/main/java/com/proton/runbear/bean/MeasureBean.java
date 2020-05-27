@@ -42,7 +42,7 @@ public class MeasureBean implements Serializable {
     }
 
     public String getMacaddress() {
-        return device.getMacaddress();
+        return profile.getMacAddress();
     }
 
     public DeviceBean getDevice() {

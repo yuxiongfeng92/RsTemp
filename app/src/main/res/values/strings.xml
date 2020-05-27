@@ -217,7 +217,7 @@
     <string name="string_end_measure">Stop</string>
     <string name="string_end_measure_tips">Fail to close the card. Please stop measuring first.</string>
     <string name="string_report_uploading">Data uploading</string>
-    <string name="string_device_name">CarePatch</string>
+    <string name="string_device_name">runBear</string>
     <string name="string_minutes_unit">min</string>
     <string name="string_confirm_delete">Are you sure you want to delete?</string>
     <string name="string_deleting">Deleting</string>

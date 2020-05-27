@@ -9,8 +9,4 @@ public class SPConstant {
     public static final String PATCH_MAC = "PATCH_MAC";
     public static final String LAST_WARM_TIME = "last_warm_time";
 
-    /**
-     * 用户账号就是手机号
-     */
-    public static final String PHONE = "phone";
 }

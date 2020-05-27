@@ -180,7 +180,7 @@ public class ReportLandscapChartActivity extends BaseActivity<ActivityReportLand
 
                     runOnUiThread(() -> {
                         binding.idCurveView.setChartType(App.get().getInstructionConstant());
-                        binding.idCurveView.addDatas(allTemps, mWarmHighestTemp, mWarmLowestTemp);
+                        binding.idCurveView.addDatas(allTemps);
                         dismissDialog();
                     });
 

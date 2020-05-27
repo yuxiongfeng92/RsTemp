@@ -145,7 +145,7 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
                 if (App.get().isLogined()) {
                     addDevice(data);
                 } else {
-                    SpUtils.saveString(AppConfigs.SP_KEY_EXPERIENCE_BIND_DEVICE, macaddress);
+//                    SpUtils.saveString(AppConfigs.SP_KEY_EXPERIENCE_BIND_DEVICE, macaddress);
                     finishOrGoToWeb();
                 }
             }
@@ -206,32 +206,32 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
             IntentUtils.goToMain(mContext);
             return;
         }
-        DeviceCenter.editShareProfile(String.valueOf(mProfile.getProfileId()), deviceId, false, new NetCallBack<Boolean>() {
-
-            @Override
-            public void noNet() {
-                super.noNet();
-                dismissDialog();
-                BlackToast.show(R.string.string_no_net);
-                reScan();
-            }
-
-            @Override
-            public void onSucceed(Boolean data) {
-                dismissDialog();
-                mProfile.setMacAddress(macaddress);
-                finishOrGoToWeb();
-                Logger.w("更新分享设备成功");
-            }
-
-            @Override
-            public void onFailed(ResultPair resultPair) {
-                super.onFailed(resultPair);
-                dismissDialog();
-                BlackToast.show(R.string.string_bind_fail);
-                reScan();
-            }
-        });
+//        DeviceCenter.editShareProfile(String.valueOf(mProfile.getProfileId()), deviceId, false, new NetCallBack<Boolean>() {
+//
+//            @Override
+//            public void noNet() {
+//                super.noNet();
+//                dismissDialog();
+//                BlackToast.show(R.string.string_no_net);
+//                reScan();
+//            }
+//
+//            @Override
+//            public void onSucceed(Boolean data) {
+//                dismissDialog();
+//                mProfile.setMacAddress(macaddress);
+//                finishOrGoToWeb();
+//                Logger.w("更新分享设备成功");
+//            }
+//
+//            @Override
+//            public void onFailed(ResultPair resultPair) {
+//                super.onFailed(resultPair);
+//                dismissDialog();
+//                BlackToast.show(R.string.string_bind_fail);
+//                reScan();
+//            }
+//        });
     }
 
     private void finishOrGoToWeb() {

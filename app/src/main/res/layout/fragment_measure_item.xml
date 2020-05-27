@@ -47,15 +47,6 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
-                        android:id="@+id/id_close"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:padding="5dp"
-                        android:src="@drawable/icon_close_card" />
-
-                    <ImageView
                         android:id="@+id/iv_battery"
                         android:layout_width="40dp"
                         android:layout_height="15dp"

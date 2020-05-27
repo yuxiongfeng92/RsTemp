@@ -220,7 +220,7 @@
     <string name="string_end_measure">结束测量</string>
     <string name="string_end_measure_tips">您正在测量，不能关闭，请先停止测量再关闭！</string>
     <string name="string_report_uploading">报告上传中</string>
-    <string name="string_device_name">卡帕奇儿童体温贴</string>
+    <string name="string_device_name">润贝儿体温贴</string>
     <string name="string_minutes_unit">分钟</string>
     <string name="string_confirm_delete">确定删除？</string>
     <string name="string_deleting">正在删除中</string>
