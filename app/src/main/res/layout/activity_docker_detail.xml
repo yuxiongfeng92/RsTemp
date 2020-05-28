@@ -2,16 +2,14 @@
 <layout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:background="@color/color_main_bg"
-                  android:orientation="vertical"
-                  tools:context="com.proton.runbear.activity.device.DockerDetailActivity">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_main_bg"
+        android:orientation="vertical">
 
         <include
             android:id="@+id/id_include_top"
-            layout="@layout/include_top_navigation"/>
+            layout="@layout/include_top_navigation" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -43,7 +41,7 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_name"/>
+                            android:text="@string/string_name" />
 
                         <TextView
                             android:id="@+id/id_tv_deviceDetail_name"
@@ -52,15 +50,15 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="end"
-                            android:text="@string/string_device_name"/>
+                            android:text="@string/string_device_name" />
                     </LinearLayout>
                 </LinearLayout>
                 <!--充电器详细内容-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="25dp"
                     android:layout_marginTop="13dp"
+                    android:layout_marginBottom="25dp"
                     android:background="@color/white"
                     android:divider="@drawable/divider_item_layout_1dp"
                     android:orientation="vertical"
@@ -78,7 +76,7 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_latest_use"/>
+                            android:text="@string/string_latest_use" />
 
                         <TextView
                             android:id="@+id/id_tv_base_latestUse"
@@ -87,7 +85,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="end"
-                            android:text="--"/>
+                            android:text="--" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -100,7 +98,7 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_wifi_address"/>
+                            android:text="@string/string_wifi_address" />
 
                         <TextView
                             android:id="@+id/id_tv_wifiAddress"
@@ -109,7 +107,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center_vertical|end"
-                            android:text="--"/>
+                            android:text="--" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -122,7 +120,7 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_bluetooth_address"/>
+                            android:text="@string/string_bluetooth_address" />
 
                         <TextView
                             android:id="@+id/id_device_mac"
@@ -131,7 +129,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="end"
-                            android:text="--"/>
+                            android:text="--" />
                     </LinearLayout>
                     <!--固件版本-->
                     <LinearLayout
@@ -144,7 +142,7 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_hardware_version"/>
+                            android:text="@string/string_hardware_version" />
 
                         <TextView
                             android:id="@+id/id_tv_base_hardVersion"
@@ -153,7 +151,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="end"
-                            android:text="--"/>
+                            android:text="--" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

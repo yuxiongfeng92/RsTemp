@@ -8,13 +8,12 @@ import com.proton.runbear.bean.LastUseBean;
 import com.proton.runbear.bean.ScanDeviceInfoBean;
 import com.proton.runbear.net.RetrofitHelper;
 import com.proton.runbear.net.bean.DeviceBean;
-import com.proton.runbear.net.bean.MessageEvent;
+import com.proton.runbear.net.bean.DeviceItemInfo;
 import com.proton.runbear.net.bean.UpdateFirmwareBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.NetSubscriber;
 import com.proton.runbear.net.callback.ParseResultException;
 import com.proton.runbear.net.callback.ResultPair;
-import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.FileUtils;
 import com.proton.runbear.utils.JSONUtils;
 import com.proton.runbear.utils.UIUtils;
@@ -75,6 +74,84 @@ public class DeviceCenter {
             }
         });
     }
+
+    /**
+     * 绑定设备
+     */
+    public static void bindDevice(String mac, NetCallBack<Boolean> callBack) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("mac", mac);
+        RetrofitHelper.getManagerCenterApi().bindDevice(params)
+                .map(s -> {
+                    ResultPair resultPair = parseResult(s);
+                    if (resultPair.isSuccess()) {
+                        return true;
+                    } else {
+                        throw new ParseResultException(resultPair.getErrorMessage());
+                    }
+                })
+                .compose(threadTrans())
+                .subscribe(new NetSubscriber<Boolean>(callBack) {
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        callBack.onSucceed(aBoolean);
+                    }
+                });
+    }
+
+    /**
+     * 查询设备详情
+     *
+     * @param mac
+     * @param callBack
+     */
+    public static void queryDeviceInfo(String mac, NetCallBack<DeviceItemInfo> callBack) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("mac", mac);
+        RetrofitHelper.getManagerCenterApi().queryDeviceInfo(params)
+                .map(s -> {
+                    ResultPair resultPair = parseResult(s);
+                    if (resultPair.isSuccess()) {
+                        DeviceItemInfo deviceInfo = JSONUtils.getObj(resultPair.getData(), DeviceItemInfo.class);
+                        return deviceInfo;
+                    } else {
+                        throw new ParseResultException(resultPair.getErrorMessage());
+                    }
+                })
+                .compose(threadTrans())
+                .subscribe(new NetSubscriber<DeviceItemInfo>(callBack) {
+                    @Override
+                    public void onNext(DeviceItemInfo rsDeviceInfo) {
+                        callBack.onSucceed(rsDeviceInfo);
+                    }
+                });
+    }
+
+    /**
+     * 查询设备列表
+     */
+    public static void queryDevices(NetCallBack<List<DeviceItemInfo>> callBack) {
+        RetrofitHelper.getManagerCenterApi().queryDevice()
+                .map(s -> {
+                    ResultPair resultPair = parseResult(s);
+                    if (resultPair.isSuccess()) {
+                        Type type = new TypeToken<List<DeviceItemInfo>>() {
+                        }.getType();
+                        List<DeviceItemInfo> deviceList = JSONUtils.getObj(resultPair.getData(), type);
+                        return deviceList;
+                    } else {
+                        throw new ParseResultException(resultPair.getErrorMessage());
+                    }
+                })
+                .compose(threadTrans())
+                .subscribe(new NetSubscriber<List<DeviceItemInfo>>(callBack) {
+                    @Override
+                    public void onNext(List<DeviceItemInfo> rsDeviceInfoList) {
+                        callBack.onSucceed(rsDeviceInfoList);
+                    }
+                });
+    }
+
 
     /**
      * 添加设备
@@ -201,7 +278,6 @@ public class DeviceCenter {
             }
         });
     }
-
 
 
     public static void deleteDevice(int deviceId, NetCallBack<ResultPair> netCallBack) {

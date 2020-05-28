@@ -155,9 +155,10 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
             mScanDeviceFragment.setProfile(profile);
         }
         mScanDeviceFragment.setOnScanDeviceListener(new MeasureScanDeviceFragment.OnScanDeviceListener() {
+
             @Override
-            public void onBindResult(DeviceBean device) {
-                profile.setMacAddress(device.getMacaddress());
+            public void onBindResult(String mac) {
+                profile.setMacAddress(mac);
                 MeasureBean measureBean = new MeasureBean(profile);
                 showMeasuring(measureBean);
             }

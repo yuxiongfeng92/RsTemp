@@ -2,17 +2,11 @@ package com.proton.runbear.fragment.measure;
 
 import android.databinding.Observable;
 import android.databinding.ViewDataBinding;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.support.v4.app.FragmentActivity;
-import android.view.View;
-import android.widget.TextView;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.proton.runbear.R;
 import com.proton.runbear.bean.MeasureBean;
-import com.proton.runbear.component.App;
-import com.proton.runbear.constant.AppConfigs;
-import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.fragment.base.BaseViewModelFragment;
 
 import com.proton.runbear.utils.ActivityManager;
@@ -29,6 +23,7 @@ public abstract class BaseMeasureFragment<DB extends ViewDataBinding, VM extends
     protected MeasureBean mMeasureInfo;
     private SearchDeviceDialog mSearchDeviceDialog;
     protected WarmDialog mHighestWarmDialog;
+    private Handler mHandler=new Handler(Looper.getMainLooper());
 
     protected Observable.OnPropertyChangedCallback mConnectStatusCallback = new Observable.OnPropertyChangedCallback() {
         @Override
@@ -49,7 +44,6 @@ public abstract class BaseMeasureFragment<DB extends ViewDataBinding, VM extends
         }
     };
 
-
     /**
      * 是否需要显示搜索对话框的回调
      */
@@ -60,16 +54,16 @@ public abstract class BaseMeasureFragment<DB extends ViewDataBinding, VM extends
                 showSearchDeviceDialog();
             } else {
                 if (mSearchDeviceDialog != null && mSearchDeviceDialog.isShowing()) {
-                    mSearchDeviceDialog.dismiss();
+                    mHandler.postDelayed(() -> mSearchDeviceDialog.dismiss(),20);
                 }
             }
         }
     };
 
-
     @Override
     protected void fragmentInit() {
         mMeasureInfo = (MeasureBean) getArguments().getSerializable("measureInfo");
+        viewmodel = getViewModel();
         viewmodel.connectStatus.addOnPropertyChangedCallback(mConnectStatusCallback);
         viewmodel.needShowSearchDeviceDialog.addOnPropertyChangedCallback(mSearchDeviceCallback);
     }
@@ -78,7 +72,6 @@ public abstract class BaseMeasureFragment<DB extends ViewDataBinding, VM extends
     protected void initView() {
         super.initView();
     }
-
 
     /**
      * 显示搜索设备的对话框

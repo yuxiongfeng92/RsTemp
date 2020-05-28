@@ -10,8 +10,6 @@ import android.databinding.Observable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.provider.Settings;
@@ -28,7 +26,6 @@ import com.proton.runbear.utils.AlarmClearTimer;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.Constants;
 import com.proton.runbear.utils.EventBusManager;
-import com.proton.runbear.utils.SPConstant;
 import com.proton.runbear.utils.SpUtils;
 import com.proton.runbear.utils.UIUtils;
 import com.proton.runbear.utils.Utils;
@@ -176,21 +173,6 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
         }
     }
 
-//    private void doNetwork() {
-//        binding.getRoot().postDelayed(() -> {
-//            if (hasInit) return;
-//            if (NetUtils.isConnected(mContext)) {
-//                hasInit = true;
-//                requestPermission();
-//                viewmodel.getConfigInfo();
-//                Utils.checkUpdate(this);
-//                SophixManager.getInstance().queryAndLoadNewPatch();
-//            } else {
-//                viewModel.measureTips.set("请检查手机网络");
-//            }
-//        }, 500);
-//    }
-
     /**
      * 高温报警
      *
@@ -271,7 +253,7 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
     @Override
     public void onMessageEvent(MessageEvent messeage) {
         super.onMessageEvent(messeage);
-                if (messeage.getEventType() == MessageEvent.EventType.WAKE) {
+        if (messeage.getEventType() == MessageEvent.EventType.WAKE) {
             viewmodel.uploadData();
         }
     }
@@ -365,7 +347,7 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
         dialogHorizental.setConfirmListener(v -> {
             if (viewmodel.connectStatus.get() == 2) {
                 viewmodel.disConnect();
-                Utils.clearMeasureViewModel(App.get().getDeviceMac(),viewmodel.measureInfo.get().getProfile().getProfileId());
+                Utils.clearMeasureViewModel(App.get().getDeviceMac(), viewmodel.measureInfo.get().getProfile().getProfileId());
             }
             SpUtils.saveString(Constants.PHONE, "");
             //重置报警设置
@@ -388,7 +370,7 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
         if (currentTemp < viewmodel.configInfo.get().getSettings().getWarmTemp()) return false;
         //上次报警时间
         long lastAlarmTime = SpUtils.getLong(Utils.getHighTempWarmSpKey(App.get().getPhone()), 0);
-        long duration = SpUtils.getLong(Utils.getHighTempDurationSpKey(),0);
+        long duration = SpUtils.getLong(Utils.getHighTempDurationSpKey(), 0);
         if (duration == -1) return false;
         Logger.w("上次报警时间: ", lastAlarmTime, " 当前时间距上次报警间隔 ：", (System.currentTimeMillis() - lastAlarmTime) / 1000 + " 秒", "  报警interval: ", duration + "秒");
         if ((System.currentTimeMillis() - lastAlarmTime) / 1000 > duration) return true;

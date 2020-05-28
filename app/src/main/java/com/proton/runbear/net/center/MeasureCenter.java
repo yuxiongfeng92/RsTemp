@@ -29,7 +29,7 @@ public class MeasureCenter extends DataCenter {
         params.put("phone", phone);
         RetrofitHelper.getMeasureCenterApi().getConfigInfo(params)
                 .map(s -> {
-                    if (TextUtils.isEmpty(s)) {
+                    if (TextUtils.isEmpty(s)||s.equalsIgnoreCase("null")) {
                         throw new ParseResultException("配置信息为空");
                     } else {
                         ResultPair resultPair = parseResult(s);

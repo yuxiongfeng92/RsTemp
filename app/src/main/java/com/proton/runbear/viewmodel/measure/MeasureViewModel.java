@@ -26,6 +26,7 @@ import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.BatteryChangeUtil;
+import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.Constants;
 import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.MQTTShareManager;
@@ -720,6 +721,8 @@ public class MeasureViewModel extends BaseViewModel {
             @Override
             public void noNet() {
                 super.noNet();
+                BlackToast.show(R.string.string_no_net);
+                needShowSearchDeviceDialog.set(false);
             }
 
             @Override
@@ -768,6 +771,7 @@ public class MeasureViewModel extends BaseViewModel {
                 super.onFailed(resultPair);
                 Logger.w("获取配置信息失败:", resultPair.getData());
                 measureTips.set("获取配置信息失败");
+                needShowSearchDeviceDialog.set(false);
             }
         });
     }

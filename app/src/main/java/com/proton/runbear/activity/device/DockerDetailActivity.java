@@ -6,7 +6,7 @@ import android.view.View;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.databinding.ActivityDockerDetailBinding;
-import com.proton.runbear.net.bean.DeviceBean;
+import com.proton.runbear.net.center.DeviceCenter;
 import com.proton.runbear.utils.DateUtils;
 import com.proton.runbear.utils.IntentUtils;
 
@@ -18,6 +18,7 @@ import com.proton.runbear.utils.IntentUtils;
  */
 public class DockerDetailActivity extends BaseActivity<ActivityDockerDetailBinding> {
 
+    private String mac;
     @Override
     protected int inflateContentView() {
         return R.layout.activity_docker_detail;
@@ -29,11 +30,11 @@ public class DockerDetailActivity extends BaseActivity<ActivityDockerDetailBindi
         binding.idIncludeTop.title.setText(getString(R.string.string_device_detail));
         binding.idIncludeTop.idTvRightOperate.setText(R.string.string_wifi_reconnect);
         binding.idIncludeTop.idTvRightOperate.setVisibility(View.VISIBLE);
-
-        DeviceBean device = (DeviceBean) getIntent().getSerializableExtra("device");
-        if (device == null) {
+        mac = getIntent().getStringExtra("mac");
+        if (TextUtils.isEmpty(mac)) {
             return;
         }
+
         //设备名称
         binding.idTvDeviceDetailName.setText(device.getDeviceTypeName());
         //充电器固件版本
@@ -58,5 +59,9 @@ public class DockerDetailActivity extends BaseActivity<ActivityDockerDetailBindi
             //重新联网
             IntentUtils.goToDockerSetNetwork(mContext, true, device.getBtaddress());
         });
+    }
+
+    private void getDeviceInfo(){
+        DeviceCenter.queryDeviceInfo();
     }
 }

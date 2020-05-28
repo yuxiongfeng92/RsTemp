@@ -17,10 +17,25 @@ import retrofit2.http.QueryMap;
  */
 
 public interface ManagerCenterApi {
+
+
     /**
-     * 设备列表
+     * 绑定设备
      */
+    String bindDevice = "appdevice/devicebind";
+    /**
+     * 查询设备信息
+     */
+    String queryDeviceInfo = "appdevice/querydeviceInfo";
+
+    /**
+     * 获取设备列表
+     */
+    String queryDevices = "appdevice/queryusedevice";
+
+
     String addDevice = "openapi/device/add";
+
     /**
      * 意见反馈
      */
@@ -110,4 +125,28 @@ public interface ManagerCenterApi {
 
     @POST("openapi/share/profile/unbind")
     Observable<String> unbind(@QueryMap HashMap<String, Object> params);
+
+
+    /**
+     * 绑定设备
+     *
+     * @param params
+     * @return
+     */
+    @GET(bindDevice)
+    Observable<String> bindDevice(@QueryMap Map<String, String> params);
+
+    /**
+     * 查询设备信息
+     *
+     * @param params
+     * @return
+     */
+    @GET(queryDeviceInfo)
+    Observable<String> queryDeviceInfo(@QueryMap Map<String, String> params);
+
+    @GET(queryDevices)
+    Observable<String> queryDevice();
+
+
 }

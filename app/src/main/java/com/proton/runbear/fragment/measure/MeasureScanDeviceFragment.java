@@ -16,6 +16,10 @@ import com.proton.runbear.databinding.LayoutScanDeviceHeaderBinding;
 import com.proton.runbear.fragment.base.BaseFragment;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
+import com.proton.runbear.net.callback.NetCallBack;
+import com.proton.runbear.net.callback.ResultPair;
+import com.proton.runbear.net.center.DeviceCenter;
+import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.Constants;
 import com.proton.runbear.utils.SpUtils;
 import com.proton.runbear.utils.Utils;
@@ -103,10 +107,7 @@ public class MeasureScanDeviceFragment extends BaseFragment<FragmentMeasureScanD
             public void convert(CommonViewHolder holder, DeviceBean device) {
                 holder.setText(R.id.id_device_mac, Utils.getShowMac(device.getMacaddress()));
                 holder.getView(R.id.id_connect).setOnClickListener(v -> {
-                    if (onScanDeviceListener!=null) {
-                        onScanDeviceListener.onBindResult(device);
-                    }
-
+                    bindDevice(device.getMacaddress());
                 });
                 holder.setText(R.id.id_connect, getString(R.string.string_click_use));
             }
@@ -199,6 +200,36 @@ public class MeasureScanDeviceFragment extends BaseFragment<FragmentMeasureScanD
     }
 
     /**
+     * 绑定设备
+     */
+    private void bindDevice(String mac) {
+        DeviceCenter.bindDevice(mac, new NetCallBack<Boolean>() {
+            @Override
+            public void noNet() {
+                super.noNet();
+                BlackToast.show(R.string.string_no_net);
+            }
+
+            @Override
+            public void onSucceed(Boolean data) {
+                Logger.w("设备绑定成功");
+                if (onScanDeviceListener != null) {
+                    onScanDeviceListener.onBindResult(mac);
+                }
+            }
+
+            @Override
+            public void onFailed(ResultPair resultPair) {
+                super.onFailed(resultPair);
+                BlackToast.show(resultPair.getData());
+                if (onScanDeviceListener != null) {
+                    onScanDeviceListener.onBindResult(mac);
+                }
+            }
+        });
+    }
+
+    /**
      * 显示无设备提示
      */
     private void showEmptyTips() {
@@ -284,7 +315,7 @@ public class MeasureScanDeviceFragment extends BaseFragment<FragmentMeasureScanD
         /**
          * 连接设备
          */
-        void onBindResult(DeviceBean device);
+        void onBindResult(String mac);
 
         /**
          * 切换档案

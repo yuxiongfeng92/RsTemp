@@ -1,22 +1,26 @@
 package com.proton.runbear.fragment.devicemanage;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.proton.runbear.R;
+import com.proton.runbear.activity.device.DockerDetailActivity;
 import com.proton.runbear.adapter.DeviceListAdapter;
 import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.FragmentDeviceListManageBinding;
 import com.proton.runbear.fragment.base.BaseViewModelFragment;
-import com.proton.runbear.net.bean.DeviceBean;
 import com.proton.runbear.net.bean.MessageEvent;
+import com.proton.runbear.net.bean.DeviceItemInfo;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.viewmodel.MainViewModel;
 import com.proton.temp.connector.bean.DeviceType;
+import com.wms.adapter.recyclerview.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +32,7 @@ import java.util.List;
 
 public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceListManageBinding, MainViewModel> {
     private DeviceListAdapter mDeviceManageAdapter;
-    private List<DeviceBean> mDeviceManageList = new ArrayList<>();
+    private List<DeviceItemInfo> mDeviceManageList = new ArrayList<>();
     private OnDeviceManageListener onDeviceManageListener;
 
     public static DeviceManageFragment newInstance() {
@@ -58,6 +62,19 @@ public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceLi
                 onDeviceManageListener.onDrawClick();
             }
         });
+
+        mDeviceManageAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(ViewGroup parent, View view, Object o, int position) {
+                DeviceItemInfo rsDeviceInfo = mDeviceManageList.get(position);
+                startActivity(new Intent(mContext, DockerDetailActivity.class).putExtra("mac",rsDeviceInfo.getPatchMac()));
+            }
+
+            @Override
+            public boolean onItemLongClick(ViewGroup parent, View view, Object o, int position) {
+                return false;
+            }
+        });
     }
 
     @Override
@@ -78,7 +95,7 @@ public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceLi
             setLoadError();
             return;
         }
-        DeviceCenter.getDeviceList(new NetCallBack<List<DeviceBean>>() {
+        DeviceCenter.queryDevices(new NetCallBack<List<DeviceItemInfo>>() {
             @Override
             public void noNet() {
                 super.noNet();
@@ -88,7 +105,7 @@ public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceLi
             }
 
             @Override
-            public void onSucceed(List<DeviceBean> data) {
+            public void onSucceed(List<DeviceItemInfo> data) {
                 binding.idRefreshLayout.finishRefresh();
                 if (data != null && data.size() > 0) {
                     if (mDeviceManageList != null) {
