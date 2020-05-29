@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.google.gson.reflect.TypeToken;
 import com.proton.runbear.net.RetrofitHelper;
 import com.proton.runbear.net.bean.ConfigInfo;
+import com.proton.runbear.net.bean.MeasureBeginResp;
+import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.ShareHistoryBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.NetSubscriber;
@@ -18,18 +20,79 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.WeakHashMap;
 
+
 /**
  * 测量请求
  */
 
 public class MeasureCenter extends DataCenter {
 
+    /**
+     * 开始测量
+     *
+     * @param mac
+     * @param pid
+     * @param callBack
+     */
+    public static void measureBegin(String mac, String pid, NetCallBack<MeasureBeginResp> callBack) {
+        WeakHashMap<String, String> params = new WeakHashMap<>();
+        params.put("mac", mac);
+        params.put("pid", pid);
+        RetrofitHelper.getMeasureCenterApi().measureBegin(params)
+                .map(s -> {
+                    ResultPair resultPair = parseResult(s);
+                    if (resultPair.isSuccess()) {
+                        MeasureBeginResp beginResp = JSONUtils.getObj(resultPair.getData(), MeasureBeginResp.class);
+                        return beginResp;
+                    } else {
+                        throw new ParseResultException(resultPair.getErrorMessage());
+                    }
+                })
+                .compose(threadTrans())
+                .subscribe(new NetSubscriber<MeasureBeginResp>(callBack) {
+                    @Override
+                    public void onNext(MeasureBeginResp measureBeginResp) {
+                        callBack.onSucceed(measureBeginResp);
+                    }
+                });
+    }
+
+
+    /**
+     * 测量结束
+     *
+     * @param examid
+     * @param callBack
+     */
+    public static void measureEnd(String examid, NetCallBack<MeasureEndResp> callBack) {
+        WeakHashMap<String, String> params = new WeakHashMap<>();
+        params.put("examid", examid);
+        RetrofitHelper.getMeasureCenterApi().measureEnd(params)
+                .map(s -> {
+                    ResultPair resultPair = parseResult(s);
+                    if (resultPair.isSuccess()) {
+                        MeasureEndResp beginResp = JSONUtils.getObj(resultPair.getData(), MeasureEndResp.class);
+                        return beginResp;
+                    } else {
+                        throw new ParseResultException(resultPair.getErrorMessage());
+                    }
+                })
+                .compose(threadTrans())
+                .subscribe(new NetSubscriber<MeasureEndResp>(callBack) {
+                    @Override
+                    public void onNext(MeasureEndResp measureEndResp) {
+                        callBack.onSucceed(measureEndResp);
+                    }
+                });
+    }
+
+
     public static void fetchConfigInfo(String phone, NetCallBack<ConfigInfo> callBack) {
         WeakHashMap<String, String> params = new WeakHashMap<>();
         params.put("phone", phone);
         RetrofitHelper.getMeasureCenterApi().getConfigInfo(params)
                 .map(s -> {
-                    if (TextUtils.isEmpty(s)||s.equalsIgnoreCase("null")) {
+                    if (TextUtils.isEmpty(s) || s.equalsIgnoreCase("null")) {
                         throw new ParseResultException("配置信息为空");
                     } else {
                         ResultPair resultPair = parseResult(s);

@@ -20,6 +20,7 @@ import com.proton.runbear.bean.MeasureBean;
 import com.proton.runbear.bean.rs.ShareBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.net.bean.ConfigInfo;
+import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
@@ -66,6 +67,11 @@ import io.reactivex.disposables.Disposable;
  * 测量viewModel
  */
 public class MeasureViewModel extends BaseViewModel {
+
+    /**
+     * 测量记录id，用于标识设备是否在测量
+     */
+    public ObservableField<String> examid = new ObservableField<>("");
 
     public ObservableField<MeasureBean> measureInfo = new ObservableField<>();
 
@@ -501,8 +507,27 @@ public class MeasureViewModel extends BaseViewModel {
      * 手动断开连接
      */
     public void disConnect() {
-        clear();
-        getConnectorManager().disConnect();
+        MeasureCenter.measureEnd(examid.get(), new NetCallBack<MeasureEndResp>() {
+
+            @Override
+            public void noNet() {
+                super.noNet();
+                BlackToast.show(R.string.string_no_net);
+            }
+
+            @Override
+            public void onSucceed(MeasureEndResp data) {
+                Logger.w("断开成功");
+                clear();
+                getConnectorManager().disConnect();
+            }
+
+            @Override
+            public void onFailed(ResultPair resultPair) {
+                super.onFailed(resultPair);
+                BlackToast.show(resultPair.getData());
+            }
+        });
     }
 
     public TempConnectorManager getConnectorManager() {

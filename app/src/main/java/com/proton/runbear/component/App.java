@@ -235,6 +235,15 @@ public class App extends BlufiApp {
         return appVersionCode;
     }
 
+
+    /**
+     * 获取绑定的设备mac
+     * @return
+     */
+    public String getDeviceMac() {
+        return SpUtils.getString(Constants.BIND_MAC, "");
+    }
+
     public ExecutorService getCachePool() {
         if (null == mCachePool) {
             mCachePool = Executors.newCachedThreadPool();
@@ -518,10 +527,6 @@ public class App extends BlufiApp {
      */
     public long getAlarmDuration() {
         return PreferenceUtils.getPrefLong(get(), Utils.getHighTempDurationSpKey(), 0);
-    }
-
-    public String getDeviceMac() {
-        return PreferenceUtils.getPrefString(get(), SPConstant.PATCH_MAC, "");
     }
 
 }

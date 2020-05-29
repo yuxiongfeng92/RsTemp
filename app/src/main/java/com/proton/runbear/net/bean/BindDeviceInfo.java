@@ -3,13 +3,13 @@ package com.proton.runbear.net.bean;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * @Description: 设备详情
+ * @Description: 绑定的设备详情
  * @Author: yxf
  * @CreateDate: 2020/5/28 9:53
  * @UpdateUser: yxf
  * @UpdateDate: 2020/5/28 9:53
  */
-public class DeviceItemInfo {
+public class BindDeviceInfo {
 
     @SerializedName("deviceBindId")
     private int DeviceBindID;

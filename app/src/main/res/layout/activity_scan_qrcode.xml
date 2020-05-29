@@ -49,6 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
+                    android:visibility="gone"
                     android:layout_marginTop="10dp"
                     android:text="@string/string_scan_no_qrcode"
                     android:textColor="#5ab1f4"

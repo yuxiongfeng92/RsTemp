@@ -140,7 +140,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.device.DockerDetailActivity"
+            android:name=".activity.device.DeviceDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity

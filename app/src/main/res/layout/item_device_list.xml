@@ -29,7 +29,9 @@
                 android:id="@+id/id_iv_devicePic"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
+                android:padding="5dp"
                 android:maxHeight="51dp"
+                android:src="@drawable/battery_icon"
                 android:maxWidth="62dp"/>
 
             <!--   android:maxHeight="62dp"

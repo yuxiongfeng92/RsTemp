@@ -67,7 +67,7 @@
     <string name="string_device_lowpower_notify">设备低电量提醒</string>
     <string name="string_time_duration_notify">高、低温提醒时间间隔</string>
     <string name="string_the_bell_remind">提醒铃声</string>
-    <string name="string_name">名称</string>
+    <string name="string_name">体温贴:</string>
     <string name="string_latest_use">最近使用</string>
     <string name="string_serial_number">序列号</string>
     <string name="string_version_code">固件版本</string>

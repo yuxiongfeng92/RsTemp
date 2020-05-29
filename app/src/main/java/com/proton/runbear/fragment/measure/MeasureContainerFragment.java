@@ -13,8 +13,13 @@ import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.FragmentMeasureContainerBinding;
 import com.proton.runbear.fragment.base.BaseFragment;
 import com.proton.runbear.fragment.base.BaseLazyFragment;
+import com.proton.runbear.net.bean.MeasureBeginResp;
+import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
+import com.proton.runbear.net.callback.NetCallBack;
+import com.proton.runbear.net.callback.ResultPair;
+import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.IntentUtils;
@@ -23,6 +28,8 @@ import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.view.InstructionDialog;
 import com.proton.temp.connector.bean.DeviceBean;
 import com.wms.logger.Logger;
+
+import io.reactivex.Observable;
 
 /**
  * Created by wangmengsi on 2018/2/28.
@@ -128,7 +135,8 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
         mChooseProfileFragment.setOnChooseProfileListener(new MeasureChooseProfileFragment.OnChooseProfileListener() {
             @Override
             public void reBindDevice(ProfileBean profile) {//重新绑定设备，进入搜索页面，因为润生体温贴没有二维码
-                showScanDevice(profile);
+//                showScanDevice(profile);
+                IntentUtils.goToScanQRCode(mContext, profile);
             }
 
             @Override
@@ -142,6 +150,58 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
         });
 
         showFragment(mChooseProfileFragment);
+    }
+
+    /**
+     * 显示正在测量界面
+     */
+    public void showMeasuring(MeasureBean measureBean) {
+        if (TextUtils.isEmpty(App.get().getDeviceMac())) {
+            BlackToast.show("请先绑定体温贴，再进行测量");
+            return;
+        }
+        if (measureBean == null || measureBean.getProfile() == null) return;
+        if (TextUtils.isEmpty(measureBean.getProfile().getMacAddress())) {
+            measureBean.getProfile().setMacAddress(App.get().getDeviceMac());
+        }
+        MeasureCenter.measureBegin(App.get().getDeviceMac(), String.valueOf(measureBean.getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
+
+            @Override
+            public void noNet() {
+                super.noNet();
+                BlackToast.show(R.string.string_no_net);
+            }
+
+            @Override
+            public void onSucceed(MeasureBeginResp data) {
+
+                if (mMeasuringFragment == null) {
+                    mMeasuringFragment = MeasureCardsFragment.newInstance();
+                }
+                mMeasuringFragment.setOnMeasureFragmentListener(new MeasureCardsFragment.OnMeasureFragmentListener() {
+                    @Override
+                    public void onCloseAllMeasure() {
+                        showChooseProfile();
+                    }
+
+                    @Override
+                    public void onMeasureStatusChanged(boolean isBeforeMeasure) {
+                        binding.idTopLayout.idTitle.setText(isBeforeMeasure ? R.string.string_measure_preparing : R.string.string_measure);
+                    }
+                });
+                showFragment(mMeasuringFragment);
+                mMeasuringFragment.addItem(measureBean);
+                if (onMeasureContainerListener != null) {
+                    onMeasureContainerListener.onShowMeasuring();
+                }
+            }
+
+            @Override
+            public void onFailed(ResultPair resultPair) {
+                super.onFailed(resultPair);
+                BlackToast.show(resultPair.getData());
+            }
+        });
     }
 
     /**
@@ -171,37 +231,6 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
         showFragment(mScanDeviceFragment);
     }
 
-
-    /**
-     * 显示正在测量界面
-     */
-    public void showMeasuring(MeasureBean measureBean) {
-        if (TextUtils.isEmpty(measureBean.getProfile().getMacAddress())) {
-            Logger.w("体温贴mac不能为空，需要先绑定体温贴");
-            showScanDevice(measureBean.getProfile());
-            return;
-        }
-        if (measureBean == null || measureBean.getProfile() == null) return;
-        if (mMeasuringFragment == null) {
-            mMeasuringFragment = MeasureCardsFragment.newInstance();
-        }
-        mMeasuringFragment.setOnMeasureFragmentListener(new MeasureCardsFragment.OnMeasureFragmentListener() {
-            @Override
-            public void onCloseAllMeasure() {
-                showChooseProfile();
-            }
-
-            @Override
-            public void onMeasureStatusChanged(boolean isBeforeMeasure) {
-                binding.idTopLayout.idTitle.setText(isBeforeMeasure ? R.string.string_measure_preparing : R.string.string_measure);
-            }
-        });
-        showFragment(mMeasuringFragment);
-        mMeasuringFragment.addItem(measureBean);
-        if (onMeasureContainerListener != null) {
-            onMeasureContainerListener.onShowMeasuring();
-        }
-    }
 
     /**
      * 显示fragment
@@ -239,7 +268,7 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
     private void doMeasuringCallback(BaseFragment fragment) {
         if (fragment instanceof MeasureCardsFragment && App.get().isLogined()) {
             //显示测量界面
-            binding.idTopLayout.idTopRight.setVisibility(View.VISIBLE);
+            binding.idTopLayout.idTopRight.setVisibility(View.GONE);
         } else {
             binding.idTopLayout.idTopRight.setVisibility(View.GONE);
         }
@@ -265,6 +294,12 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
     @Override
     public void onMessageEvent(MessageEvent event) {
         super.onMessageEvent(event);
+        if (event.getEventType() == MessageEvent.EventType.DEVICE_BIND_SUCCESS) {//设备绑定成功
+            ProfileBean mProfile = (ProfileBean) event.getObject();
+            MeasureBean measureBean = new MeasureBean(mProfile);
+            showMeasuring(measureBean);
+        }
+
     }
 
     public void setOnMeasureContainerListener(OnMeasureContainerListener onMeasureContainerListener) {

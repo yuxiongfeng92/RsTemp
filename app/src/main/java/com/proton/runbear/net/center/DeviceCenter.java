@@ -8,7 +8,8 @@ import com.proton.runbear.bean.LastUseBean;
 import com.proton.runbear.bean.ScanDeviceInfoBean;
 import com.proton.runbear.net.RetrofitHelper;
 import com.proton.runbear.net.bean.DeviceBean;
-import com.proton.runbear.net.bean.DeviceItemInfo;
+import com.proton.runbear.net.bean.DeviceDetailInfo;
+import com.proton.runbear.net.bean.BindDeviceInfo;
 import com.proton.runbear.net.bean.UpdateFirmwareBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.NetSubscriber;
@@ -100,29 +101,57 @@ public class DeviceCenter {
     }
 
     /**
-     * 查询设备详情
+     * 查询绑定设备详情
      *
      * @param mac
      * @param callBack
      */
-    public static void queryDeviceInfo(String mac, NetCallBack<DeviceItemInfo> callBack) {
+    public static void queryBindDeviceInfo(String mac, NetCallBack<BindDeviceInfo> callBack) {
         HashMap<String, String> params = new HashMap<>();
         params.put("mac", mac);
-        RetrofitHelper.getManagerCenterApi().queryDeviceInfo(params)
+        RetrofitHelper.getManagerCenterApi().queryBindDeviceInfo(params)
                 .map(s -> {
                     ResultPair resultPair = parseResult(s);
                     if (resultPair.isSuccess()) {
-                        DeviceItemInfo deviceInfo = JSONUtils.getObj(resultPair.getData(), DeviceItemInfo.class);
-                        return deviceInfo;
+                        BindDeviceInfo bindDeviceInfo = JSONUtils.getObj(resultPair.getData(), BindDeviceInfo.class);
+                        return bindDeviceInfo;
                     } else {
                         throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 })
                 .compose(threadTrans())
-                .subscribe(new NetSubscriber<DeviceItemInfo>(callBack) {
+                .subscribe(new NetSubscriber<BindDeviceInfo>(callBack) {
                     @Override
-                    public void onNext(DeviceItemInfo rsDeviceInfo) {
-                        callBack.onSucceed(rsDeviceInfo);
+                    public void onNext(BindDeviceInfo bindDeviceInfo) {
+                        callBack.onSucceed(bindDeviceInfo);
+                    }
+                });
+    }
+
+    /**
+     * 查询设备详情
+     *
+     * @param mac
+     * @param callBack
+     */
+    public static void queryDeviceDetailInfo(String mac, NetCallBack<DeviceDetailInfo> callBack) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("mac", mac);
+        RetrofitHelper.getManagerCenterApi().queryDeviceDetailInfo(params)
+                .map(s -> {
+                    ResultPair resultPair = parseResult(s);
+                    if (resultPair.isSuccess()) {
+                        DeviceDetailInfo deviceDetailInfo = JSONUtils.getObj(resultPair.getData(), DeviceDetailInfo.class);
+                        return deviceDetailInfo;
+                    } else {
+                        throw new ParseResultException(resultPair.getErrorMessage());
+                    }
+                })
+                .compose(threadTrans())
+                .subscribe(new NetSubscriber<DeviceDetailInfo>(callBack) {
+                    @Override
+                    public void onNext(DeviceDetailInfo detailInfo) {
+                        callBack.onSucceed(detailInfo);
                     }
                 });
     }
@@ -130,23 +159,23 @@ public class DeviceCenter {
     /**
      * 查询设备列表
      */
-    public static void queryDevices(NetCallBack<List<DeviceItemInfo>> callBack) {
-        RetrofitHelper.getManagerCenterApi().queryDevice()
+    public static void queryDevices(NetCallBack<List<BindDeviceInfo>> callBack) {
+        RetrofitHelper.getManagerCenterApi().queryDeviceList()
                 .map(s -> {
                     ResultPair resultPair = parseResult(s);
                     if (resultPair.isSuccess()) {
-                        Type type = new TypeToken<List<DeviceItemInfo>>() {
+                        Type type = new TypeToken<List<BindDeviceInfo>>() {
                         }.getType();
-                        List<DeviceItemInfo> deviceList = JSONUtils.getObj(resultPair.getData(), type);
+                        List<BindDeviceInfo> deviceList = JSONUtils.getObj(resultPair.getData(), type);
                         return deviceList;
                     } else {
                         throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 })
                 .compose(threadTrans())
-                .subscribe(new NetSubscriber<List<DeviceItemInfo>>(callBack) {
+                .subscribe(new NetSubscriber<List<BindDeviceInfo>>(callBack) {
                     @Override
-                    public void onNext(List<DeviceItemInfo> rsDeviceInfoList) {
+                    public void onNext(List<BindDeviceInfo> rsDeviceInfoList) {
                         callBack.onSucceed(rsDeviceInfoList);
                     }
                 });

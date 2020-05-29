@@ -25,22 +25,10 @@ public class ProfileViewModel extends BaseViewModel {
 
     public ObservableField<List<ProfileBean>> profileList = new ObservableField<>();
 
-    public void getProfileList() {
-        getProfileList(false);
-    }
-
     /**
      * 获取档案列表
      */
-    public void getProfileList(boolean refresh) {
-        if (!refresh) {
-            List<ProfileBean> profileBeans = ProfileManager.getAllProfile();
-            if (!CommonUtils.listIsEmpty(profileBeans)) {
-                status.set(Status.Success);
-                profileList.set(profileBeans);
-                return;
-            }
-        }
+    public void getProfileList() {
         ProfileCenter.getProfileList(new NetCallBack<List<ProfileBean>>() {
             @Override
             public void noNet() {

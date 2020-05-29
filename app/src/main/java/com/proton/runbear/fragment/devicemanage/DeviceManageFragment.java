@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.proton.runbear.R;
-import com.proton.runbear.activity.device.DockerDetailActivity;
+import com.proton.runbear.activity.device.DeviceDetailActivity;
 import com.proton.runbear.adapter.DeviceListAdapter;
 import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.FragmentDeviceListManageBinding;
 import com.proton.runbear.fragment.base.BaseViewModelFragment;
 import com.proton.runbear.net.bean.MessageEvent;
-import com.proton.runbear.net.bean.DeviceItemInfo;
+import com.proton.runbear.net.bean.BindDeviceInfo;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
@@ -32,7 +32,7 @@ import java.util.List;
 
 public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceListManageBinding, MainViewModel> {
     private DeviceListAdapter mDeviceManageAdapter;
-    private List<DeviceItemInfo> mDeviceManageList = new ArrayList<>();
+    private List<BindDeviceInfo> mDeviceManageList = new ArrayList<>();
     private OnDeviceManageListener onDeviceManageListener;
 
     public static DeviceManageFragment newInstance() {
@@ -63,18 +63,6 @@ public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceLi
             }
         });
 
-        mDeviceManageAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(ViewGroup parent, View view, Object o, int position) {
-                DeviceItemInfo rsDeviceInfo = mDeviceManageList.get(position);
-                startActivity(new Intent(mContext, DockerDetailActivity.class).putExtra("mac",rsDeviceInfo.getPatchMac()));
-            }
-
-            @Override
-            public boolean onItemLongClick(ViewGroup parent, View view, Object o, int position) {
-                return false;
-            }
-        });
     }
 
     @Override
@@ -95,7 +83,7 @@ public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceLi
             setLoadError();
             return;
         }
-        DeviceCenter.queryDevices(new NetCallBack<List<DeviceItemInfo>>() {
+        DeviceCenter.queryDevices(new NetCallBack<List<BindDeviceInfo>>() {
             @Override
             public void noNet() {
                 super.noNet();
@@ -105,7 +93,7 @@ public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceLi
             }
 
             @Override
-            public void onSucceed(List<DeviceItemInfo> data) {
+            public void onSucceed(List<BindDeviceInfo> data) {
                 binding.idRefreshLayout.finishRefresh();
                 if (data != null && data.size() > 0) {
                     if (mDeviceManageList != null) {

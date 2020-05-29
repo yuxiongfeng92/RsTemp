@@ -17,6 +17,14 @@ import retrofit2.http.QueryMap;
 
 public interface MeasureCenterApi {
     String configInfoStr = "BindInfo/GetBindInfoByPhone/";
+    /**
+     * 开始测量
+     */
+    String measureBegin = "appdevice/measurebegin";
+    /**
+     * 结束测量
+     */
+    String measureEnd = "appdevice/measureend";
 
 
     String mqttIsOnline = "mqtt/clients";
@@ -73,6 +81,30 @@ public interface MeasureCenterApi {
     Observable<String> getDockerAlgorithmVersion(@QueryMap Map<String, String> params);
 
 
+    /**
+     * 开始测量
+     *
+     * @param params
+     * @return
+     */
+    @GET(measureBegin)
+    Observable<String> measureBegin(@QueryMap Map<String, String> params);
+
+    /**
+     * 结束测量
+     *
+     * @param params
+     * @return
+     */
+    @GET(measureEnd)
+    Observable<String> measureEnd(@QueryMap Map<String, String> params);
+
+    /**
+     * 获取设备信息
+     *
+     * @param params
+     * @return
+     */
     @GET(configInfoStr)
     Observable<String> getConfigInfo(@QueryMap Map<String, String> params);
 

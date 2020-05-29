@@ -41,16 +41,16 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_name" />
+                            android:text="体温贴:" />
 
                         <TextView
-                            android:id="@+id/id_tv_deviceDetail_name"
+                            android:id="@+id/id_mac"
                             style="@style/style_15sp_grayb3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="end"
-                            android:text="@string/string_device_name" />
+                            android:text="--" />
                     </LinearLayout>
                 </LinearLayout>
                 <!--充电器详细内容-->
@@ -76,10 +76,10 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_latest_use" />
+                            android:text="绑定手机:" />
 
                         <TextView
-                            android:id="@+id/id_tv_base_latestUse"
+                            android:id="@+id/id_bind_phone"
                             style="@style/style_15sp_grayb3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -98,10 +98,10 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_wifi_address" />
+                            android:text="绑定日期:" />
 
                         <TextView
-                            android:id="@+id/id_tv_wifiAddress"
+                            android:id="@+id/id_bind_date"
                             style="@style/style_15sp_grayb3"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -120,10 +120,10 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_bluetooth_address" />
+                            android:text="绑定天数:" />
 
                         <TextView
-                            android:id="@+id/id_device_mac"
+                            android:id="@+id/id_bind_days"
                             style="@style/style_15sp_grayb3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -142,10 +142,55 @@
                             style="@style/style_15sp_gray33"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/string_hardware_version" />
+                            android:text="出库类型" />
 
                         <TextView
-                            android:id="@+id/id_tv_base_hardVersion"
+                            android:id="@+id/id_out_type"
+                            style="@style/style_15sp_grayb3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/style_15sp_gray33"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="绑定状态:" />
+
+                        <TextView
+                            android:id="@+id/id_bind_status"
+                            style="@style/style_15sp_grayb3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:gravity="center_vertical"
+                        android:visibility="gone"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/style_15sp_gray33"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="出库机构" />
+
+                        <TextView
+                            android:id="@+id/id_iow_org"
                             style="@style/style_15sp_grayb3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

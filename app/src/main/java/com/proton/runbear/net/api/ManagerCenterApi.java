@@ -23,6 +23,11 @@ public interface ManagerCenterApi {
      * 绑定设备
      */
     String bindDevice = "appdevice/devicebind";
+
+    /**
+     * 查询绑定设备的详情
+     */
+    String queryBindDeviceInfo = "appdevice/querydevicebindinfo";
     /**
      * 查询设备信息
      */
@@ -137,16 +142,24 @@ public interface ManagerCenterApi {
     Observable<String> bindDevice(@QueryMap Map<String, String> params);
 
     /**
+     * 查询设备详细信息
+     * @param params
+     * @return
+     */
+    @GET(queryBindDeviceInfo)
+    Observable<String> queryBindDeviceInfo(@QueryMap Map<String, String> params);
+
+    /**
      * 查询设备信息
      *
      * @param params
      * @return
      */
     @GET(queryDeviceInfo)
-    Observable<String> queryDeviceInfo(@QueryMap Map<String, String> params);
+    Observable<String> queryDeviceDetailInfo(@QueryMap Map<String, String> params);
 
     @GET(queryDevices)
-    Observable<String> queryDevice();
+    Observable<String> queryDeviceList();
 
 
 }

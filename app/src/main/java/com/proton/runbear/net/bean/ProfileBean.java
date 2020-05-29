@@ -43,6 +43,17 @@ public class ProfileBean extends LitePalSupport implements Serializable {
 
     private long created;
 
+    @SerializedName("Data3")
+    private String examid;
+
+    public String getExamid() {
+        return examid;
+    }
+
+    public void setExamid(String examid) {
+        this.examid = examid;
+    }
+
     public long getCreated() {
         return created;
     }

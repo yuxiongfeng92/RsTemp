@@ -13,8 +13,13 @@ import com.proton.runbear.activity.profile.AddProfileActivity;
 import com.proton.runbear.bean.MeasureBean;
 import com.proton.runbear.databinding.FragmentMeasureChooseProfileBinding;
 import com.proton.runbear.fragment.base.BaseViewModelFragment;
+import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
+import com.proton.runbear.net.callback.NetCallBack;
+import com.proton.runbear.net.callback.ResultPair;
+import com.proton.runbear.net.center.MeasureCenter;
+import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.view.EllipsizeTextView;
@@ -88,7 +93,32 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
 
                 holder.getView(R.id.id_measure).setOnClickListener(v -> {
                     if (onChooseProfileListener != null) {
-                        onChooseProfileListener.onClickProfile(profileBean);
+                        if (profileBean != null) {
+                            if (!TextUtils.isEmpty(profileBean.getExamid())) {//如果examid不为空，则上次测量未结束，需要先结束测量
+                                MeasureCenter.measureEnd(profileBean.getExamid(), new NetCallBack<MeasureEndResp>() {
+                                    @Override
+                                    public void noNet() {
+                                        super.noNet();
+                                        BlackToast.show(R.string.string_no_net);
+                                    }
+
+                                    @Override
+                                    public void onSucceed(MeasureEndResp data) {
+                                        profileBean.setExamid(null);
+                                        onChooseProfileListener.onClickProfile(profileBean);
+                                    }
+
+                                    @Override
+                                    public void onFailed(ResultPair resultPair) {
+                                        super.onFailed(resultPair);
+                                        BlackToast.show(resultPair.getData());
+                                    }
+                                });
+                            } else {
+                                onChooseProfileListener.onClickProfile(profileBean);
+                            }
+                        }
+
                     }
                 });
 
@@ -114,7 +144,7 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
         });
 
         initRefreshLayout(binding.idRefreshLayout, refreshlayout -> {
-            viewmodel.getProfileList(true);
+            viewmodel.getProfileList();
         });
     }
 
@@ -193,7 +223,7 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                 || type == MessageEvent.EventType.BIND_DEVICE_SUCCESS
                 || type == MessageEvent.EventType.UNBIND_DEVICE_SUCCESS) {
             //档案编辑了或者档案绑定了贴
-            viewmodel.getProfileList(true);
+            viewmodel.getProfileList();
         }
     }
 

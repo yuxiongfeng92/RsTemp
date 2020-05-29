@@ -12,7 +12,7 @@ import com.proton.runbear.activity.device.DeviceBaseConnectFailActivity;
 import com.proton.runbear.activity.device.DeviceBaseConnectingActivity;
 import com.proton.runbear.activity.device.DeviceBaseInputWifiPwdActivity;
 import com.proton.runbear.activity.device.DeviceBasePatchPowerActivity;
-import com.proton.runbear.activity.device.DockerDetailActivity;
+import com.proton.runbear.activity.device.DeviceDetailActivity;
 import com.proton.runbear.activity.device.PatchDetailActivity;
 import com.proton.runbear.activity.device.FirewareUpdatingActivity;
 import com.proton.runbear.activity.managecenter.AboutProtonActivity;
@@ -138,7 +138,7 @@ public class PageUtils {
         if (SettingFragment.class.getName().equalsIgnoreCase(name)) {
             return "设置";
         }
-        if (DockerDetailActivity.class.getName().equalsIgnoreCase(name)) {
+        if (DeviceDetailActivity.class.getName().equalsIgnoreCase(name)) {
             return "充电器详情";
         }
         if (PatchDetailActivity.class.getName().equalsIgnoreCase(name)) {

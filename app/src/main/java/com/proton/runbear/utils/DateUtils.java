@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by luochune on 2017/3/31.
@@ -63,6 +65,21 @@ public class DateUtils {
         }
     }
 
+    /**
+     * yyyy-MM-dd'T'HH:mm:ss
+     * @param dateNew
+     * @return
+     */
+    public static long formatStringT(String dateNew){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.CHINA);
+            Date dateTime = sdf.parse(dateNew);
+            return dateTime.getTime();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
+    }
 
 
     /**
@@ -92,7 +109,6 @@ public class DateUtils {
     public static int daysBetween(String smdate, String bdate) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
-        cal.setTime(sdf.parse(smdate));
         long time1 = cal.getTimeInMillis();
         cal.setTime(sdf.parse(bdate));
         long time2 = cal.getTimeInMillis();

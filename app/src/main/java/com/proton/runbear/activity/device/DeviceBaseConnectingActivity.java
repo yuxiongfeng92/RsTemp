@@ -269,9 +269,9 @@ public class DeviceBaseConnectingActivity extends BaseActivity<ActivityDeviceBas
     private void doSetNetSuccess() {
         EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.SWITCH_DEVICE, DeviceType.P03));
         //判断一下是否是从充电器详情页过来
-        DockerDetailActivity detailActivity = ActivityManager.findActivity(DockerDetailActivity.class);
+        DeviceDetailActivity detailActivity = ActivityManager.findActivity(DeviceDetailActivity.class);
         if (detailActivity != null) {
-            ActivityManager.keepActivity(HomeActivity.class, DockerDetailActivity.class);
+            ActivityManager.keepActivity(HomeActivity.class, DeviceDetailActivity.class);
         } else {
             Utils.showHomeMeasure();
             IntentUtils.goToMain(mContext);
