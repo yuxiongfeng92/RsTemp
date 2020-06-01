@@ -86,7 +86,6 @@ public class MeasureCenter extends DataCenter {
                 });
     }
 
-
     public static void fetchConfigInfo(String phone, NetCallBack<ConfigInfo> callBack) {
         WeakHashMap<String, String> params = new WeakHashMap<>();
         params.put("phone", phone);
@@ -95,7 +94,9 @@ public class MeasureCenter extends DataCenter {
                     if (TextUtils.isEmpty(s) || s.equalsIgnoreCase("null")) {
                         throw new ParseResultException("配置信息为空");
                     } else {
-                        ResultPair resultPair = parseResult(s);
+                        ResultPair resultPair = new ResultPair();
+                        resultPair.setSuccess(true);
+                        resultPair.setData(s);
                         if (resultPair.isSuccess()) {
                             ConfigInfo configInfo = JSONUtils.getObj(resultPair.getData(), ConfigInfo.class);
                             return configInfo;

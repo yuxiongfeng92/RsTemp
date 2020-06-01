@@ -1,6 +1,5 @@
 package com.proton.runbear.viewmodel.measure;
 
-import android.content.Context;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -8,7 +7,6 @@ import android.databinding.ObservableFloat;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableLong;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
@@ -20,6 +18,7 @@ import com.proton.runbear.bean.MeasureBean;
 import com.proton.runbear.bean.rs.ShareBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.net.bean.ConfigInfo;
+import com.proton.runbear.net.bean.MeasureBeginResp;
 import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.callback.NetCallBack;
@@ -208,7 +207,6 @@ public class MeasureViewModel extends BaseViewModel {
             needShowSearchDeviceDialog.set(false);
             needShowPreheating.set(true);
             connectStatus.set(2);
-            getHeartRate();
             uploadData();
             //建立mqtt连接
             mainHandler.postDelayed(() -> MQTTShareManager.getInstance().connectMQTTServer(), 2000);
@@ -520,12 +518,15 @@ public class MeasureViewModel extends BaseViewModel {
                 Logger.w("断开成功");
                 clear();
                 getConnectorManager().disConnect();
+                measureInfo.get().getProfile().setExamid(null);
             }
 
             @Override
             public void onFailed(ResultPair resultPair) {
                 super.onFailed(resultPair);
-                BlackToast.show(resultPair.getData());
+                Logger.w(resultPair.getData());
+                clear();
+                getConnectorManager().disConnect();
             }
         });
     }
@@ -652,9 +653,8 @@ public class MeasureViewModel extends BaseViewModel {
          */
         if (connectStatus.get() == 0 || connectStatus.get() == 3) {
             needShowSearchDeviceDialog.set(true);
-            getConfigInfo();
+            measureStart();//开始测量
         } else if (connectStatus.get() == 2) {//已连接，点击则断开蓝牙
-
             new WarmDialog(ActivityManager.currentActivity())
                     .setTopText(R.string.string_warm_tips)
                     .setContent("确定断开蓝牙连接？")
@@ -664,77 +664,59 @@ public class MeasureViewModel extends BaseViewModel {
     }
 
     /**
-     * 该版本暂没有这个功能
+     * 获取配置信息前需要先调用开始测量接口
      */
-    private void getHeartRate() {
-        //先去掉该功能
-        if (true) {
-            return;
-        }
-        long interval = configInfo.get().getSettings().getHeartRateInterval();
-        if (interval <= 0) {
-            return;
-        }
-        if (mHeartTimer != null) {
-            mHeartTimer.cancel();
-        }
-        mHeartTimer = new Timer();
-        mHeartTimer.schedule(new TimerTask() {
-
-            private boolean canShowHeartRate;
-
-            @Override
-            public void run() {
-
-                float minTemp = configInfo.get().getSettings().getHeartRateMinTemp();
-                if (currentTemp.get() < minTemp) {
-                    Logger.w("当前温度小于最小获取心率温度:temp:", currentTemp.get(), ",min:", minTemp);
-                    return;
+    private void measureStart() {
+        if (!TextUtils.isEmpty(measureInfo.get().getProfile().getExamid())) {
+            MeasureCenter.measureEnd(measureInfo.get().getProfile().getExamid(), new NetCallBack<MeasureEndResp>() {
+                @Override
+                public void noNet() {
+                    super.noNet();
+                    needShowSearchDeviceDialog.set(false);
+                    BlackToast.show(R.string.string_no_net);
                 }
 
-                if (!isConnected()) {
-                    Logger.w("为连接不获取心率");
-                    return;
-                }
-
-                if (mHeartSensor != null) {
-                    mSensorManager.registerListener(mSensorEventListener, mHeartSensor, SensorManager.SENSOR_DELAY_UI);
-                }
-                if (mSensorManager == null) {
-                    mSensorManager = (SensorManager) App.get().getSystemService(Context.SENSOR_SERVICE);
-                }
-                if (mHeartSensor == null) {
-                    mHeartSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
-                }
-                if (mSensorEventListener == null) {
-                    mSensorEventListener = new SensorEventListener() {
+                @Override
+                public void onSucceed(MeasureEndResp data) {
+                    MeasureCenter.measureBegin(App.get().getServerMac(), String.valueOf(measureInfo.get().getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
                         @Override
-                        public void onAccuracyChanged(Sensor sensor, int arg1) {
+                        public void onSucceed(MeasureBeginResp beginResp) {
+                            Logger.w("调用服务器开始测量成功，examId is :", beginResp.getExamid());
+                            getConfigInfo();
                         }
 
                         @Override
-                        public void onSensorChanged(SensorEvent event) {
-                            if (event.sensor == mHeartSensor) {
-                                int rate = (int) event.values[0];
-                                Logger.w("心率:", rate, ",canShowHeartRate:", canShowHeartRate);
-                                if (canShowHeartRate) {
-                                    lastUpdateHeartTime.set(System.currentTimeMillis());
-                                    heartRate.set(rate);
-                                }
-                            }
+                        public void onFailed(ResultPair resultPair) {
+                            super.onFailed(resultPair);
+                            BlackToast.show(resultPair.getData());
+                            needShowSearchDeviceDialog.set(false);
                         }
-                    };
+                    });
                 }
-                mSensorManager.registerListener(mSensorEventListener, mHeartSensor, SensorManager.SENSOR_DELAY_UI);
-                mainHandler.postDelayed(() -> {
-                    canShowHeartRate = true;
-                    mainHandler.postDelayed(() -> {
-                        canShowHeartRate = false;
-                        mSensorManager.unregisterListener(mSensorEventListener);
-                    }, 5000);
-                }, 15000);
-            }
-        }, 15000, interval * 1000);
+
+                @Override
+                public void onFailed(ResultPair resultPair) {
+                    super.onFailed(resultPair);
+                    needShowSearchDeviceDialog.set(false);
+                    BlackToast.show(resultPair.getData());
+                }
+            });
+        } else {
+            MeasureCenter.measureBegin(App.get().getServerMac(), String.valueOf(measureInfo.get().getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
+                @Override
+                public void onSucceed(MeasureBeginResp beginResp) {
+                    Logger.w("调用服务器开始测量成功，examId is :", beginResp.getExamid());
+                    getConfigInfo();
+                }
+
+                @Override
+                public void onFailed(ResultPair resultPair) {
+                    super.onFailed(resultPair);
+                    BlackToast.show(resultPair.getData());
+                    needShowSearchDeviceDialog.set(false);
+                }
+            });
+        }
     }
 
     /**
@@ -752,6 +734,7 @@ public class MeasureViewModel extends BaseViewModel {
 
             @Override
             public void onSucceed(ConfigInfo config) {
+                Logger.w("configInfo is :", config.toString());
                 if (config == null || config.getStatus().equalsIgnoreCase("error")) {//获取配置信息失败，重新登录
                     SpUtils.saveString(Constants.PHONE, "");
                     //重置报警设置
@@ -780,15 +763,11 @@ public class MeasureViewModel extends BaseViewModel {
                 }
                 device.set(new DeviceBean(App.get().getDeviceMac()));
                 connectStatus.set(1);
-                //扫描设备，判断附近是否有该贴，并且已打开
-
                 //获取配置成功，连接体温贴
                 measureTips.set("正在连接体温贴...");
                 mainHandler.postDelayed(() -> {
                     connectDevice();//连接设备
                 }, 2000);
-
-
             }
 
             @Override

@@ -234,4 +234,19 @@ public class ConfigInfo {
     public void setSettings(Settings settings) {
         this.settings = settings;
     }
+
+    @Override
+    public String toString() {
+        return "ConfigInfo{" +
+                "isFirst=" + isFirst +
+                ", patchMac='" + patchMac + '\'' +
+                ", watchImei='" + watchImei + '\'' +
+                ", bindId=" + bindId +
+                ", errodMsg='" + errodMsg + '\'' +
+                ", status='" + status + '\'' +
+                ", orgId='" + orgId + '\'' +
+                ", algorithType=" + algorithType +
+                ", settings=" + settings +
+                '}';
+    }
 }

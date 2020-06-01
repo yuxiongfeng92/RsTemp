@@ -4,7 +4,9 @@ import android.text.TextUtils;
 
 import com.proton.runbear.R;
 import com.proton.runbear.component.App;
+import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.Constants;
+import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.JSONUtils;
 import com.proton.runbear.utils.UIUtils;
 import com.wms.logger.Logger;
@@ -17,7 +19,9 @@ import java.net.SocketTimeoutException;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import retrofit2.adapter.rxjava2.HttpException;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 public abstract class NetSubscriber<T> implements Observer<T> {
     private NetCallBack mCallBack;
@@ -41,6 +45,11 @@ public abstract class NetSubscriber<T> implements Observer<T> {
     }
 
     @Override
+    public void onNext(T t) {
+        Logger.w(t);
+    }
+
+    @Override
     public void onError(Throwable e) {
         Logger.w(e.toString());
 
@@ -54,6 +63,7 @@ public abstract class NetSubscriber<T> implements Observer<T> {
         } else if (e instanceof ConnectException) {
             resultPair.setData(UIUtils.getString(R.string.string_network_error));
         } else if (e instanceof HttpException) {
+//            App.get().kickOff();
             resultPair.setData(UIUtils.getString(R.string.string_server_error));
         } else if (e instanceof IOException) {
             resultPair.setData(UIUtils.getString(R.string.string_network_error));

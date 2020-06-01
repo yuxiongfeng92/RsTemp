@@ -94,7 +94,8 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                 holder.getView(R.id.id_measure).setOnClickListener(v -> {
                     if (onChooseProfileListener != null) {
                         if (profileBean != null) {
-                            if (!TextUtils.isEmpty(profileBean.getExamid())) {//如果examid不为空，则上次测量未结束，需要先结束测量
+                            onChooseProfileListener.onClickProfile(profileBean);
+                          /*  if (!TextUtils.isEmpty(profileBean.getExamid())) {//如果examid不为空，则上次测量未结束，需要先结束测量
                                 MeasureCenter.measureEnd(profileBean.getExamid(), new NetCallBack<MeasureEndResp>() {
                                     @Override
                                     public void noNet() {
@@ -116,7 +117,7 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                                 });
                             } else {
                                 onChooseProfileListener.onClickProfile(profileBean);
-                            }
+                            }*/
                         }
 
                     }

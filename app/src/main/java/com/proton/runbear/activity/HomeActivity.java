@@ -43,6 +43,7 @@ import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
 import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.net.center.UserCenter;
+import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.HttpUrls;
 import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.SpUtils;
@@ -87,28 +88,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 //        showTutorialDialog();
         showMeasureFragment();
         Utils.checkUpdate(this, false);
-        getConfigInfo();
-    }
-
-    /**
-     * 获取配置信息
-     */
-    private void getConfigInfo() {
-        if (TextUtils.isEmpty(App.get().getPhone())) {
-            Logger.w("phone is null,can't getConfigInfo");
-            return;
-        }
-        MeasureCenter.fetchConfigInfo(App.get().getPhone(), new NetCallBack<ConfigInfo>() {
-            @Override
-            public void onSucceed(ConfigInfo configInfo) {
-                if (configInfo != null) {
-                    Logger.w("获取配置信息成功");
-                    App.get().setConfigInfo(configInfo);
-                } else {
-                    Logger.w("配置信息为空");
-                }
-            }
-        });
     }
 
     /**
@@ -157,6 +136,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                     public void onFailed(ResultPair resultPair) {
                         super.onFailed(resultPair);
                         Logger.w(resultPair.getData());
+                        BlackToast.show(resultPair.getData());
                     }
                 })).show());
 

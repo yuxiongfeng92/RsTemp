@@ -164,44 +164,64 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
         if (TextUtils.isEmpty(measureBean.getProfile().getMacAddress())) {
             measureBean.getProfile().setMacAddress(App.get().getDeviceMac());
         }
-        MeasureCenter.measureBegin(App.get().getDeviceMac(), String.valueOf(measureBean.getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
 
+        if (mMeasuringFragment == null) {
+            mMeasuringFragment = MeasureCardsFragment.newInstance();
+        }
+        mMeasuringFragment.setOnMeasureFragmentListener(new MeasureCardsFragment.OnMeasureFragmentListener() {
             @Override
-            public void noNet() {
-                super.noNet();
-                BlackToast.show(R.string.string_no_net);
+            public void onCloseAllMeasure() {
+                showChooseProfile();
             }
 
             @Override
-            public void onSucceed(MeasureBeginResp data) {
-
-                if (mMeasuringFragment == null) {
-                    mMeasuringFragment = MeasureCardsFragment.newInstance();
-                }
-                mMeasuringFragment.setOnMeasureFragmentListener(new MeasureCardsFragment.OnMeasureFragmentListener() {
-                    @Override
-                    public void onCloseAllMeasure() {
-                        showChooseProfile();
-                    }
-
-                    @Override
-                    public void onMeasureStatusChanged(boolean isBeforeMeasure) {
-                        binding.idTopLayout.idTitle.setText(isBeforeMeasure ? R.string.string_measure_preparing : R.string.string_measure);
-                    }
-                });
-                showFragment(mMeasuringFragment);
-                mMeasuringFragment.addItem(measureBean);
-                if (onMeasureContainerListener != null) {
-                    onMeasureContainerListener.onShowMeasuring();
-                }
-            }
-
-            @Override
-            public void onFailed(ResultPair resultPair) {
-                super.onFailed(resultPair);
-                BlackToast.show(resultPair.getData());
+            public void onMeasureStatusChanged(boolean isBeforeMeasure) {
+                binding.idTopLayout.idTitle.setText(isBeforeMeasure ? R.string.string_measure_preparing : R.string.string_measure);
             }
         });
+        showFragment(mMeasuringFragment);
+        mMeasuringFragment.addItem(measureBean);
+        if (onMeasureContainerListener != null) {
+            onMeasureContainerListener.onShowMeasuring();
+        }
+//        MeasureCenter.measureBegin(App.get().getServerMac(), String.valueOf(measureBean.getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
+//
+//            @Override
+//            public void noNet() {
+//                super.noNet();
+//                BlackToast.show(R.string.string_no_net);
+//            }
+//
+//            @Override
+//            public void onSucceed(MeasureBeginResp data) {
+//
+//                if (mMeasuringFragment == null) {
+//                    mMeasuringFragment = MeasureCardsFragment.newInstance();
+//                }
+//                mMeasuringFragment.setOnMeasureFragmentListener(new MeasureCardsFragment.OnMeasureFragmentListener() {
+//                    @Override
+//                    public void onCloseAllMeasure() {
+//                        showChooseProfile();
+//                    }
+//
+//                    @Override
+//                    public void onMeasureStatusChanged(boolean isBeforeMeasure) {
+//                        binding.idTopLayout.idTitle.setText(isBeforeMeasure ? R.string.string_measure_preparing : R.string.string_measure);
+//                    }
+//                });
+//                showFragment(mMeasuringFragment);
+//                mMeasuringFragment.addItem(measureBean);
+//                if (onMeasureContainerListener != null) {
+//                    onMeasureContainerListener.onShowMeasuring();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailed(ResultPair resultPair) {
+//                super.onFailed(resultPair);
+//                BlackToast.show(resultPair.getData());
+//            }
+//        });
     }
 
     /**

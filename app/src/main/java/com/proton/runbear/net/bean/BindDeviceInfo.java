@@ -25,6 +25,17 @@ public class BindDeviceInfo {
     @SerializedName("isFirst")
     private boolean IsFirst;
 
+    public String getExamid() {
+        return examid;
+    }
+
+    public void setExamid(String examid) {
+        this.examid = examid;
+    }
+
+    @SerializedName("Data3")
+    private String examid;
+
     public int getDeviceBindID() {
         return DeviceBindID;
     }
@@ -95,5 +106,21 @@ public class BindDeviceInfo {
 
     public void setFirst(boolean first) {
         IsFirst = first;
+    }
+
+    @Override
+    public String toString() {
+        return "BindDeviceInfo{" +
+                "DeviceBindID=" + DeviceBindID +
+                ", phone='" + phone + '\'' +
+                ", patchMac='" + patchMac + '\'' +
+                ", OutType=" + OutType +
+                ", BindState=" + BindState +
+                ", BindTime='" + BindTime + '\'' +
+                ", UnbindTime=" + UnbindTime +
+                ", OrgID=" + OrgID +
+                ", IsFirst=" + IsFirst +
+                ", examid='" + examid + '\'' +
+                '}';
     }
 }

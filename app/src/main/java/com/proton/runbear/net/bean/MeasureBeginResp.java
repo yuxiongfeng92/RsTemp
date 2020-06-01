@@ -1,5 +1,7 @@
 package com.proton.runbear.net.bean;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @Description:
  * @Author: yxf
@@ -26,8 +28,8 @@ public class MeasureBeginResp {
      * Data2 : 0
      * Data3 : 2020/5/29 11:57:53
      */
-
-    private int ExamRecordID;
+    @SerializedName("ExamRecordID")
+    private int examid;
     private int PID;
     private int GuarderID;
     private String Age;
@@ -43,12 +45,12 @@ public class MeasureBeginResp {
     private String Data2;
     private String Data3;
 
-    public int getExamRecordID() {
-        return ExamRecordID;
+    public int getExamid() {
+        return examid;
     }
 
-    public void setExamRecordID(int ExamRecordID) {
-        this.ExamRecordID = ExamRecordID;
+    public void setExamid(int examid) {
+        this.examid = examid;
     }
 
     public int getPID() {

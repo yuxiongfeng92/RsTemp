@@ -244,6 +244,19 @@ public class App extends BlufiApp {
         return SpUtils.getString(Constants.BIND_MAC, "");
     }
 
+    /**
+     * 与服务器交互的mac地址不能有冒号
+     * @return
+     */
+    public String getServerMac(){
+        String mac = SpUtils.getString(Constants.BIND_MAC, "");
+        if (!TextUtils.isEmpty(mac)) {
+            String serverMac=mac.replaceAll(":","");
+            return serverMac;
+        }
+        return null;
+    }
+
     public ExecutorService getCachePool() {
         if (null == mCachePool) {
             mCachePool = Executors.newCachedThreadPool();

@@ -64,6 +64,7 @@ public abstract class BaseMeasureFragment<DB extends ViewDataBinding, VM extends
     protected void fragmentInit() {
         mMeasureInfo = (MeasureBean) getArguments().getSerializable("measureInfo");
         viewmodel = getViewModel();
+        viewmodel.measureInfo.set(mMeasureInfo);
         viewmodel.connectStatus.addOnPropertyChangedCallback(mConnectStatusCallback);
         viewmodel.needShowSearchDeviceDialog.addOnPropertyChangedCallback(mSearchDeviceCallback);
     }
@@ -87,10 +88,11 @@ public abstract class BaseMeasureFragment<DB extends ViewDataBinding, VM extends
                             .setContent("是否停止搜索设备")
                             .setConfirmListener(v -> viewmodel.disConnect())
                             .show();
-                } else {
-                    mSearchDeviceDialog.swithSearchStyle(true);
-                    viewmodel.getConfigInfo();
                 }
+//                else {
+//                    mSearchDeviceDialog.swithSearchStyle(true);
+//                    viewmodel.getConfigInfo();
+//                }
 
             });
         }

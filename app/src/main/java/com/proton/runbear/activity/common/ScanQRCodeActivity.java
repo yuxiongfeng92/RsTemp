@@ -8,11 +8,14 @@ import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.ActivityScanQrcodeBinding;
 import com.proton.runbear.enums.QRPatchType;
+import com.proton.runbear.net.bean.BindDeviceInfo;
+import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
+import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.Constants;
 import com.proton.runbear.utils.EventBusManager;
@@ -31,7 +34,6 @@ import java.util.Map;
  */
 public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> {
     private ProfileBean mProfile;
-    private boolean go2ScanDevice;
     private CaptureFragment captureFragment;
     private String deviceType;
     private String macaddress;
@@ -46,7 +48,6 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
     protected void init() {
         super.init();
         mProfile = (ProfileBean) getIntent().getSerializableExtra("profile");
-        go2ScanDevice = getIntent().getBooleanExtra("go2ScanDevice", false);
         if (mProfile != null) {
             App.get().getHasScanQRCode().add(mProfile.getProfileId());
         }
@@ -102,7 +103,7 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
             macaddress = params.get("macId");
             deviceType = params.get("type");
             //测试mac
-            macaddress = "0081F910540C";
+            macaddress = "00:81:F9:10:54:0C";
 
             /**
              * 只扫描润生的体温贴
@@ -142,17 +143,18 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
             IntentUtils.goToMain(mContext);
             return;
         }
-        DeviceCenter.bindDevice(macaddress, new NetCallBack<Boolean>() {
+        String serverMac = macaddress.replaceAll(":", "");
+        DeviceCenter.bindDevice(serverMac, new NetCallBack<Boolean>() {
             @Override
             public void noNet() {
                 super.noNet();
                 dismissDialog();
                 BlackToast.show(R.string.string_no_net);
+                reScan();
             }
 
             @Override
             public void onSucceed(Boolean data) {
-                dismissDialog();
                 Logger.w("设备绑定成功");
                 mProfile.setMacAddress(macaddress);
                 SpUtils.saveString(Constants.BIND_MAC, macaddress);
@@ -165,9 +167,66 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
                 super.onFailed(resultPair);
                 BlackToast.show(resultPair.getData());
                 dismissDialog();
+                reScan();
             }
         });
     }
+
+    /**
+     * 获取设备详情
+     */
+//    private void queryDeviceDetailInfo() {
+//        DeviceCenter.queryBindDeviceInfo(App.get().getServerMac(), new NetCallBack<BindDeviceInfo>() {
+//            @Override
+//            public void noNet() {
+//                super.noNet();
+//                dismissDialog();
+//                BlackToast.show(R.string.string_no_net);
+//                reScan();
+//            }
+//
+//            @Override
+//            public void onSucceed(BindDeviceInfo info) {
+//                dismissDialog();
+//                Logger.w("获取绑定设备信息:",info.toString());
+//                if (TextUtils.isEmpty(info.getExamid())) {
+//                    EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.DEVICE_BIND_SUCCESS, mProfile));
+//                    finish();
+//                    return;
+//                }
+//
+//                MeasureCenter.measureEnd(info.getExamid(), new NetCallBack<MeasureEndResp>() {
+//                    @Override
+//                    public void noNet() {
+//                        super.noNet();
+//                        reScan();
+//                    }
+//
+//                    @Override
+//                    public void onSucceed(MeasureEndResp data) {
+//                        mProfile.setExamid(null);
+//                        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.DEVICE_BIND_SUCCESS, mProfile));
+//                        finish();
+//                    }
+//
+//                    @Override
+//                    public void onFailed(ResultPair resultPair) {
+//                        super.onFailed(resultPair);
+//                        reScan();
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onFailed(ResultPair resultPair) {
+//                super.onFailed(resultPair);
+//                dismissDialog();
+//                BlackToast.show(resultPair.getData());
+//                reScan();
+//            }
+//        });
+//    }
 
     @Override
     protected void initView() {
