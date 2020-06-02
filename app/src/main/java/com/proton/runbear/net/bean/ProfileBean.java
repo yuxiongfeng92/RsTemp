@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.google.gson.annotations.SerializedName;
 import com.proton.runbear.R;
 import com.proton.runbear.utils.UIUtils;
+import com.wms.logger.Logger;
 
 import org.litepal.crud.LitePalSupport;
 
@@ -51,6 +52,7 @@ public class ProfileBean extends LitePalSupport implements Serializable {
     }
 
     public void setExamid(String examid) {
+        Logger.w("设置examid的值:", examid);
         this.examid = examid;
     }
 

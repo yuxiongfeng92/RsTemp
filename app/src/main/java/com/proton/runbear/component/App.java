@@ -24,7 +24,6 @@ import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.runbear.net.bean.MessageEvent;
-import com.proton.runbear.net.bean.UserInfo;
 import com.proton.runbear.socailauth.PlatformConfig;
 import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.BlackToast;
@@ -202,6 +201,7 @@ public class App extends BlufiApp {
 
     public String getToken() {
         String token = SpUtils.getString(Constants.APITOKEN, "");
+//        String token = "48b4d2c19a6a4f5886477add4c5e45a1";
         return token;
     }
 

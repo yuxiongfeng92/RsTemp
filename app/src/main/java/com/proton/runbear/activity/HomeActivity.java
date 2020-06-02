@@ -136,7 +136,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                     public void onFailed(ResultPair resultPair) {
                         super.onFailed(resultPair);
                         Logger.w(resultPair.getData());
-                        BlackToast.show(resultPair.getData());
+                        App.get().logout();
+                        IntentUtils.goToLogin(mContext);
                     }
                 })).show());
 

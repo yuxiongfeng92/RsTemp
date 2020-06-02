@@ -67,11 +67,6 @@ import io.reactivex.disposables.Disposable;
  */
 public class MeasureViewModel extends BaseViewModel {
 
-    /**
-     * 测量记录id，用于标识设备是否在测量
-     */
-    public ObservableField<String> examid = new ObservableField<>("");
-
     public ObservableField<MeasureBean> measureInfo = new ObservableField<>();
 
     public ObservableField<DeviceBean> device = new ObservableField<>();
@@ -505,30 +500,25 @@ public class MeasureViewModel extends BaseViewModel {
      * 手动断开连接
      */
     public void disConnect() {
-        MeasureCenter.measureEnd(examid.get(), new NetCallBack<MeasureEndResp>() {
+        if (!TextUtils.isEmpty(measureInfo.get().getProfile().getExamid())) {
+            MeasureCenter.measureEnd(measureInfo.get().getProfile().getExamid(), new NetCallBack<MeasureEndResp>() {
+                @Override
+                public void onSucceed(MeasureEndResp data) {
+                    Logger.w("服务器连接断开成功");
+                    clear();
+                    getConnectorManager().disConnect();
+                    measureInfo.get().getProfile().setExamid(null);
+                }
 
-            @Override
-            public void noNet() {
-                super.noNet();
-                BlackToast.show(R.string.string_no_net);
-            }
-
-            @Override
-            public void onSucceed(MeasureEndResp data) {
-                Logger.w("断开成功");
-                clear();
-                getConnectorManager().disConnect();
-                measureInfo.get().getProfile().setExamid(null);
-            }
-
-            @Override
-            public void onFailed(ResultPair resultPair) {
-                super.onFailed(resultPair);
-                Logger.w(resultPair.getData());
-                clear();
-                getConnectorManager().disConnect();
-            }
-        });
+                @Override
+                public void onFailed(ResultPair resultPair) {
+                    super.onFailed(resultPair);
+                    clear();
+                    getConnectorManager().disConnect();
+                    measureInfo.get().getProfile().setExamid(null);
+                }
+            });
+        }
     }
 
     public TempConnectorManager getConnectorManager() {
@@ -668,6 +658,7 @@ public class MeasureViewModel extends BaseViewModel {
      */
     private void measureStart() {
         if (!TextUtils.isEmpty(measureInfo.get().getProfile().getExamid())) {
+            Logger.w("examid 不为空，调用measureEnd先结束服务器上正在测量的状态");
             MeasureCenter.measureEnd(measureInfo.get().getProfile().getExamid(), new NetCallBack<MeasureEndResp>() {
                 @Override
                 public void noNet() {
@@ -682,6 +673,7 @@ public class MeasureViewModel extends BaseViewModel {
                         @Override
                         public void onSucceed(MeasureBeginResp beginResp) {
                             Logger.w("调用服务器开始测量成功，examId is :", beginResp.getExamid());
+                            measureInfo.get().getProfile().setExamid(String.valueOf(beginResp.getExamid()));
                             getConfigInfo();
                         }
 
@@ -702,10 +694,12 @@ public class MeasureViewModel extends BaseViewModel {
                 }
             });
         } else {
+            Logger.w("examid为空，直接调用measureBegin开始测量");
             MeasureCenter.measureBegin(App.get().getServerMac(), String.valueOf(measureInfo.get().getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
                 @Override
                 public void onSucceed(MeasureBeginResp beginResp) {
                     Logger.w("调用服务器开始测量成功，examId is :", beginResp.getExamid());
+                    measureInfo.get().getProfile().setExamid(String.valueOf(beginResp.getExamid()));
                     getConfigInfo();
                 }
 

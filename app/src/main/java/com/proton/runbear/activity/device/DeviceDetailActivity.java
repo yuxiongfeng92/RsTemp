@@ -90,7 +90,8 @@ public class DeviceDetailActivity extends BaseActivity<ActivityDeviceDetailBindi
         binding.idBindPhone.setText(App.get().getPhone());
         binding.idBindDate.setText(DateUtils.dateStrToYMDHMS(DateUtils.formatStringT(deviceInfo.getBindTime())));
         try {
-            binding.idBindDays.setText(DateUtils.daysBetween(DateUtils.dateStrToYMDHMS(System.currentTimeMillis()),DateUtils.dateStrToYMDHMS(DateUtils.formatStringT(deviceInfo.getBindTime())))+"天");
+//            binding.idBindDays.setText(DateUtils.daysBetween(DateUtils.dateStrToYMDHMS(System.currentTimeMillis()),DateUtils.dateStrToYMDHMS(DateUtils.formatStringT(deviceInfo.getBindTime())))+"天");
+            binding.idBindDays.setText(DateUtils.daysBetween(DateUtils.dateStrToYMDHMS(DateUtils.formatStringT(deviceInfo.getBindTime())),DateUtils.dateStrToYMDHMS(System.currentTimeMillis()))+"天");
         } catch (ParseException e) {
             e.printStackTrace();
         }

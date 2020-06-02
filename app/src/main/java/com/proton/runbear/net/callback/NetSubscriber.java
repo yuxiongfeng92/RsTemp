@@ -19,9 +19,7 @@ import java.net.SocketTimeoutException;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import okhttp3.ResponseBody;
 import retrofit2.HttpException;
-import retrofit2.Response;
 
 public abstract class NetSubscriber<T> implements Observer<T> {
     private NetCallBack mCallBack;

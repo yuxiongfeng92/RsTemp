@@ -57,7 +57,6 @@ public class MeasureCenter extends DataCenter {
                 });
     }
 
-
     /**
      * 测量结束
      *
