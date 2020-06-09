@@ -8,14 +8,11 @@ import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.ActivityScanQrcodeBinding;
 import com.proton.runbear.enums.QRPatchType;
-import com.proton.runbear.net.bean.BindDeviceInfo;
-import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
-import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.Constants;
 import com.proton.runbear.utils.EventBusManager;
@@ -73,7 +70,6 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
     }
 
     /**
-     * w
      * 二维码格式
      * http://www.protontek.com/device/temp?type=P03&macId=0C:61:CF:C7:E7:0E&sn=18051601003
      */
@@ -103,7 +99,7 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
             macaddress = params.get("macId");
             deviceType = params.get("type");
             //测试mac
-            macaddress = "00:81:F9:10:54:0C";
+//            macaddress = "00:81:F9:10:54:0C";
 
             /**
              * 只扫描润生的体温贴
@@ -227,7 +223,6 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
 //            }
 //        });
 //    }
-
     @Override
     protected void initView() {
         super.initView();

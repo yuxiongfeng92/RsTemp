@@ -248,37 +248,7 @@
             android:exported="true" />
         <service android:name=".component.OfflineReportUploadService" />
 
-        <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="${umeng_appkey}"
-            tools:replace="android:value" />
-        <meta-data
-            android:name="UMENG_MESSAGE_SECRET"
-            android:value="${umeng_secret}"
-            tools:replace="android:value" />
-        <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="新版"
-            tools:replace="android:value" /> <!-- 百度统计开始 -->
-        <!-- 是否开启错误日志统计，默认为 false -->
-        <meta-data
-            android:name="BaiduMobAd_EXCEPTION_LOG"
-            android:value="true" /> <!-- 日志发送策略，可选值:APP_START、ONCE_A_DAY、SET_TIME_INTERVAL， 默认为 APP_START -->
-        <meta-data
-            android:name="BaiduMobAd_SEND_STRATEGY"
-            android:value="APP_START" />
-        <meta-data
-            android:name="BaiduMobAd_ONLY_WIFI"
-            android:value="false" /> <!-- 是否获取基站位置信息 ,默认为 true -->
-        <meta-data
-            android:name="BaiduMobAd_CELL_LOCATION"
-            android:value="true" /> <!-- 是否获取 GPS 位置信息，默认为 true -->
-        <meta-data
-            android:name="BaiduMobAd_GPS_LOCATION"
-            android:value="true" /> <!-- 是否获取 NET 位置信息，默认为 true -->
-        <meta-data
-            android:name="BaiduMobAd_WIFI_LOCATION"
-            android:value="true" /> <!-- 百度统计结束 -->
+
         <activity
             android:name="com.alipay.sdk.app.H5AuthActivity"
             android:configChanges="orientation|keyboardHidden|navigation"

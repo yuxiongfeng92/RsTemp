@@ -163,7 +163,12 @@ public class App extends BlufiApp {
                 .isDebug(BuildConfig.DEBUG)
                 .build();
         //连接器初始化
-        TempConnectorManager.init(this, new MQTTConfig(BuildConfig.MQTT_SERVER, BuildConfig.MQTT_USERNAME, BuildConfig.MQTT_PWD));
+
+        if (BuildConfig.DEBUG) {
+            TempConnectorManager.init(this, new MQTTConfig("tcp://47.93.2.87:1883", "admin", "public"));
+        } else {
+            TempConnectorManager.init(this);
+        }
         //下拉刷新初始化
         initRefresh();
         //数据库初始化

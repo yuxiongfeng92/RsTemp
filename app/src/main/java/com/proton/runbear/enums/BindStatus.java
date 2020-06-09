@@ -1,7 +1,7 @@
 package com.proton.runbear.enums;
 
 /**
- * @Description: 绑定状态枚举
+ * @Description: 设备的绑定状态枚举
  * @Author: yxf
  * @CreateDate: 2020/5/29 10:56
  * @UpdateUser: yxf

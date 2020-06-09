@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.proton.runbear.BuildConfig;
 import com.proton.runbear.bean.ShareTempBean;
 import com.proton.runbear.component.App;
+import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.temp.connector.bean.DockerDataBean;
 import com.proton.temp.connector.bean.TempDataBean;
 import com.proton.temp.connector.bluetooth.utils.BleUtils;
@@ -189,32 +190,30 @@ public class MQTTShareManager {
      * 连接MQTT服务器
      */
     public void connectMQTTServer() {
+        ConfigInfo.Settings settings = App.get().getConfigInfo().getSettings();
         // 服务器地址（协议+地址+端口号）
-        Logger.w("mqtt共享clientId:proton" + App.get().getApiUid());
         if (mMQTTClient == null) {
             // 服务器地址（协议+地址+端口号）
-            mMQTTClient = new MqttAndroidClient(mContext, BuildConfig.MQTT_SERVER, "proton" + App.get().getApiUid());
+            mMQTTClient = new MqttAndroidClient(mContext, "tcp://" + settings.getMqttServer() + ":" + settings.getMqttPort(), "proton" + System.currentTimeMillis());
             // 设置MQTT监听并且接受消息
             mMQTTClient.setCallback(mMQTTDataCallback);
         }
 
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setKeepAliveInterval(600);
         // 用户名
-        mqttConnectOptions.setUserName(BuildConfig.MQTT_USERNAME);
+        mqttConnectOptions.setUserName(settings.getMqttUsername());
         // 密码
-        mqttConnectOptions.setPassword(BuildConfig.MQTT_PWD.toCharArray());
+        mqttConnectOptions.setPassword(settings.getMqttPassword().toCharArray());
 
         if (mMQTTClient.isConnected()) {
             Logger.w("mqtt已经连接");
             return;
         }
         try {
-            String content = "{\"uid\": " + App.get().getApiUid() + ", \"code\": 206}";
-            mqttConnectOptions.setWill("clients/" + App.get().getApiUid(), content.getBytes(), 0, false);
             mMQTTClient.connect(mqttConnectOptions, null, mMqttConnectCallback);
         } catch (Exception e) {
             e.printStackTrace();
-            reConnect();
         }
     }
 
