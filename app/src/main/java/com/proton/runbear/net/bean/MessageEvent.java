@@ -217,5 +217,16 @@ public class MessageEvent {
 
         WAKE,
 
+        /**
+         * 实时测量页面切换
+         */
+        SWITCH_MEASURE,
+
+        /**
+         * 刷新档案
+         */
+        FRESH_PROFILE,
+
+
     }
 }

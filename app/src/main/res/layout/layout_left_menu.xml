@@ -61,6 +61,30 @@
                     app:left_menu_select_img="@drawable/icon_left_menu_measure_normal"
                     app:left_menu_text="@string/string_measure" />
 
+                <!--我的档案-->
+                <com.proton.runbear.view.LeftMenuItemView
+                    android:id="@+id/id_menu_myprofile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    app:left_menu_normal_img="@drawable/icon_left_menu_myprofile_normal"
+                    app:left_menu_select_img="@drawable/icon_left_menu_myprofile_normal"
+                    app:left_menu_text="@string/string_profile_manage" />
+                <!--设备管理-->
+                <com.proton.runbear.view.LeftMenuItemView
+                    android:id="@+id/id_menu_devicemanage_center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:left_menu_normal_img="@drawable/icon_left_menu_devicemanage_selected_normal"
+                    app:left_menu_select_img="@drawable/icon_left_menu_devicemanage_selected_normal"
+                    app:left_menu_text="@string/string_bluetooth_device_manage" />
+
+                <Space
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
                 <com.proton.runbear.view.LeftMenuItemView
                     android:id="@+id/id_menu_help"
                     android:layout_width="wrap_content"
@@ -69,11 +93,6 @@
                     app:left_menu_normal_img="@drawable/icon_left_menu_report_normal"
                     app:left_menu_select_img="@drawable/icon_left_menu_report_normal"
                     app:left_menu_text="@string/string_help" />
-
-                <Space
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
 
                 <com.proton.runbear.view.LeftMenuItemView
                     android:id="@+id/id_menu_tips"
@@ -97,24 +116,7 @@
                     app:left_menu_select_img="@drawable/icon_left_menu_msg_select"
                     app:left_menu_text="@string/string_message_center" />
 
-                <!--我的档案-->
-                <com.proton.runbear.view.LeftMenuItemView
-                    android:id="@+id/id_menu_myprofile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    app:left_menu_normal_img="@drawable/icon_left_menu_myprofile_normal"
-                    app:left_menu_select_img="@drawable/icon_left_menu_myprofile_normal"
-                    app:left_menu_text="@string/string_profile_manage" />
-                <!--设备管理-->
-                <com.proton.runbear.view.LeftMenuItemView
-                    android:id="@+id/id_menu_devicemanage_center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:left_menu_normal_img="@drawable/icon_left_menu_devicemanage_selected_normal"
-                    app:left_menu_select_img="@drawable/icon_left_menu_devicemanage_selected_normal"
-                    app:left_menu_text="@string/string_bluetooth_device_manage" />
+
 
                 <com.proton.runbear.view.LeftMenuItemView
                     android:id="@+id/id_menu_manager_center"

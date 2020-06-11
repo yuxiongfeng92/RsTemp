@@ -3,10 +3,10 @@ package com.proton.runbear.net.callback;
 import android.text.TextUtils;
 
 import com.proton.runbear.R;
+import com.proton.runbear.activity.user.LoginActivity;
 import com.proton.runbear.component.App;
 import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.Constants;
-import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.JSONUtils;
 import com.proton.runbear.utils.UIUtils;
 import com.wms.logger.Logger;
@@ -61,8 +61,12 @@ public abstract class NetSubscriber<T> implements Observer<T> {
         } else if (e instanceof ConnectException) {
             resultPair.setData(UIUtils.getString(R.string.string_network_error));
         } else if (e instanceof HttpException) {
-//            App.get().kickOff();
-            resultPair.setData(UIUtils.getString(R.string.string_server_error));
+            if (ActivityManager.currentActivity() instanceof LoginActivity) {
+                resultPair.setData(UIUtils.getString(R.string.string_server_error));
+            } else {
+                resultPair.setData(UIUtils.getString(R.string.string_server_error));
+                App.get().logout();
+            }
         } else if (e instanceof IOException) {
             resultPair.setData(UIUtils.getString(R.string.string_network_error));
         } else if (e instanceof ParseResultException) {

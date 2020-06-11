@@ -3,6 +3,8 @@ package com.proton.runbear.fragment.measure;
 import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 import android.databinding.Observable;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +13,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.profile.AddProfileActivity;
 import com.proton.runbear.bean.MeasureBean;
+import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.FragmentMeasureChooseProfileBinding;
 import com.proton.runbear.fragment.base.BaseViewModelFragment;
 import com.proton.runbear.net.bean.MeasureEndResp;
@@ -66,7 +69,7 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
             private void initRecyclerView() {
                 mProfiles.clear();
                 mProfiles.addAll(viewmodel.profileList.get());
-                filterMeasuringProfile();
+//                filterMeasuringProfile();
                 initProfileRecycler();
             }
         });
@@ -88,43 +91,33 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                 holder.setText(R.id.id_age, profileBean.getAge());
                 SimpleDraweeView avatarImg = holder.getView(R.id.id_avatar);
                 avatarImg.setImageURI(profileBean.getAvatar());
+//                holder.setText(R.id.id_measure_status, TextUtils.isEmpty(profileBean.getExamid()) ? getString(R.string.string_not_bind_patch) : getString(R.string.string_has_bind_patch) + Utils.getShowMac(profileBean.getMacAddress()));
 
-                holder.setText(R.id.id_macadress, TextUtils.isEmpty(profileBean.getMacAddress()) ? getString(R.string.string_not_bind_patch) : getString(R.string.string_has_bind_patch) + Utils.getShowMac(profileBean.getMacAddress()));
+                holder.setText(R.id.id_measure_status, TextUtils.isEmpty(profileBean.getExamid()) || !Utils.checkPatchIsMeasuring(App.get().getDeviceMac()) ? getString(R.string.string_not_bind_patch) : getString(R.string.string_has_bind_patch));
+                holder.setTextColor(R.id.id_measure_status, TextUtils.isEmpty(profileBean.getExamid()) || !Utils.checkPatchIsMeasuring(App.get().getDeviceMac()) ? ContextCompat.getColor(mContext, R.color.color_gray_b3) : ContextCompat.getColor(mContext, R.color.color_main));
 
                 holder.getView(R.id.id_measure).setOnClickListener(v -> {
                     if (onChooseProfileListener != null) {
                         if (profileBean != null) {
+                            if (!Utils.checkProfileIsMeasuring(profileBean.getProfileId())
+                                    && ((MeasureContainerFragment) getParentFragment()).hasMeasureItem()
+                                    && Utils.checkPatchIsMeasuring(App.get().getDeviceMac())) {
+                                BlackToast.show("其他设备正在测量中，请先结束测量");
+                                return;
+                            }
                             onChooseProfileListener.onClickProfile(profileBean);
-                          /*  if (!TextUtils.isEmpty(profileBean.getExamid())) {//如果examid不为空，则上次测量未结束，需要先结束测量
-                                MeasureCenter.measureEnd(profileBean.getExamid(), new NetCallBack<MeasureEndResp>() {
-                                    @Override
-                                    public void noNet() {
-                                        super.noNet();
-                                        BlackToast.show(R.string.string_no_net);
-                                    }
-
-                                    @Override
-                                    public void onSucceed(MeasureEndResp data) {
-                                        profileBean.setExamid(null);
-                                        onChooseProfileListener.onClickProfile(profileBean);
-                                    }
-
-                                    @Override
-                                    public void onFailed(ResultPair resultPair) {
-                                        super.onFailed(resultPair);
-                                        BlackToast.show(resultPair.getData());
-                                    }
-                                });
-                            } else {
-                                onChooseProfileListener.onClickProfile(profileBean);
-                            }*/
                         }
-
                     }
                 });
 
                 holder.getView(R.id.id_rebind).setOnClickListener(v -> {
+
                     if (onChooseProfileListener != null) {
+                        if (((MeasureContainerFragment) getParentFragment()).hasMeasureItem()
+                                && Utils.checkPatchIsMeasuring(App.get().getDeviceMac())) {
+                            BlackToast.show("请先结束正在测量的设备");
+                            return;
+                        }
                         onChooseProfileListener.reBindDevice(profileBean);
                     }
 //                    IntentUtils.goToScanQRCode(mContext, profileBean);
@@ -177,9 +170,9 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden) {
-            filterMeasuringProfile();
-        }
+//        if (!hidden) {
+//            filterMeasuringProfile();
+//        }
     }
 
     /**
@@ -222,6 +215,7 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
         MessageEvent.EventType type = event.getEventType();
         if (type == MessageEvent.EventType.PROFILE_CHANGE
                 || type == MessageEvent.EventType.BIND_DEVICE_SUCCESS
+                || type == MessageEvent.EventType.FRESH_PROFILE
                 || type == MessageEvent.EventType.UNBIND_DEVICE_SUCCESS) {
             //档案编辑了或者档案绑定了贴
             viewmodel.getProfileList();

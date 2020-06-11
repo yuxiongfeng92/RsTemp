@@ -28,7 +28,7 @@ public class NetChangeReceiver extends BroadcastReceiver {
                 if (activeNetwork == null) return;
                 if (activeNetwork.isConnected()) {
                     Logger.i("网络连接成功，上传离线报告");
-                    IntentUtils.startOffLineReportUploadService(context);
+//                    IntentUtils.startOffLineReportUploadService(context);
                 }
             }
         } catch (Exception e) {

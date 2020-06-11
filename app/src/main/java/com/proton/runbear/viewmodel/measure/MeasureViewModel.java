@@ -17,12 +17,14 @@ import com.proton.runbear.R;
 import com.proton.runbear.bean.MeasureBean;
 import com.proton.runbear.bean.rs.ShareBean;
 import com.proton.runbear.component.App;
+import com.proton.runbear.net.bean.BindDeviceInfo;
 import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.runbear.net.bean.MeasureBeginResp;
 import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
+import com.proton.runbear.net.center.DeviceCenter;
 import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.ActivityManager;
 import com.proton.runbear.utils.BatteryChangeUtil;
@@ -61,6 +63,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+
 
 /**
  * 测量viewModel
@@ -223,6 +226,9 @@ public class MeasureViewModel extends BaseViewModel {
             connectStatus.set(isManual ? 3 : 0);
             clear();
             Logger.w("连接断开");
+            if (isManual) {
+                stopMqttStatusTimer();
+            }
         }
 
         @Override
@@ -657,18 +663,20 @@ public class MeasureViewModel extends BaseViewModel {
      * 获取配置信息前需要先调用开始测量接口
      */
     private void measureStart() {
-        if (!TextUtils.isEmpty(measureInfo.get().getProfile().getExamid())) {
-            Logger.w("examid 不为空，调用measureEnd先结束服务器上正在测量的状态");
-            MeasureCenter.measureEnd(measureInfo.get().getProfile().getExamid(), new NetCallBack<MeasureEndResp>() {
-                @Override
-                public void noNet() {
-                    super.noNet();
-                    needShowSearchDeviceDialog.set(false);
-                    BlackToast.show(R.string.string_no_net);
-                }
+        //获取绑定设备详情，判断该设备是否在测量中
+        DeviceCenter.queryBindDeviceInfo(App.get().getServerMac(), new NetCallBack<BindDeviceInfo>() {
+            @Override
+            public void noNet() {
+                super.noNet();
+                needShowSearchDeviceDialog.set(false);
+                BlackToast.show(R.string.string_no_net);
+            }
 
-                @Override
-                public void onSucceed(MeasureEndResp data) {
+            @Override
+            public void onSucceed(BindDeviceInfo info) {
+                String examId = info.getExamid();
+                if (TextUtils.isEmpty(examId)) {
+                    Logger.w("examId为空，直接调用measureBegin开始测量");
                     MeasureCenter.measureBegin(App.get().getServerMac(), String.valueOf(measureInfo.get().getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
                         @Override
                         public void onSucceed(MeasureBeginResp beginResp) {
@@ -684,34 +692,56 @@ public class MeasureViewModel extends BaseViewModel {
                             needShowSearchDeviceDialog.set(false);
                         }
                     });
+                } else {
+                    Logger.w("examid 不为空，调用measureEnd先结束服务器上正在测量的状态");
+                    MeasureCenter.measureEnd(examId, new NetCallBack<MeasureEndResp>() {
+                        @Override
+                        public void noNet() {
+                            super.noNet();
+                            needShowSearchDeviceDialog.set(false);
+                            BlackToast.show(R.string.string_no_net);
+                        }
+
+                        @Override
+                        public void onSucceed(MeasureEndResp data) {
+                            MeasureCenter.measureBegin(App.get().getServerMac(), String.valueOf(measureInfo.get().getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
+                                @Override
+                                public void onSucceed(MeasureBeginResp beginResp) {
+                                    Logger.w("调用服务器开始测量成功，examId is :", beginResp.getExamid());
+                                    measureInfo.get().getProfile().setExamid(String.valueOf(beginResp.getExamid()));
+                                    getConfigInfo();
+                                }
+
+                                @Override
+                                public void onFailed(ResultPair resultPair) {
+                                    super.onFailed(resultPair);
+                                    BlackToast.show(resultPair.getData());
+                                    needShowSearchDeviceDialog.set(false);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(ResultPair resultPair) {
+                            super.onFailed(resultPair);
+                            needShowSearchDeviceDialog.set(false);
+                            BlackToast.show(resultPair.getData());
+                        }
+                    });
                 }
 
-                @Override
-                public void onFailed(ResultPair resultPair) {
-                    super.onFailed(resultPair);
-                    needShowSearchDeviceDialog.set(false);
-                    BlackToast.show(resultPair.getData());
-                }
-            });
-        } else {
-            Logger.w("examid为空，直接调用measureBegin开始测量");
-            MeasureCenter.measureBegin(App.get().getServerMac(), String.valueOf(measureInfo.get().getProfile().getProfileId()), new NetCallBack<MeasureBeginResp>() {
-                @Override
-                public void onSucceed(MeasureBeginResp beginResp) {
-                    Logger.w("调用服务器开始测量成功，examId is :", beginResp.getExamid());
-                    measureInfo.get().getProfile().setExamid(String.valueOf(beginResp.getExamid()));
-                    getConfigInfo();
-                }
 
-                @Override
-                public void onFailed(ResultPair resultPair) {
-                    super.onFailed(resultPair);
-                    BlackToast.show(resultPair.getData());
-                    needShowSearchDeviceDialog.set(false);
-                }
-            });
-        }
+            }
+
+            @Override
+            public void onFailed(ResultPair resultPair) {
+                super.onFailed(resultPair);
+                BlackToast.show(resultPair.getData());
+                needShowSearchDeviceDialog.set(false);
+            }
+        });
     }
+
 
     /**
      * 获取润生服务器上的配置信息
@@ -802,6 +832,17 @@ public class MeasureViewModel extends BaseViewModel {
                 }
             }, 6 * 1000, 30 * 1000);
         }
+    }
+
+    /**
+     * 关闭获取mqtt状态的定时器
+     */
+    private void stopMqttStatusTimer() {
+        if (mMqttConnectStatusTimer != null) {
+            mMqttConnectStatusTimer.cancel();
+            mMqttConnectStatusTimer = null;
+        }
+        isMqttConnectStatus.set(false);
     }
 
     /**

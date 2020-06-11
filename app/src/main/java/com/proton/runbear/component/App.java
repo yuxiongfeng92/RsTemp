@@ -124,7 +124,6 @@ public class App extends BlufiApp {
     private String imei;
     private String appVersion;
 
-
     public static App get() {
         return mInstance;
     }
@@ -243,6 +242,7 @@ public class App extends BlufiApp {
 
     /**
      * 获取绑定的设备mac
+     *
      * @return
      */
     public String getDeviceMac() {
@@ -251,12 +251,13 @@ public class App extends BlufiApp {
 
     /**
      * 与服务器交互的mac地址不能有冒号
+     *
      * @return
      */
-    public String getServerMac(){
+    public String getServerMac() {
         String mac = SpUtils.getString(Constants.BIND_MAC, "");
         if (!TextUtils.isEmpty(mac)) {
-            String serverMac=mac.replaceAll(":","");
+            String serverMac = mac.replaceAll(":", "");
             return serverMac;
         }
         return null;
@@ -282,7 +283,7 @@ public class App extends BlufiApp {
             SophixManager.getInstance().queryAndLoadNewPatch();
         }
         //停用服务
-        stopService(new Intent(this, AliyunService.class));
+//        stopService(new Intent(this, AliyunService.class));
         //关闭共享
         MQTTShareManager.getInstance().close();
         //断开所有连接

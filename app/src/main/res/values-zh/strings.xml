@@ -554,8 +554,8 @@
     <string name="string_login_fail">登录失败</string>
     <string name="string_login_cancel">登录取消</string>
     <string name="string_bind_phone">绑定手机号</string>
-    <string name="string_not_bind_patch">未绑定体温贴</string>
-    <string name="string_has_bind_patch">已绑定体温贴</string>
+    <string name="string_not_bind_patch">未绑定</string>
+    <string name="string_has_bind_patch">已绑定</string>
     <string name="string_please_keep_net_ok">*请保持您的网络情况良好</string>
     <string name="string_2_4g">2.4G</string>
     <string name="string_not_support_5g">目前暂不支持5G频段的WiFi\n请使用2.4G频段的WiFi</string>

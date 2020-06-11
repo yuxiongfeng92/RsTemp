@@ -34,16 +34,14 @@ import com.proton.runbear.fragment.home.SettingFragment;
 import com.proton.runbear.fragment.measure.MeasureContainerFragment;
 import com.proton.runbear.fragment.profile.ProfileFragment;
 import com.proton.runbear.fragment.report.ReportsFragment;
-import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.bean.UpdateFirmwareBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.DeviceCenter;
-import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.net.center.UserCenter;
-import com.proton.runbear.utils.BlackToast;
+import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.HttpUrls;
 import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.SpUtils;
@@ -71,6 +69,11 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     private BroadcastReceiver mNetReceiver = new NetChangeReceiver();
     private BaseFragment mOpenFragment;
     private List<Long> mShowingDialog = new ArrayList<>();
+
+    /**
+     * 是否需要切换测量页面，如：1：表示上一个fragment是MeasureContainerFragment且是MeasureItemFragment页面   0：表示不需要切换
+     */
+    private int isMeasurePageChange = 0;
 
     @Override
     protected int inflateContentView() {
@@ -113,6 +116,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     protected void initView() {
         super.initView();
         binding.idMenuLeft.idMenuMeasure.setSelect();
+
         binding.idMenuLeft.idMenuMeasure.setOnClickListener(v -> showMeasureFragment());
 
         binding.idMenuLeft.idLoginOut.setOnClickListener(v -> new WarmDialogVertical(HomeActivity.this)
@@ -222,23 +226,27 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
                 @Override
                 public void onToggleDrawer() {
+                    isMeasurePageChange = 1;
                     toogleDrawer();
                 }
 
                 @Override
                 public void onShowMeasuring() {
+                    isMeasurePageChange = 0;
                     showMeasureFragment();
                 }
             });
         }
         mOpenFragment = null;
         showFragment(mMeasureFragment);
+        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.SWITCH_MEASURE).setMsg(String.valueOf(isMeasurePageChange)));
     }
 
     /**
      * 使用帮助
      */
     private void showHelpFragment() {
+        isMeasurePageChange = 0;
         toogleDrawer();
         IntentUtils.goToWeb(mContext, HttpUrls.RUNSHENG_HELP);
     }
@@ -278,7 +286,10 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         binding.idMenuLeft.idMenuMyprofile.setSelect();
         if (mProfileFragment == null) {
             mProfileFragment = ProfileFragment.newInstance();
-            mProfileFragment.setOnReportOperateListener(this::toogleDrawer);
+            mProfileFragment.setOnReportOperateListener(() -> {
+                isMeasurePageChange = 0;
+                toogleDrawer();
+            });
         }
         showOrLazyLoadFragment(mProfileFragment);
     }
@@ -291,7 +302,11 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         binding.idMenuLeft.idMenuDevicemanageCenter.setSelect();
         if (mDeviceManagerFragment == null) {
             mDeviceManagerFragment = DeviceManageFragment.newInstance();
-            mDeviceManagerFragment.setOnDeviceManageListener(this::toogleDrawer);
+            mDeviceManagerFragment.setOnDeviceManageListener(() -> {
+                isMeasurePageChange = 0;
+                toogleDrawer();
+            });
+
         }
         showOrLazyLoadFragment(mDeviceManagerFragment);
     }

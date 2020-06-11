@@ -119,9 +119,6 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
      * 显示选择档案
      */
     public void showChooseProfile() {
-        if (hasMeasureItem()) {
-            return;
-        }
         if (!App.get().isLogined()) {
             //未登录不显示档案界面
             BlackToast.show("未登陆");
@@ -318,6 +315,14 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
             ProfileBean mProfile = (ProfileBean) event.getObject();
             MeasureBean measureBean = new MeasureBean(mProfile);
             showMeasuring(measureBean);
+        } else if (event.getEventType() == MessageEvent.EventType.SWITCH_MEASURE) {
+            int isMeasurePageChange = Integer.parseInt(event.getMsg());
+            Logger.w("isMeasurePageChange is : ",isMeasurePageChange," ,hasMeasureItem is :",hasMeasureItem());
+
+            if (isMeasurePageChange == 1 && hasMeasureItem()) {
+                EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.FRESH_PROFILE));
+                showChooseProfile();
+            }
         }
 
     }

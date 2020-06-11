@@ -649,7 +649,10 @@ public class Utils {
                     MeasureViewModel viewModel = (MeasureViewModel) viewmodels.get(key);
                     if (viewModel == null || TextUtils.isEmpty(viewModel.measureInfo.get().getMacaddress()))
                         continue;
-                    if (viewModel.measureInfo.get().getMacaddress().equalsIgnoreCase(macaddress)) return true;
+                    if (viewModel.measureInfo.get().getMacaddress().equalsIgnoreCase(macaddress) && viewModel.isConnected()) {
+                        return true;
+                    }
+
                 }
             }
         }
@@ -687,7 +690,7 @@ public class Utils {
                     //测量的viewmodel
                     MeasureBean measureBean = ((MeasureViewModel) viewmodels.get(key)).measureInfo.get();
                     if (measureBean == null) continue;
-                    if (measureBean.getProfile().getProfileId() == profileId) {
+                    if (measureBean.getProfile().getProfileId() == profileId&&((MeasureViewModel) viewmodels.get(key)).isConnected()) {
                         isMeasuring = true;
                     }
                 }
@@ -709,7 +712,6 @@ public class Utils {
         String telRegex = "[19][0-9]\\d{9}";
         return !TextUtils.isEmpty(mobiles) && mobiles.matches(telRegex);
     }
-
 
 
     /**
@@ -1081,6 +1083,7 @@ public class Utils {
         context.startActivity(new Intent(context, WeChatLoginActivity.class).putExtra("msg", msg));
         ActivityManager.finishOthersActivity(WeChatLoginActivity.class);
     }
+
     /**
      * 返回实时温度的颜色值
      *
@@ -1137,7 +1140,6 @@ public class Utils {
         animator.setAddDuration(400);
         mRecyclerView.setItemAnimator(animator);
     }
-
 
 
 }

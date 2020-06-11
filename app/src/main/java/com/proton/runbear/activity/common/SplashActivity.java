@@ -55,7 +55,7 @@ public class SplashActivity extends BaseActivity {
         super.init();
         mPermissionsChecker = new PermissionsChecker(this);
         //获取阿里云token
-        MeasureReportCenter.getAliyunToken();
+//        MeasureReportCenter.getAliyunToken();
         App.get().initRefresh();
         if (!BuildConfig.DEBUG) {
             SophixManager.getInstance().queryAndLoadNewPatch();
@@ -93,7 +93,7 @@ public class SplashActivity extends BaseActivity {
                         IntentUtils.goToMain(mContext);
                         //开启服务
                         //开启阿里云服务
-                        IntentUtils.startAliyunService(this);
+//                        IntentUtils.startAliyunService(this);
                     }
                 });
     }

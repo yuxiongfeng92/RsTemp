@@ -1,6 +1,7 @@
 package com.proton.runbear.viewmodel.profile;
 
 import android.databinding.ObservableField;
+import android.text.TextUtils;
 
 import com.proton.runbear.R;
 import com.proton.runbear.component.App;
@@ -61,7 +62,6 @@ public class ProfileViewModel extends BaseViewModel {
             }
         });
     }
-
 
 
     /**

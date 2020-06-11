@@ -41,7 +41,7 @@ public class UserGuideActivity extends BaseActivity<ActivityUserGuideBinding> {
             IntentUtils.goToMain(mContext);
             //开启服务
             //开启阿里云服务
-            IntentUtils.startAliyunService(this);
+//            IntentUtils.startAliyunService(this);
         }
         SpUtils.saveBoolean(AppConfigs.SP_KEY_SHOW_GUIDE, false);
     }

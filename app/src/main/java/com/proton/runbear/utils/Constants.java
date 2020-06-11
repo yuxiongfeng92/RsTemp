@@ -11,7 +11,7 @@ public class Constants {
     /**
      * 绑定的体温贴mac
      */
-    public static final String BIND_MAC="bind_patchMac";
+    public static final String BIND_MAC = "bind_patchMac";
 
     /**
      * 失败
