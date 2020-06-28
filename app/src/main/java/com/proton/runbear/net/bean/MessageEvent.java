@@ -226,6 +226,10 @@ public class MessageEvent {
          * 刷新档案
          */
         FRESH_PROFILE,
+        /**
+         * 跳转到正在测量页面
+         */
+        GO_TO_MEASURING_FRAGMENT,
 
 
     }

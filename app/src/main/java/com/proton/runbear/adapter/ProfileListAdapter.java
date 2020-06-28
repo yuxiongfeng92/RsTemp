@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.proton.runbear.R;
 import com.proton.runbear.net.bean.ProfileBean;
+import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.view.OnItemChildClickListener;
 import com.wms.adapter.CommonViewHolder;
 import com.wms.adapter.recyclerview.CommonAdapter;
@@ -93,7 +94,8 @@ public class ProfileListAdapter extends CommonAdapter<ProfileBean> {
         //查看报告
         holder.getView(R.id.id_lay_profile_report).setOnClickListener(v -> {
             if (onItemChildClickListener != null) {
-                onItemChildClickListener.onChildClick(holder, profileBean, v);
+                BlackToast.show("此功能暂未开通");
+//                onItemChildClickListener.onChildClick(holder, profileBean, v);
             }
         });
         //档案删除

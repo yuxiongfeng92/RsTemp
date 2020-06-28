@@ -19,7 +19,7 @@ android {
             versionName '1.0.2'
         } else {
             applicationId 'com.proton.runbear'
-            versionCode 13
+            versionCode 14
             versionName "1.1.1"
         }
         multiDexEnabled true
@@ -186,6 +186,8 @@ dependencies {
     implementation 'com.yanzhenjie.permission:support:2.0.1'
 
     implementation 'com.github.zyyoona7:wheelview:1.0.6'
+    implementation 'com.contrarywind:Android-PickerView:4.1.9'
+
 }
 
 if (isInternational) {

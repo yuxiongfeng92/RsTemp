@@ -31,6 +31,18 @@
             android:textSize="18sp"
             android:visibility="visible"/>
 
+        <ImageView
+            android:id="@+id/iv_top_right"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:padding="5dp"
+            android:src="@drawable/arrow_right"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp20"
+            android:visibility="gone"
+            />
+
         <!--tab切换标题-->
         <com.proton.runbear.view.TabCheckedChangeView
             android:id="@+id/id_tabchangeview"
@@ -50,5 +62,7 @@
             android:gravity="center_vertical"
             android:text="@string/string_new_device"
             android:visibility="gone"/>
+
+
     </RelativeLayout>
 </layout>

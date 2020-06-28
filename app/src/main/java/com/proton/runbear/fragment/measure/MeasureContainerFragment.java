@@ -25,6 +25,7 @@ import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.IntentUtils;
 import com.proton.runbear.utils.LongClickUtils;
 import com.proton.runbear.enums.InstructionConstant;
+import com.proton.runbear.utils.Utils;
 import com.proton.runbear.view.InstructionDialog;
 import com.proton.temp.connector.bean.DeviceBean;
 import com.wms.logger.Logger;
@@ -74,6 +75,7 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
         } else {
             binding.idTopLayout.idToogleDrawer.setImageResource(R.drawable.icon_toolbar_left);
         }
+        binding.idTopLayout.ivTopRight.setVisibility(View.VISIBLE);
         showChooseProfile();
 
         LongClickUtils.setLongClick(mHandler, binding.idTopLayout.idTitle, 1500, v -> {
@@ -96,7 +98,6 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
             dialog.show();
             return true;
         });
-
     }
 
     @Override
@@ -113,6 +114,8 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
                 onMeasureContainerListener.onToggleDrawer();
             }
         });
+
+        binding.idTopLayout.ivTopRight.setOnClickListener(v -> showMeasuringFragment());
     }
 
     /**
@@ -147,6 +150,19 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
         });
 
         showFragment(mChooseProfileFragment);
+    }
+
+
+    /**
+     * 点击顶部按钮跳转到正在测量的页面
+     */
+    public void showMeasuringFragment() {
+        if (hasMeasureItem() && Utils.checkPatchIsMeasuring(App.get().getDeviceMac())) {
+            showFragment(mMeasuringFragment);
+            return;
+        } else {
+            BlackToast.show("没有正在测量的页面");
+        }
     }
 
     /**
@@ -317,12 +333,14 @@ public class MeasureContainerFragment extends BaseLazyFragment<FragmentMeasureCo
             showMeasuring(measureBean);
         } else if (event.getEventType() == MessageEvent.EventType.SWITCH_MEASURE) {
             int isMeasurePageChange = Integer.parseInt(event.getMsg());
-            Logger.w("isMeasurePageChange is : ",isMeasurePageChange," ,hasMeasureItem is :",hasMeasureItem());
+            Logger.w("isMeasurePageChange is : ", isMeasurePageChange, " ,hasMeasureItem is :", hasMeasureItem());
 
             if (isMeasurePageChange == 1 && hasMeasureItem()) {
                 EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.FRESH_PROFILE));
                 showChooseProfile();
             }
+        } else if (event.getEventType() == MessageEvent.EventType.GO_TO_MEASURING_FRAGMENT) {
+            showMeasuringFragment();
         }
 
     }

@@ -40,6 +40,7 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/id_height"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -70,6 +71,7 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/id_weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -89,6 +91,7 @@
             android:id="@+id/ll_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="@{(view)->clickListener.onClick(view)}"
             android:orientation="vertical">
 
             <TextView

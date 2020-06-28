@@ -75,6 +75,15 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
      */
     private int isMeasurePageChange = 0;
 
+    /**
+     * 是否是来自设备管理页面
+     */
+    private boolean isFromDeviceManagePage = false;
+
+    public void setFromDeviceManagePage(boolean fromDeviceManagePage) {
+        isFromDeviceManagePage = fromDeviceManagePage;
+    }
+
     @Override
     protected int inflateContentView() {
         return R.layout.activity_home;
@@ -239,7 +248,11 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         }
         mOpenFragment = null;
         showFragment(mMeasureFragment);
-        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.SWITCH_MEASURE).setMsg(String.valueOf(isMeasurePageChange)));
+        if (!isFromDeviceManagePage) {
+            EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.SWITCH_MEASURE).setMsg(String.valueOf(isMeasurePageChange)));
+        }
+        isFromDeviceManagePage = false;
+
     }
 
     /**
