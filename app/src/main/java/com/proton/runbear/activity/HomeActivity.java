@@ -25,7 +25,6 @@ import com.proton.runbear.bean.MeasureBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.component.NetChangeReceiver;
 import com.proton.runbear.constant.AppConfigs;
-import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.databinding.ActivityHomeBinding;
 import com.proton.runbear.fragment.base.BaseFragment;
 import com.proton.runbear.fragment.devicemanage.DeviceManageFragment;
@@ -166,22 +165,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         binding.idMenuLeft.idMenuManagerCenter.setOnClickListener(v -> showSettingFragment());
 
 //        binding.idMenuLeft.idSetNetwork.setOnClickListener(v -> IntentUtils.goToDockerSetNetwork(mContext));
-        //头像默认显示本地档案中第一个
-        showTheFirstProfileAvator();
-        setMenuProfile();
-    }
-
-    /**
-     * 显示档案头像
-     */
-    private void showTheFirstProfileAvator() {
-        ProfileBean profile = ProfileManager.getDefaultProfile();
-        if (profile != null) {
-            String avator = profile.getAvatar();
-            if (!TextUtils.isEmpty(avator)) {
-                binding.idMenuLeft.idProfileImg.setImageURI(avator);
-            }
-        }
     }
 
     private void clearSelect() {
@@ -393,21 +376,9 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         super.onMessageEvent(event);
         MessageEvent.EventType eventType = event.getEventType();
         if (eventType == MessageEvent.EventType.PROFILE_CHANGE || eventType == MessageEvent.EventType.LOGIN) {
-            setMenuProfile();
+//            setMenuProfile();
         } else if (eventType == MessageEvent.EventType.HOME_GET_MSG) {
             initData();
-        }
-    }
-
-    /**
-     * 设置侧边栏头像
-     */
-    private void setMenuProfile() {
-        ProfileBean profile = ProfileManager.getDefaultProfile();
-        if (profile != null) {
-            binding.idMenuLeft.idProfileImg.setImageURI(profile.getAvatar());
-        } else {
-            binding.idMenuLeft.idProfileImg.setImageResource(R.drawable.icon_default_profile);
         }
     }
 

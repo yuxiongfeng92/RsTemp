@@ -32,6 +32,18 @@
             android:visibility="visible"/>
 
         <ImageView
+            android:id="@+id/iv_top_right2"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:padding="5dp"
+            android:src="@drawable/arrow_right"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/id_top_right"
+            android:layout_marginRight="5dp"
+            android:visibility="gone"
+            />
+
+        <ImageView
             android:id="@+id/iv_top_right"
             android:layout_width="34dp"
             android:layout_height="34dp"
@@ -61,7 +73,8 @@
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
             android:text="@string/string_new_device"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            />
 
 
     </RelativeLayout>

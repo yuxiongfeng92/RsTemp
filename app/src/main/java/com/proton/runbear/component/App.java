@@ -20,7 +20,6 @@ import com.proton.runbear.BuildConfig;
 import com.proton.runbear.R;
 import com.proton.runbear.bean.AliyunToken;
 import com.proton.runbear.constant.AppConfigs;
-import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.net.bean.ConfigInfo;
 import com.proton.runbear.net.bean.MessageEvent;
@@ -298,7 +297,6 @@ public class App extends BlufiApp {
      * 清除缓存
      */
     private void clearCache() {
-        ProfileManager.deleteAll();
         //清空用户数据
         SpUtils.saveString(Constants.APITOKEN, "");
         SpUtils.saveString(Constants.APIUID, "");

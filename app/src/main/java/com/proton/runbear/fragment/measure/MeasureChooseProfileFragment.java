@@ -247,6 +247,7 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
         super.onMessageEvent(event);
         MessageEvent.EventType type = event.getEventType();
         if (type == MessageEvent.EventType.PROFILE_CHANGE
+                ||type==MessageEvent.EventType.DELETE_PROFILE
                 || type == MessageEvent.EventType.BIND_DEVICE_SUCCESS
                 || type == MessageEvent.EventType.FRESH_PROFILE
                 || type == MessageEvent.EventType.UNBIND_DEVICE_SUCCESS) {

@@ -1,11 +1,9 @@
 package com.proton.runbear.viewmodel.profile;
 
 import android.databinding.ObservableField;
-import android.text.TextUtils;
 
 import com.proton.runbear.R;
 import com.proton.runbear.component.App;
-import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
@@ -35,13 +33,7 @@ public class ProfileViewModel extends BaseViewModel {
             public void noNet() {
                 super.noNet();
                 //刷新无网
-                List<ProfileBean> profileBeansList = ProfileManager.getAllProfile();
-                if (profileBeansList != null && profileBeansList.size() > 0) {
-                    profileList.set(profileBeansList);
-                    status.set(Status.Success);
-                } else {
-                    status.set(Status.NO_NET);
-                }
+                BlackToast.show(R.string.string_no_net);
             }
 
             @Override

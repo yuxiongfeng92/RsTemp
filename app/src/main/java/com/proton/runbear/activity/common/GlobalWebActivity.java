@@ -13,7 +13,6 @@ import com.proton.runbear.R;
 import com.proton.runbear.activity.HomeActivity;
 import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.activity.measure.AddNewDeviceActivity;
-import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.databinding.ActivityGlobalWebBinding;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
@@ -133,27 +132,5 @@ public class GlobalWebActivity extends BaseActivity<ActivityGlobalWebBinding> {
             IntentUtils.goToDockerSetNetwork(mContext);
         }
 
-        /**
-         * 跳转开始测量
-         */
-        @JavascriptInterface
-        public void goToStartMeasure(String profileId) {
-            try {
-                ProfileBean profileBean = ProfileManager.getById(Long.parseLong(profileId));
-                if (profileBean == null) {
-                    IntentUtils.goToMain(mContext);
-                } else {
-                    ActivityManager.finishOthersActivity(HomeActivity.class);
-                    if (Utils.hasMeasureItem()) {
-                        //有测量卡片
-                        IntentUtils.goToAddNewDevice(mContext, true, profileBean);
-                    } else {
-                        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.DEVICE_BIND_SUCCESS, profileBean));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                IntentUtils.goToMain(mContext);
-            }
-        }
     }
 }

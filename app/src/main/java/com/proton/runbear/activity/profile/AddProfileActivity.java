@@ -29,12 +29,14 @@ import com.proton.runbear.databinding.ActivityAddProfileBinding;
 import com.proton.runbear.databinding.AddAdditionalBaseInfoLayoutBinding;
 import com.proton.runbear.databinding.CaseHistoryLayoutBinding;
 import com.proton.runbear.net.bean.AddProfileReq;
+import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.ProfileCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.DateUtils;
+import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.FileUtils;
 import com.proton.runbear.utils.GetJsonDataUtil;
 import com.proton.runbear.utils.Utils;
@@ -394,14 +396,7 @@ public class AddProfileActivity extends BaseActivity<ActivityAddProfileBinding> 
             public void onSucceed(ProfileBean data) {
                 dismissDialog();
                 BlackToast.show(R.string.string_profile_add);
-//                if (!TextUtils.isEmpty(App.get().getLastScanDeviceId())) {
-//                    //上次扫描了直接绑定
-//                    bindDevice(data.getProfileId());
-//                } else {
-//                    if (getIntent().getBooleanExtra("needScanQRCode", false)) {
-//                        IntentUtils.goToScanQRCode(mContext, data, true);
-//                    }
-//                }
+                EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.PROFILE_CHANGE));
                 finish();
             }
 

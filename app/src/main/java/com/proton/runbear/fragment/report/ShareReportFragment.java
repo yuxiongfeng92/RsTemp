@@ -42,7 +42,6 @@ import com.proton.runbear.R;
 import com.proton.runbear.activity.report.PrePDFActivity;
 import com.proton.runbear.component.App;
 import com.proton.runbear.constant.AppConfigs;
-import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.bean.ReportBeanData;
 import com.proton.runbear.socailauth.PlatformType;
@@ -370,12 +369,12 @@ public class ShareReportFragment extends DialogFragment {
                 PdfUtil pdfUtil = new PdfUtil();
                 //   String msg = VCare.getACacheInstance().getAsString(Extras.ACHCHE_PROFILE);
                 //  mProfile = ProfileManager.getProfile(mReport.getProfileid());
-                ProfileBean profileBean = ProfileManager.getProfileBean(profileId);
-                if (profileBean == null) {
-                    mHandler.sendEmptyMessage(profileNotFound);
-                    return null;
-                }
-                String sex = 1 == profileBean.getGender() ? UIUtils.getString(R.string.string_boy) : UIUtils.getString(R.string.string_girl);
+//                ProfileBean profileBean = ProfileManager.getProfileBean(profileId);
+//                if (profileBean == null) {
+//                    mHandler.sendEmptyMessage(profileNotFound);
+//                    return null;
+//                }
+//                String sex = 1 == profileBean.getGender() ? UIUtils.getString(R.string.string_boy) : UIUtils.getString(R.string.string_girl);
                 String fever;
                 if (Float.parseFloat(maxTemp) > 37.5) {
                     fever = UIUtils.getString(R.string.string_yes);
@@ -391,7 +390,7 @@ public class ShareReportFragment extends DialogFragment {
                     maxTempFloat = FormatUtils.c2F(maxTempFloat);
                     tempUnit = UIUtils.getString(R.string.string_temp_F);
                 }
-                pdfUtil.createPdf(ActivityManager.currentActivity(), profileBean.getUsername(), sex, profileBean.getAge(), maxTempFloat + "", fever, testTime, tempUnit, reportId);
+//                pdfUtil.createPdf(ActivityManager.currentActivity(), profileBean.getUsername(), sex, profileBean.getAge(), maxTempFloat + "", fever, testTime, tempUnit, reportId);
                 return null;
             }
 

@@ -7,8 +7,6 @@ import com.proton.runbear.R;
 import com.proton.runbear.utils.UIUtils;
 import com.wms.logger.Logger;
 
-import org.litepal.crud.LitePalSupport;
-
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,7 +17,7 @@ import java.util.Date;
  * 档案管理实体对象
  */
 
-public class ProfileBean extends LitePalSupport implements Serializable {
+public class ProfileBean  implements Serializable {
 
     @SerializedName("PID")
     private long profileId = -1;

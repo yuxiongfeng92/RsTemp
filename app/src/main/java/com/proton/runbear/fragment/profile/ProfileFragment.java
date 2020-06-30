@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.proton.runbear.R;
+import com.proton.runbear.activity.HomeActivity;
 import com.proton.runbear.activity.profile.AddProfileActivity;
 import com.proton.runbear.activity.profile.ProfileEditActivity;
 import com.proton.runbear.activity.report.SomOneMeasureReportActivity;
@@ -17,6 +18,8 @@ import com.proton.runbear.fragment.base.BaseViewModelFragment;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.utils.ActivityManager;
+import com.proton.runbear.utils.BlackToast;
+import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.view.OnItemChildClickListener;
 import com.proton.runbear.view.WarmDialog;
@@ -24,6 +27,8 @@ import com.proton.runbear.viewmodel.profile.ProfileViewModel;
 import com.wms.adapter.CommonViewHolder;
 
 import java.util.List;
+
+import static com.proton.runbear.utils.Utils.hasMeasureItem;
 
 /**
  * 档案管理
@@ -69,6 +74,7 @@ public class ProfileFragment extends BaseViewModelFragment<FragmentProfileBindin
         binding.idTopLayout.idTopRight.setVisibility(View.VISIBLE);
         binding.idTopLayout.idTopRight.setText(R.string.string_new_file);
         binding.idTopLayout.idTitle.setText(getResources().getString(R.string.string_profile_manage));
+        binding.idTopLayout.ivTopRight2.setVisibility(View.VISIBLE);
         mAdapter = new ProfileListAdapter(getActivity(), null, R.layout.item_profile_list, this);
         binding.idIncludeRefresh.idRecyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         binding.idIncludeRefresh.idRecyclerview.setAdapter(mAdapter);
@@ -88,6 +94,17 @@ public class ProfileFragment extends BaseViewModelFragment<FragmentProfileBindin
         binding.idTopLayout.idTopRight.setOnClickListener(v -> {
             //添加新档案
             startActivity(new Intent(getActivity(), AddProfileActivity.class));
+        });
+
+        binding.idTopLayout.ivTopRight2.setOnClickListener(v -> {
+            if (hasMeasureItem() && Utils.checkPatchIsMeasuring(App.get().getDeviceMac())) {
+                ((HomeActivity)getActivity()).setFromDeviceManagePage(true);
+                ((HomeActivity)getActivity()).showMeasureFragment();
+                EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.GO_TO_MEASURING_FRAGMENT));
+                return;
+            } else {
+                BlackToast.show("没有正在测量的页面");
+            }
         });
     }
 

@@ -1,7 +1,6 @@
 package com.proton.runbear.net.center;
 
 import com.google.gson.reflect.TypeToken;
-import com.proton.runbear.database.ProfileManager;
 import com.proton.runbear.net.RetrofitHelper;
 import com.proton.runbear.net.bean.AddProfileReq;
 import com.proton.runbear.net.bean.DeleteProfileReq;
@@ -35,7 +34,6 @@ public class ProfileCenter extends DataCenter {
                         Type type = new TypeToken<List<ProfileBean>>() {
                         }.getType();
                         List<ProfileBean> profiles = JSONUtils.getObj(resultPair.getData(), type);
-                        ProfileManager.saveAll(profiles);
                         return profiles;
                     } else {
                         throw new ParseResultException(resultPair.getData());
@@ -85,7 +83,6 @@ public class ProfileCenter extends DataCenter {
                     ResultPair resultPair = parseResult(json);
                     if (resultPair != null && resultPair.isSuccess()) {
                         ProfileBean profileBean = JSONUtils.getObj(resultPair.getData(), ProfileBean.class);
-                        ProfileManager.save(profileBean);
                         return profileBean;
                     } else {
                         throw new ParseResultException(resultPair.getData());
@@ -109,7 +106,6 @@ public class ProfileCenter extends DataCenter {
             Logger.json(json);
             ResultPair resultPair = parseResult(json);
             if (resultPair != null && resultPair.isSuccess()) {
-                ProfileManager.delete(profileId);
                 return resultPair;
             } else {
                 throw new ParseResultException(resultPair.getData());
@@ -131,7 +127,6 @@ public class ProfileCenter extends DataCenter {
             ResultPair resultPair = parseResult(json);
             if (resultPair != null && resultPair.isSuccess()) {
                 ProfileBean profileBean = JSONUtils.getObj(resultPair.getData(), ProfileBean.class);
-                ProfileManager.update(profileBean);
                 return profileBean;
             } else {
                 throw new ParseResultException(resultPair.getData());
