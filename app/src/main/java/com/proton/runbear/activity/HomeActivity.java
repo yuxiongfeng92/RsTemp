@@ -319,8 +319,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                 isMeasurePageChange = 0;
                 toogleDrawer();
             });
-
         }
+        EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.DEVICE_CHANGED));
         showOrLazyLoadFragment(mDeviceManagerFragment);
     }
 

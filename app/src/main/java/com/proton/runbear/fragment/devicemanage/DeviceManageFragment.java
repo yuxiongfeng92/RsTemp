@@ -26,6 +26,7 @@ import com.proton.runbear.utils.Utils;
 import com.proton.runbear.viewmodel.MainViewModel;
 import com.proton.temp.connector.bean.DeviceType;
 import com.wms.adapter.recyclerview.OnItemClickListener;
+import com.wms.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,6 @@ public class DeviceManageFragment extends BaseViewModelFragment<FragmentDeviceLi
         mDeviceManageAdapter = new DeviceListAdapter(getActivity(), mDeviceManageList, R.layout.item_device_list);
         binding.idRecyclerview.setAdapter(mDeviceManageAdapter);
         setListener();
-
     }
 
     private void setListener() {

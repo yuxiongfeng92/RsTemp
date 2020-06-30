@@ -648,8 +648,49 @@ public class MeasureViewModel extends BaseViewModel {
          * 断开或者未连接的时候
          */
         if (connectStatus.get() == 0 || connectStatus.get() == 3) {
-            needShowSearchDeviceDialog.set(true);
-            measureStart();//开始测量
+            /**
+             * 判断是否有可用设备，可能设备此时被其他用户绑定了
+             */
+            DeviceCenter.queryDevices(new NetCallBack<List<BindDeviceInfo>>() {
+                @Override
+                public void noNet() {
+                    super.noNet();
+                    BlackToast.show(R.string.string_no_net);
+                }
+
+                @Override
+                public void onSucceed(List<BindDeviceInfo> data) {
+                    boolean isBind = false;
+                    for (int i = 0; i < data.size(); i++) {
+                        if (data.get(i).getPatchMac().equalsIgnoreCase(App.get().getServerMac())) {
+                            isBind=true;
+                            break;
+                        }
+                    }
+                    if (isBind) {
+                        /**
+                         * 开始测量
+                         */
+                        needShowSearchDeviceDialog.set(true);
+                        measureStart();
+                    }else {
+                        SpUtils.saveString(Constants.BIND_MAC, "");
+                        BlackToast.show("请先绑定体温贴，再进行测量");
+                    }
+
+                }
+
+                @Override
+                public void onFailed(ResultPair resultPair) {
+                    super.onFailed(resultPair);
+                    BlackToast.show(resultPair.getData());
+                }
+            });
+
+
+
+
+
         } else if (connectStatus.get() == 2) {//已连接，点击则断开蓝牙
             new WarmDialog(ActivityManager.currentActivity())
                     .setTopText(R.string.string_warm_tips)

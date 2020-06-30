@@ -13,13 +13,8 @@ import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.FragmentMeasureContainerBinding;
 import com.proton.runbear.fragment.base.BaseFragment;
 import com.proton.runbear.fragment.base.BaseLazyFragment;
-import com.proton.runbear.net.bean.MeasureBeginResp;
-import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
-import com.proton.runbear.net.callback.NetCallBack;
-import com.proton.runbear.net.callback.ResultPair;
-import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.EventBusManager;
 import com.proton.runbear.utils.IntentUtils;
@@ -27,10 +22,7 @@ import com.proton.runbear.utils.LongClickUtils;
 import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.view.InstructionDialog;
-import com.proton.temp.connector.bean.DeviceBean;
 import com.wms.logger.Logger;
-
-import io.reactivex.Observable;
 
 /**
  * Created by wangmengsi on 2018/2/28.

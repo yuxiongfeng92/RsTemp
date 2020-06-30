@@ -8,6 +8,7 @@ import com.proton.runbear.activity.base.BaseActivity;
 import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.ActivityScanQrcodeBinding;
 import com.proton.runbear.enums.QRPatchType;
+import com.proton.runbear.net.bean.BindDeviceInfo;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
@@ -24,6 +25,8 @@ import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.wms.logger.Logger;
 import com.wms.utils.NetUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -120,7 +123,6 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
         }
     }
 
-
     private void reScan() {
         binding.getRoot().postDelayed(() -> {
             if (captureFragment != null) {
@@ -128,7 +130,6 @@ public class ScanQRCodeActivity extends BaseActivity<ActivityScanQrcodeBinding> 
             }
         }, 2000);
     }
-
     /**
      * 绑定设备
      */

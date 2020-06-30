@@ -16,14 +16,18 @@ import com.proton.runbear.bean.MeasureBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.databinding.FragmentMeasureChooseProfileBinding;
 import com.proton.runbear.fragment.base.BaseViewModelFragment;
+import com.proton.runbear.net.bean.BindDeviceInfo;
 import com.proton.runbear.net.bean.MeasureEndResp;
 import com.proton.runbear.net.bean.MessageEvent;
 import com.proton.runbear.net.bean.ProfileBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
+import com.proton.runbear.net.center.DeviceCenter;
 import com.proton.runbear.net.center.MeasureCenter;
 import com.proton.runbear.utils.BlackToast;
+import com.proton.runbear.utils.Constants;
 import com.proton.runbear.utils.IntentUtils;
+import com.proton.runbear.utils.SpUtils;
 import com.proton.runbear.utils.Utils;
 import com.proton.runbear.view.EllipsizeTextView;
 import com.proton.runbear.viewmodel.measure.MeasureViewModel;
@@ -91,7 +95,6 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                 holder.setText(R.id.id_age, profileBean.getAge());
                 SimpleDraweeView avatarImg = holder.getView(R.id.id_avatar);
                 avatarImg.setImageURI(profileBean.getAvatar());
-//                holder.setText(R.id.id_measure_status, TextUtils.isEmpty(profileBean.getExamid()) ? getString(R.string.string_not_bind_patch) : getString(R.string.string_has_bind_patch) + Utils.getShowMac(profileBean.getMacAddress()));
 
                 holder.setText(R.id.id_measure_status, TextUtils.isEmpty(profileBean.getExamid()) || !Utils.checkPatchIsMeasuring(App.get().getDeviceMac()) ? getString(R.string.string_not_bind_patch) : getString(R.string.string_has_bind_patch));
                 holder.setTextColor(R.id.id_measure_status, TextUtils.isEmpty(profileBean.getExamid()) || !Utils.checkPatchIsMeasuring(App.get().getDeviceMac()) ? ContextCompat.getColor(mContext, R.color.color_gray_b3) : ContextCompat.getColor(mContext, R.color.color_main));
@@ -105,7 +108,37 @@ public class MeasureChooseProfileFragment extends BaseViewModelFragment<Fragment
                                 BlackToast.show("其他设备正在测量中，请先结束测量");
                                 return;
                             }
-                            onChooseProfileListener.onClickProfile(profileBean);
+                            DeviceCenter.queryDevices(new NetCallBack<List<BindDeviceInfo>>() {
+                                @Override
+                                public void noNet() {
+                                    super.noNet();
+                                    BlackToast.show(R.string.string_no_net);
+                                }
+
+                                @Override
+                                public void onSucceed(List<BindDeviceInfo> data) {
+                                    boolean isBind = false;
+                                    for (int i = 0; i < data.size(); i++) {
+                                        if (data.get(i).getPatchMac().equalsIgnoreCase(App.get().getServerMac())) {
+                                            isBind=true;
+                                            break;
+                                        }
+                                    }
+                                    if (isBind) {
+                                        onChooseProfileListener.onClickProfile(profileBean);
+                                    }else {
+                                        SpUtils.saveString(Constants.BIND_MAC, "");
+                                        BlackToast.show("请先绑定体温贴，再进行测量");
+                                    }
+
+                                }
+
+                                @Override
+                                public void onFailed(ResultPair resultPair) {
+                                    super.onFailed(resultPair);
+                                    BlackToast.show(resultPair.getData());
+                                }
+                            });
                         }
                     }
                 });
