@@ -36,7 +36,7 @@ public class ProfileCenter extends DataCenter {
                         List<ProfileBean> profiles = JSONUtils.getObj(resultPair.getData(), type);
                         return profiles;
                     } else {
-                        throw new ParseResultException(resultPair.getData());
+                        throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 })
                 .compose(threadTrans())
@@ -108,7 +108,7 @@ public class ProfileCenter extends DataCenter {
             if (resultPair != null && resultPair.isSuccess()) {
                 return resultPair;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ResultPair>(resultPairNetCallBack) {
             @Override
@@ -129,7 +129,7 @@ public class ProfileCenter extends DataCenter {
                 ProfileBean profileBean = JSONUtils.getObj(resultPair.getData(), ProfileBean.class);
                 return profileBean;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ProfileBean>(netCallBack) {
             @Override

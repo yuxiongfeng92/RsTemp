@@ -113,7 +113,7 @@ public class MeasureReportCenter extends DataCenter {
                         }.getType();
                         return JSONUtils.<ReportListItemBean>getObj(resultPair.getData(), mType);
                     } else {
-                        throw new ParseResultException(resultPair.getData());
+                        throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 }
         ).compose(threadTrans()).subscribe(new NetSubscriber<List<ReportListItemBean>>(reportNetCallBack) {
@@ -136,7 +136,7 @@ public class MeasureReportCenter extends DataCenter {
             if (resultPair.isSuccess()) {
                 return resultPair;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ResultPair>(resultPairNetCallBack) {
             @Override
@@ -156,7 +156,7 @@ public class MeasureReportCenter extends DataCenter {
             if (resultPair.isSuccess()) {
                 return resultPair;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ResultPair>(resultPairNetCallBack) {
             @Override
@@ -176,7 +176,7 @@ public class MeasureReportCenter extends DataCenter {
             if (resultPair.isSuccess()) {
                 return resultPair;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ResultPair>(resultPairNetCallBack) {
             @Override
@@ -200,7 +200,7 @@ public class MeasureReportCenter extends DataCenter {
                 }.getType();
                 return JSONUtils.<NoteBean>getObj(resultPair.getData(), listType);
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
 
         }).compose(threadTrans()).subscribe(new NetSubscriber<List<NoteBean>>(noteListNetCallBack) {
@@ -228,7 +228,7 @@ public class MeasureReportCenter extends DataCenter {
             if (resultPair.isSuccess()) {
                 return resultPair;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ResultPair>(resultPairNetCallBack) {
             @Override
@@ -254,7 +254,7 @@ public class MeasureReportCenter extends DataCenter {
                     if (resultPair.isSuccess()) {
                         return JSONUtils.getString(resultPair.getData(), "id");
                     } else {
-                        throw new ParseResultException(resultPair.getData());
+                        throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 }).compose(threadTrans()).subscribe(new NetSubscriber<String>(callBack) {
             @Override
@@ -296,7 +296,7 @@ public class MeasureReportCenter extends DataCenter {
                     if (resultPair.isSuccess()) {
                         return json;
                     } else {
-                        throw new ParseResultException(resultPair.getData());
+                        throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 }).compose(threadTrans()).subscribe(new NetSubscriber<String>(callBack) {
             @Override
@@ -323,7 +323,7 @@ public class MeasureReportCenter extends DataCenter {
                 App.get().aliyunToken = token;
                 return token;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<AliyunToken>(aliyunCallBack) {
             @Override
@@ -371,7 +371,7 @@ public class MeasureReportCenter extends DataCenter {
                     if (resultPair.isSuccess()) {
                         return resultPair.isSuccess();
                     } else {
-                        throw new ParseResultException(resultPair.getData());
+                        throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 }).compose(threadTrans()).subscribe(new NetSubscriber<Boolean>(callBack) {
             @Override

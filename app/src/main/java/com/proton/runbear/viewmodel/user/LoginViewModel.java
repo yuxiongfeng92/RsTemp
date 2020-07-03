@@ -168,15 +168,6 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     /**
-     * 发送登录验证码
-     */
-    public void sendLoginCode() {
-        if (checkCanSend(false, false)) {
-            UserCenter.sendSms(phoneNum.get(), mSendCodeCallback);
-        }
-    }
-
-    /**
      * 登录
      */
     public void login() {

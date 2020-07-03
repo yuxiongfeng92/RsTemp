@@ -17,7 +17,7 @@ import com.wms.utils.CommonUtils;
 import java.util.List;
 
 /**
- * Created by luochune on 2018/3/16.
+ * Created by yxf
  */
 
 public class ProfileViewModel extends BaseViewModel {

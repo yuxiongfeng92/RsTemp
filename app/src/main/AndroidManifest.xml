@@ -33,10 +33,6 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity
-            android:name=".activity.user.WeChatLoginActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
         <activity android:name=".activity.user.RemindBellSelectActivity" />
 
         <meta-data

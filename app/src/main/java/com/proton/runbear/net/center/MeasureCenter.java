@@ -102,7 +102,7 @@ public class MeasureCenter extends DataCenter {
                             ConfigInfo configInfo = JSONUtils.getObj(resultPair.getData(), ConfigInfo.class);
                             return configInfo;
                         } else {
-                            throw new ParseResultException(resultPair.getData());
+                            throw new ParseResultException(resultPair.getErrorMessage());
                         }
                     }
                 }).compose(threadTrans())
@@ -153,7 +153,7 @@ public class MeasureCenter extends DataCenter {
                 }.getType();
                 return JSONUtils.<ShareHistoryBean>getObj(resultPair.getData(), type);
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<List<ShareHistoryBean>>(netCallBack) {
             @Override

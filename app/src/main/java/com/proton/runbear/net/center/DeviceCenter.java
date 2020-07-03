@@ -205,7 +205,7 @@ public class DeviceCenter {
                     if (resultPair.isSuccess()) {
                         return JSONUtils.getString(resultPair.getData(), "id");
                     } else {
-                        throw new ParseResultException(resultPair.getData());
+                        throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 }).compose(threadTrans())
                 .subscribe(new NetSubscriber<String>(callBack) {
@@ -270,7 +270,7 @@ public class DeviceCenter {
             if (resultPair != null && resultPair.isSuccess()) {
                 return true;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<Boolean>(resultPairNetCallBack) {
             @Override
@@ -298,7 +298,7 @@ public class DeviceCenter {
                     if (resultPair.isSuccess()) {
                         return resultPair.isSuccess();
                     } else {
-                        throw new ParseResultException(resultPair.getData());
+                        throw new ParseResultException(resultPair.getErrorMessage());
                     }
                 }).compose(threadTrans()).subscribe(new NetSubscriber<Boolean>(callBack) {
             @Override
@@ -318,7 +318,7 @@ public class DeviceCenter {
             if (resultPair.isSuccess()) {
                 return resultPair;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ResultPair>(netCallBack) {
             @Override
@@ -337,7 +337,7 @@ public class DeviceCenter {
             if (resultPair != null && resultPair.isSuccess()) {
                 return JSONUtils.getObj(resultPair.getData(), LastUseBean.class);
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<LastUseBean>(callback) {
             @Override
@@ -359,7 +359,7 @@ public class DeviceCenter {
             if (resultPair != null && resultPair.isSuccess()) {
                 return JSONUtils.getObj(resultPair.getData(), ScanDeviceInfoBean.class);
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<ScanDeviceInfoBean>(callback) {
             @Override
@@ -378,7 +378,7 @@ public class DeviceCenter {
             if (resultPair != null && resultPair.isSuccess()) {
                 return true;
             } else {
-                throw new ParseResultException(resultPair.getData());
+                throw new ParseResultException(resultPair.getErrorMessage());
             }
         }).compose(threadTrans()).subscribe(new NetSubscriber<Boolean>(callback) {
             @Override

@@ -770,8 +770,6 @@ public class MeasureViewModel extends BaseViewModel {
                         }
                     });
                 }
-
-
             }
 
             @Override
@@ -801,17 +799,14 @@ public class MeasureViewModel extends BaseViewModel {
             public void onSucceed(ConfigInfo config) {
                 Logger.w("configInfo is :", config.toString());
                 if (config == null || config.getStatus().equalsIgnoreCase("error")) {//获取配置信息失败，重新登录
-                    SpUtils.saveString(Constants.PHONE, "");
-                    //重置报警设置
-                    SpUtils.saveLong(Utils.getHighTempDurationSpKey(), 0);
-                    SpUtils.saveLong(Utils.getHighTempWarmSpKey(App.get().getPhone()), 0);
-                    Utils.goToLogin(ActivityManager.getTopActivity());
-                    EventBusManager.getInstance().post(new MessageEvent(MessageEvent.EventType.CONFIG_NULL).setMsg(config.getErrodMsg()));
+                    Logger.w(config.getErrodMsg());
+                    measureTips.set("获取配置信息失败");
+                    BlackToast.show(config.getErrodMsg());
+                    needShowSearchDeviceDialog.set(false);
                     return;
                 }
                 App.get().setConfigInfo(config);
                 configInfo.set(config);
-
                 //进入界面显示搜索对话框
                 needShowSearchDeviceDialog.set(true);
                 if (TextUtils.isEmpty(config.getPatchMac())) {

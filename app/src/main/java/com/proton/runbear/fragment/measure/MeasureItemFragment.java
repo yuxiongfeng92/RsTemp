@@ -113,10 +113,10 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
                 if (viewmodel.configInfo.get().getSettings() != null) {
                     initAlarmManager(viewmodel.configInfo.get().getSettings().getTempInterval());
                 }
-                if (viewmodel.configInfo.get().getStatus().equalsIgnoreCase("error")) {
-                    finish();
-                    Utils.goToLogin(mContext);
-                }
+//                if (viewmodel.configInfo.get().getStatus().equalsIgnoreCase("error")) {
+//                    finish();
+//                    Utils.goToLogin(mContext);
+//                }
                 initTips();
             }
         });

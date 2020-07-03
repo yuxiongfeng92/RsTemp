@@ -30,7 +30,7 @@ import com.google.gson.GsonBuilder;
 import com.proton.runbear.BuildConfig;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.HomeActivity;
-import com.proton.runbear.activity.user.WeChatLoginActivity;
+import com.proton.runbear.activity.user.LoginActivity;
 import com.proton.runbear.bean.AlarmBean;
 import com.proton.runbear.bean.MeasureBean;
 import com.proton.runbear.bean.ReportBean;
@@ -1080,8 +1080,8 @@ public class Utils {
     }
 
     public static void goToLogin(Context context, String msg) {
-        context.startActivity(new Intent(context, WeChatLoginActivity.class).putExtra("msg", msg));
-        ActivityManager.finishOthersActivity(WeChatLoginActivity.class);
+        context.startActivity(new Intent(context, LoginActivity.class).putExtra("msg", msg));
+        ActivityManager.finishOthersActivity(LoginActivity.class);
     }
 
     /**

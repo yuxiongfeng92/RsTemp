@@ -210,10 +210,6 @@ public class MessageEvent {
          * 修改了报警时间间隔
          */
         MODIFIY_WARM_DURATION,
-        /**
-         * 配置信息为空
-         */
-        CONFIG_NULL,
 
         WAKE,
 
