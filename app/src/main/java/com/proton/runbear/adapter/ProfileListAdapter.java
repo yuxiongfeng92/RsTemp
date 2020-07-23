@@ -94,8 +94,7 @@ public class ProfileListAdapter extends CommonAdapter<ProfileBean> {
         //查看报告
         holder.getView(R.id.id_lay_profile_report).setOnClickListener(v -> {
             if (onItemChildClickListener != null) {
-                BlackToast.show("此功能暂未开通");
-//                onItemChildClickListener.onChildClick(holder, profileBean, v);
+                onItemChildClickListener.onChildClick(holder, profileBean, v);
             }
         });
         //档案删除

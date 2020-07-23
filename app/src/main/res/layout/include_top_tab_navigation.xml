@@ -15,6 +15,15 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="@dimen/dimen_bar_height"
+                android:layout_height="@dimen/dimen_bar_height"
+                android:src="@drawable/btn_back_img"
+                android:paddingRight="30dp"
+                android:visibility="gone"
+                />
+
             <!--tab切换标题-->
             <com.proton.runbear.view.TabCheckedChangeView
                 android:id="@+id/id_tabchangeview"

@@ -217,7 +217,6 @@ public class App extends BlufiApp {
         return SpUtils.getString(Constants.PHONE, "");
     }
 
-
     public String getVersion() {
         if (TextUtils.isEmpty(version)) {
             version = CommonUtils.getAppVersion(this) + "&" + CommonUtils.getAppVersionCode(this);
@@ -237,7 +236,6 @@ public class App extends BlufiApp {
         }
         return appVersionCode;
     }
-
 
     /**
      * 获取绑定的设备mac

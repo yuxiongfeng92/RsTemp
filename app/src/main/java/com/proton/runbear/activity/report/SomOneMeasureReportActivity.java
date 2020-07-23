@@ -23,7 +23,6 @@ import com.proton.runbear.viewmodel.MainViewModel;
  */
 public class SomOneMeasureReportActivity extends BaseViewModelActivity<ActivitySomOneMeasureReportBinding, MainViewModel> {
 
-
     private ReportFragment allReportFragment;//全部报告片段
     private ReportFragment collcetReportFragment;//收藏报告片
 
@@ -60,6 +59,11 @@ public class SomOneMeasureReportActivity extends BaseViewModelActivity<ActivityS
             }
         });
         binding.idReportViewpager.setOffscreenPageLimit(2);
+    }
+
+    @Override
+    protected boolean showBackBtn() {
+        return true;
     }
 
     @Override

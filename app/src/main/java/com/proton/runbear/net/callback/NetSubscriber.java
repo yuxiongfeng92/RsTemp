@@ -6,13 +6,20 @@ import com.proton.runbear.R;
 import com.proton.runbear.activity.user.LoginActivity;
 import com.proton.runbear.component.App;
 import com.proton.runbear.utils.ActivityManager;
+import com.proton.runbear.utils.BlackToast;
 import com.proton.runbear.utils.Constants;
+import com.proton.runbear.utils.FileUtils;
 import com.proton.runbear.utils.JSONUtils;
 import com.proton.runbear.utils.UIUtils;
 import com.wms.logger.Logger;
 import com.wms.utils.NetUtils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
@@ -61,11 +68,20 @@ public abstract class NetSubscriber<T> implements Observer<T> {
         } else if (e instanceof ConnectException) {
             resultPair.setData(UIUtils.getString(R.string.string_network_error));
         } else if (e instanceof HttpException) {
-            if (ActivityManager.currentActivity() instanceof LoginActivity) {
-                resultPair.setData(UIUtils.getString(R.string.string_server_error));
-            } else {
-                resultPair.setData(UIUtils.getString(R.string.string_server_error));
-                App.get().logout();
+            try {
+                String ret = ((HttpException) e).response().errorBody().string();
+                String ErrorMessage = JSONUtils.getString(ret, "ErrorMessage");
+                String Data = JSONUtils.getString(ret, "Data");
+                int Code = Integer.parseInt(JSONUtils.getString(ret, "Code"));
+                if (Code==10005) {//token失效
+                    BlackToast.show(ErrorMessage);
+                    App.get().logout();
+                }else {
+                    resultPair.setData(ErrorMessage);
+                }
+            } catch (Exception ex) {
+                resultPair.setData(ex.getMessage());
+                ex.printStackTrace();
             }
         } else if (e instanceof IOException) {
             resultPair.setData(UIUtils.getString(R.string.string_network_error));

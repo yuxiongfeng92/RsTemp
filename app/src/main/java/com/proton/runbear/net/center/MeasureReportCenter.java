@@ -50,6 +50,7 @@ public class MeasureReportCenter extends DataCenter {
             public void onNext(List<ReportListItemBean> reportList) {
                 netCallBack.onSucceed(reportList);
             }
+
         });
     }
 
