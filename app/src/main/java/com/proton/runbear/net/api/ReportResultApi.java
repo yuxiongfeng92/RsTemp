@@ -25,9 +25,14 @@ public interface ReportResultApi {
     String addComments = "openapi/report/addcomments";//  添加多条随手记
     String aliyunToken = "openapi/user/getSTSAuthorization";//获取阿里云授权token
     String addReport = "openapi/tempreport/add";//获取阿里云授权token
-    String oneBabyReportList = "openapi/profile/getreportlist";//获取某个档案下面的报告列表
     String oneBabyCollectReportList = "openapi/profile/getCollectReportlist";//获取某个档案下面的收藏报告列表
     String deleteNoteComment = "openapi/report/deletecomment";//删除一条帖子记录
+
+    /**
+     * 润生接口
+     */
+    String oneBabyReportList = "docment/GetReportByPID";//获取某个档案下面的报告列表
+    String reportDetailByPid = "docment/GetReportDetail";//根据pid获取报告详情
 
     @GET(reportListUrl)
     Observable<String> getReportList(@QueryMap Map<String, String> params);
@@ -60,6 +65,9 @@ public interface ReportResultApi {
 
     @GET(oneBabyReportList)
     Observable<String> getOneBabyReportList(@QueryMap HashMap<String, Object> paramMap);
+
+    @GET(reportDetailByPid)
+    Observable<String> getReportByPid(@QueryMap HashMap<String, Object> paramMap);
 
     @GET(oneBabyCollectReportList)
     Observable<String> getOneBabyCollectReportList(@QueryMap HashMap<String, Object> paramMap);

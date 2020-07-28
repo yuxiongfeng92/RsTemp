@@ -1,6 +1,6 @@
 package com.proton.runbear.net.bean;
 
-import com.proton.runbear.utils.net.OSSUtils;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
@@ -11,262 +11,281 @@ import java.io.Serializable;
 public class ReportListItemBean implements Serializable {
 
     /**
-     * id : 81
-     * deviceid : 15
-     * profileid : 4
-     * type : 1
-     * profilename : hunjji
-     * profileavatar : http://vdpics.oss-cn-hangzhou.aliyuncs.com/2016/12/vu1481194392703680.jpg
-     * devicetype : 1
-     * starttime : 1481263873000
-     * endtime : 1481263976000
-     * filepath : http://rawtemp.oss-cn-hangzhou.aliyuncs.com/2016/12/i_5_1481263882_4.json
-     * vcareadvice :
-     * vcareresult :
-     * doctoradvice :
-     * doctoravatar :
-     * healthtipid : 4
-     * healthtip : Treatments vary depending on the cause of the fever. For example, antibiotics would be used for a bacterial infection such as strep throat.
-     * data : {"time":94,"heart_rate_avg":0,"temp_max":42.39,"conception_rate":0,"temp_bbt":0}
-     * creator : 5
-     * paystatus : 0
-     * reqdoctorid : null
-     * reqpriority : null
-     * collect : false
-     * timestr : null
+     * ReportID : 16357
+     * PID : 9918
+     * RecordID : 8227
+     * ReportType : 0
+     * Contents : null
+     * CreateUserID : -1
+     * CreateDate : null
+     * OrgID : 1
+     * IsDelete : false
+     * CurrentLoginUserId : 0
+     * CurrentLoginUserName : null
+     * CurrentLoginUserPassword : null
+     * CurrentLoginUserMac : null
+     * CurrentLoginUserIp : null
+     * CurrentLoginUserConnectId : null
+     * ErrorCode : null
+     * Tag : null
+     * ObjectT : null
+     * Data1 : 2020/7/1 10:29:39
+     * Data2 : 0
+     * Data3 : 0
+     * Data4 : 15
+     * Data5 : 8227
+     * Data6 : 哈哈
+     * Data7 : null
+     * Data8 : null
+     * Data9 : null
      */
 
-    private String id;
-    private String deviceid;
-    /**
-     * 档案id
-     */
-    private long profileid;
-    private int type;
-    private String profilename;
-    private String profileavatar;
-    private String devicetype;
-    private long starttime;
-    private long endtime;
-    private String filepath;
-    private String vcareadvice;
-    private String vcareresult;
-    private String doctoradvice;
-    private String doctoravatar;
-    private int healthtipid;
-    private String healthtip;
-    private DataBean data;
-    private boolean collect;
-    private boolean checked = false;
+    private String ReportID;
+    private String PID;
+    private String RecordID;
+    private int ReportType;
+    private Object Contents;
+    private int CreateUserID;
+    private Object CreateDate;
+    private int OrgID;
+    private boolean IsDelete;
+    private int CurrentLoginUserId;
+    private Object CurrentLoginUserName;
+    private Object CurrentLoginUserPassword;
+    private Object CurrentLoginUserMac;
+    private Object CurrentLoginUserIp;
+    private Object CurrentLoginUserConnectId;
+    private Object ErrorCode;
+    private Object Tag;
+    private Object ObjectT;
 
-    public String getId() {
-        return id;
+    @SerializedName("Data1")
+    private String dateTime;
+    @SerializedName("Data2")
+    private String tempMax;
+    @SerializedName("Data3")
+    private String tempMin;
+    @SerializedName("Data4")
+    private long measureLength;
+    @SerializedName("Data6")
+    private String profileName;
+    private Object Data7;
+    private Object Data8;
+    private Object Data9;
+
+    public String getReportID() {
+        return ReportID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setReportID(String reportID) {
+        ReportID = reportID;
     }
 
-    public String getDeviceid() {
-        return deviceid;
+    public String getPID() {
+        return PID;
     }
 
-    public void setDeviceid(String deviceid) {
-        this.deviceid = deviceid;
+    public void setPID(String PID) {
+        this.PID = PID;
     }
 
-    public long getProfileid() {
-        return profileid;
+    public String getRecordID() {
+        return RecordID;
     }
 
-    public void setProfileid(long profileid) {
-        this.profileid = profileid;
+    public void setRecordID(String recordID) {
+        RecordID = recordID;
     }
 
-    public int getType() {
-        return type;
+    public int getReportType() {
+        return ReportType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setReportType(int ReportType) {
+        this.ReportType = ReportType;
     }
 
-    public String getProfilename() {
-        return profilename;
+    public Object getContents() {
+        return Contents;
     }
 
-    public void setProfilename(String profilename) {
-        this.profilename = profilename;
+    public void setContents(Object Contents) {
+        this.Contents = Contents;
     }
 
-    public String getProfileavatar() {
-        return profileavatar;
+    public int getCreateUserID() {
+        return CreateUserID;
     }
 
-    public void setProfileavatar(String profileavatar) {
-        this.profileavatar = profileavatar;
+    public void setCreateUserID(int CreateUserID) {
+        this.CreateUserID = CreateUserID;
     }
 
-    public String getDevicetype() {
-        return devicetype;
+    public Object getCreateDate() {
+        return CreateDate;
     }
 
-    public void setDevicetype(String devicetype) {
-        this.devicetype = devicetype;
+    public void setCreateDate(Object CreateDate) {
+        this.CreateDate = CreateDate;
     }
 
-    public long getStarttime() {
-        return starttime;
+    public int getOrgID() {
+        return OrgID;
     }
 
-    public void setStarttime(long starttime) {
-        this.starttime = starttime;
+    public void setOrgID(int OrgID) {
+        this.OrgID = OrgID;
     }
 
-    public long getEndtime() {
-        return endtime;
+    public boolean isIsDelete() {
+        return IsDelete;
     }
 
-    public void setEndtime(long endtime) {
-        this.endtime = endtime;
+    public void setIsDelete(boolean IsDelete) {
+        this.IsDelete = IsDelete;
     }
 
-    public String getFilepath() {
-        filepath = OSSUtils.getRealUrl(filepath);
-        return filepath;
+    public int getCurrentLoginUserId() {
+        return CurrentLoginUserId;
     }
 
-    public void setFilepath(String filepath) {
-        this.filepath = filepath;
+    public void setCurrentLoginUserId(int CurrentLoginUserId) {
+        this.CurrentLoginUserId = CurrentLoginUserId;
     }
 
-    public String getVcareadvice() {
-        return vcareadvice;
+    public Object getCurrentLoginUserName() {
+        return CurrentLoginUserName;
     }
 
-    public void setVcareadvice(String vcareadvice) {
-        this.vcareadvice = vcareadvice;
+    public void setCurrentLoginUserName(Object CurrentLoginUserName) {
+        this.CurrentLoginUserName = CurrentLoginUserName;
     }
 
-    public String getVcareresult() {
-        return vcareresult;
+    public Object getCurrentLoginUserPassword() {
+        return CurrentLoginUserPassword;
     }
 
-    public void setVcareresult(String vcareresult) {
-        this.vcareresult = vcareresult;
+    public void setCurrentLoginUserPassword(Object CurrentLoginUserPassword) {
+        this.CurrentLoginUserPassword = CurrentLoginUserPassword;
     }
 
-    public String getDoctoradvice() {
-        return doctoradvice;
+    public Object getCurrentLoginUserMac() {
+        return CurrentLoginUserMac;
     }
 
-    public void setDoctoradvice(String doctoradvice) {
-        this.doctoradvice = doctoradvice;
+    public void setCurrentLoginUserMac(Object CurrentLoginUserMac) {
+        this.CurrentLoginUserMac = CurrentLoginUserMac;
     }
 
-    public String getDoctoravatar() {
-        return doctoravatar;
+    public Object getCurrentLoginUserIp() {
+        return CurrentLoginUserIp;
     }
 
-    public void setDoctoravatar(String doctoravatar) {
-        this.doctoravatar = doctoravatar;
+    public void setCurrentLoginUserIp(Object CurrentLoginUserIp) {
+        this.CurrentLoginUserIp = CurrentLoginUserIp;
     }
 
-    public int getHealthtipid() {
-        return healthtipid;
+    public Object getCurrentLoginUserConnectId() {
+        return CurrentLoginUserConnectId;
     }
 
-    public void setHealthtipid(int healthtipid) {
-        this.healthtipid = healthtipid;
+    public void setCurrentLoginUserConnectId(Object CurrentLoginUserConnectId) {
+        this.CurrentLoginUserConnectId = CurrentLoginUserConnectId;
     }
 
-    public String getHealthtip() {
-        return healthtip;
+    public Object getErrorCode() {
+        return ErrorCode;
     }
 
-    public void setHealthtip(String healthtip) {
-        this.healthtip = healthtip;
+    public void setErrorCode(Object ErrorCode) {
+        this.ErrorCode = ErrorCode;
     }
 
-    public DataBean getData() {
-        return data;
+    public Object getTag() {
+        return Tag;
     }
 
-    public void setData(DataBean data) {
-        this.data = data;
+    public void setTag(Object Tag) {
+        this.Tag = Tag;
     }
 
-
-    public boolean isCollect() {
-        return collect;
+    public Object getObjectT() {
+        return ObjectT;
     }
 
-    public void setCollect(boolean collect) {
-        this.collect = collect;
+    public void setObjectT(Object ObjectT) {
+        this.ObjectT = ObjectT;
     }
 
-
-    public boolean isChecked() {
-        return checked;
+    public boolean isDelete() {
+        return IsDelete;
     }
 
-    public void setChecked(boolean checked) {
-        this.checked = checked;
+    public void setDelete(boolean delete) {
+        IsDelete = delete;
     }
 
-    public static class DataBean implements Serializable {
-        /**
-         * time : 94
-         * heart_rate_avg : 0       获取体温数据时此项为高温报警值
-         * temp_max : 42.39
-         * conception_rate : 0      获取体温数据时此项为低温报警值
-         * temp_bbt : 0
-         */
+    public String getDateTime() {
+        return dateTime;
+    }
 
-        private long time;
-        private float heart_rate_avg;
-        private String temp_max;
-        private float conception_rate;
-        private int temp_bbt;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
 
-        public long getTime() {
-            return time;
-        }
+    public String getTempMax() {
+        return tempMax;
+    }
 
-        public void setTime(long time) {
-            this.time = time;
-        }
+    public void setTempMax(String tempMax) {
+        this.tempMax = tempMax;
+    }
 
-        public float getHeart_rate_avg() {
-            return heart_rate_avg;
-        }
+    public String getTempMin() {
+        return tempMin;
+    }
 
-        public void setHeart_rate_avg(float heart_rate_avg) {
-            this.heart_rate_avg = heart_rate_avg;
-        }
+    public void setTempMin(String tempMin) {
+        this.tempMin = tempMin;
+    }
 
-        public String getTemp_max() {
-            return temp_max;
-        }
+    public long getMeasureLength() {
+        return measureLength;
+    }
 
-        public void setTemp_max(String temp_max) {
-            this.temp_max = temp_max;
-        }
+    public void setMeasureLength(long measureLength) {
+        this.measureLength = measureLength;
+    }
 
-        public float getConception_rate() {
-            return conception_rate;
-        }
+    public String getProfileName() {
+        return profileName;
+    }
 
-        public void setConception_rate(float conception_rate) {
-            this.conception_rate = conception_rate;
-        }
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
 
-        public int getTemp_bbt() {
-            return temp_bbt;
-        }
+    public Object getData7() {
+        return Data7;
+    }
 
-        public void setTemp_bbt(int temp_bbt) {
-            this.temp_bbt = temp_bbt;
-        }
+    public void setData7(Object Data7) {
+        this.Data7 = Data7;
+    }
+
+    public Object getData8() {
+        return Data8;
+    }
+
+    public void setData8(Object Data8) {
+        this.Data8 = Data8;
+    }
+
+    public Object getData9() {
+        return Data9;
+    }
+
+    public void setData9(Object Data9) {
+        this.Data9 = Data9;
     }
 }

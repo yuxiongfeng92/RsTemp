@@ -57,12 +57,19 @@ public class TempCurveView2 extends FrameLayout {
     private LimitLine highestLine, lowLimitLine;
 
     /**
-     * 温度曲线类型
+     * 曲线的显示类型
      */
-    private InstructionConstant chartType = InstructionConstant.bb;
+    private InstructionConstant chartType = InstructionConstant.aa;
 
-    public static final String REAL_LABEL = "实时温度";
+    /**
+     * 算法温度曲线
+     */
     public static final String ALGORITHM_LABEL = "算法温度";
+    /**
+     * 实时温度曲线
+     */
+    public static final String REAL_LABEL = "实时温度";
+
 
     public TempCurveView2(@NonNull Context context) {
         this(context, null);
@@ -88,14 +95,14 @@ public class TempCurveView2 extends FrameLayout {
         this.chartType = chartType;
         switch (chartType) {
             case aa://算法温度曲线
-                initDataSet(ALGORITHM_LABEL, R.color.color_temp_high);
+                initDataSet();
                 break;
             case ab://算法温度+真实温度曲线
-                initDataSet(ALGORITHM_LABEL, R.color.color_temp_high);
-                initDataSet(REAL_LABEL, R.color.color_main);
+                initDataSet(REAL_LABEL, R.color.color_temp_high);
+                initDataSet(ALGORITHM_LABEL, R.color.color_main);
                 break;
             case bb://真实温度曲线
-                initLineData();
+                initDataSet(REAL_LABEL, R.color.color_temp_high);
                 break;
         }
         addMarkView();
@@ -140,34 +147,11 @@ public class TempCurveView2 extends FrameLayout {
         }
     }
 
-    private void initLineData() {
-        mDataSet = new LineDataSet(entries, REAL_LABEL);
-        Drawable fillDrawable = ContextCompat.getDrawable(getContext(), R.drawable.drawable_line_chart);
-        fillDrawable.setAlpha(120);
-        mDataSet.setFillDrawable(fillDrawable);
-        mDataSet.setDrawFilled(true);
-        mDataSet.setDrawCircles(false);
-        mDataSet.disableDashedLine();
-        mDataSet.setColor(Color.TRANSPARENT);
-        mDataSet.setCircleColor(Color.BLACK);
-        mDataSet.setLineWidth(0f);
-        mDataSet.setCircleRadius(3f);
-        mDataSet.setDrawCircleHole(false);
-        mDataSet.setDrawValues(false);
-        mDataSet.setDrawFilled(true);
-        mDataSet.setFormLineWidth(1f);
-        mDataSet.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-        mDataSet.setFormSize(15.f);
-        mDataSet.setHighLightColor(Color.BLACK);
-        mDataSet.enableDashedHighlightLine(10f, 10f, 0f);
-        if (mLineData == null) {
-            mLineData = new LineData();
-        }
-        mLineData.addDataSet(mDataSet);
-        mLineData.setDrawValues(false);
-        mLineChart.setData(mLineData);
-    }
 
+
+    /**
+     * 初始化图表
+     */
     private void initLineChart() {
         mLineChart.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_gray_f4));
         mLineChart.setDragEnabled(true);
@@ -244,18 +228,20 @@ public class TempCurveView2 extends FrameLayout {
         mLineChart.invalidate();
     }
 
-    public void addData(float data, float algorithmTemp) {
-        TempDataBean tempDataBean = new TempDataBean(System.currentTimeMillis(), data, algorithmTemp);
+    public void addData(float realTemp, float algorithmTemp) {
+        TempDataBean tempDataBean = new TempDataBean(System.currentTimeMillis(), realTemp, algorithmTemp);
         mTempList.add(tempDataBean);
+
+        if (chartType!= InstructionConstant.aa) {
+            LineDataSet dataSetReal = (LineDataSet) mLineData.getDataSetByLabel(REAL_LABEL, true);
+            addEntry(tempDataBean, dataSetReal);
+        }
+
         if (chartType != InstructionConstant.bb) {
             LineDataSet dataSetAlgorithm = (LineDataSet) mLineData.getDataSetByLabel(ALGORITHM_LABEL, true);
             addEntry(tempDataBean, dataSetAlgorithm);
         }
 
-        if (chartType != InstructionConstant.aa) {
-            LineDataSet dataSetReal = (LineDataSet) mLineData.getDataSetByLabel(REAL_LABEL, true);
-            addEntry(tempDataBean, dataSetReal);
-        }
 //        addLineLimit();
         mLineData.notifyDataChanged();
         mLineChart.notifyDataSetChanged();
@@ -279,12 +265,38 @@ public class TempCurveView2 extends FrameLayout {
         final float scale = getResources().getDisplayMetrics().density;
         return dpValue * scale;
     }
+    private void initDataSet() {
+        mDataSet = new LineDataSet(entries, ALGORITHM_LABEL);
+        Drawable fillDrawable = ContextCompat.getDrawable(getContext(), R.drawable.drawable_line_chart);
+        fillDrawable.setAlpha(120);
+        mDataSet.setFillDrawable(fillDrawable);
+        mDataSet.setDrawFilled(true);
+        mDataSet.setDrawCircles(false);
+        mDataSet.disableDashedLine();
+        mDataSet.setColor(Color.TRANSPARENT);
+        mDataSet.setCircleColor(Color.BLACK);
+        mDataSet.setLineWidth(0f);
+        mDataSet.setCircleRadius(3f);
+        mDataSet.setDrawCircleHole(false);
+        mDataSet.setDrawValues(false);
+        mDataSet.setDrawFilled(true);
+        mDataSet.setFormLineWidth(1f);
+        mDataSet.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+        mDataSet.setFormSize(15.f);
+        mDataSet.setHighLightColor(Color.BLACK);
+        mDataSet.enableDashedHighlightLine(10f, 10f, 0f);
+        if (mLineData == null) {
+            mLineData = new LineData();
+        }
+        mLineData.addDataSet(mDataSet);
+        mLineData.setDrawValues(false);
+        mLineChart.setData(mLineData);
+    }
 
     /**
-     * 初始化算法温度曲线数据
+     * 设置曲线样式
      */
-    private void initDataSet(String lable, int color) {
-
+    private void initDataSet(String label, int color) {
         Legend legend = mLineChart.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
@@ -293,7 +305,7 @@ public class TempCurveView2 extends FrameLayout {
         legend.setEnabled(true);
 
         List<Entry> mValue = new ArrayList<>();
-        LineDataSet lineDataSet = new LineDataSet(mValue, lable);
+        LineDataSet lineDataSet = new LineDataSet(mValue, label);
         lineDataSet.setDrawValues(true);
         lineDataSet.setDrawCircles(false);
         lineDataSet.setColor(ContextCompat.getColor(getContext(), color));

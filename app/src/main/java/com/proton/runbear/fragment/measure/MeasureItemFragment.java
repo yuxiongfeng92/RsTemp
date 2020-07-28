@@ -70,17 +70,17 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
     protected void fragmentInit() {
         super.fragmentInit();
         binding.setViewmodel(viewmodel);
-        viewmodel.currentTemp.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+        viewmodel.algorithmTemp.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
-                doAlarm(viewmodel.currentTemp.get());
+                doAlarm(viewmodel.algorithmTemp.get());
                 if (!isHaveSetType) {
-                    binding.idCurveView.setChartType(InstructionConstant.bb);
+                    binding.idCurveView.setChartType(InstructionConstant.aa);
                     isHaveSetType = true;
                 }
 
-                if (viewmodel.currentTemp.get() > 0) {
-                    binding.idCurveView.addData(viewmodel.currentTemp.get(), viewmodel.algorithmTemp.get());
+                if (viewmodel.algorithmTemp.get() > 0) {
+                    binding.idCurveView.addData(viewmodel.currentRealTemp.get(), viewmodel.algorithmTemp.get());
                 }
             }
         });
@@ -98,7 +98,7 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
                 if (!isHaveSetType) {
-                    binding.idCurveView.setChartType(InstructionConstant.bb);
+                    binding.idCurveView.setChartType(InstructionConstant.aa);
                     isHaveSetType = true;
                 }
 
@@ -214,7 +214,7 @@ public class MeasureItemFragment extends BaseMeasureFragment<FragmentMeasureItem
             SpUtils.saveLong(Utils.getHighTempWarmSpKey(App.get().getPhone()), System.currentTimeMillis());
 
         });
-        mHighestWarmDialog.setContent(String.format("宝宝的体温已经%s了！", Utils.getTempAndUnit(viewmodel.currentTemp.get())));
+        mHighestWarmDialog.setContent(String.format("宝宝的体温已经%s了！", Utils.getTempAndUnit(viewmodel.algorithmTemp.get())));
         if (!mHighestWarmDialog.isShowing()) {
             Utils.vibrateAndSound();
             mHighestWarmDialog.show();

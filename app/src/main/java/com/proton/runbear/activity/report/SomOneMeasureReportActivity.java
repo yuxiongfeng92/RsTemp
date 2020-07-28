@@ -29,6 +29,8 @@ public class SomOneMeasureReportActivity extends BaseViewModelActivity<ActivityS
     @Override
     protected void init() {
         super.init();
+        binding.idIncludeTopTab.idTabchangeview.setVisibility(View.GONE);
+        binding.idIncludeTopTab.title.setText("报告");
         long profileId = getIntent().getLongExtra("profileId", -1);
         allReportFragment = new ReportFragment();//全部报告片段
         Bundle allReportBdle = new Bundle();
@@ -73,7 +75,7 @@ public class SomOneMeasureReportActivity extends BaseViewModelActivity<ActivityS
         binding.idIncludeTopTab.idTabchangeview.setSegmentText(getString(R.string.string_all), 0);
         binding.idIncludeTopTab.idTabchangeview.setSegmentText(getString(R.string.string_report_collect_tip), 1);
         binding.idIncludeTopTab.idTvRightOperate.setText(getString(R.string.string_edit));
-        binding.idIncludeTopTab.idTvRightOperate.setVisibility(View.VISIBLE);
+        binding.idIncludeTopTab.idTvRightOperate.setVisibility(View.GONE);
     }
 
     @Override

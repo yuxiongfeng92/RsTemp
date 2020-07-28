@@ -53,22 +53,6 @@ public class ReportViewModel extends BaseViewModel {
     private int pagesize = 5;//分页加载的每页数目，每页加载5条数据
     private int allReportCurrPageIndex = 1;
     private int collectReportCurrPageIndex = 1;
-    /**
-     * 是否存在本地未上传的文件
-     */
-    private boolean isHaveLocalReport = false;
-
-    private static List<ReportListItemBean> parseReportList(String json) throws Exception {
-        Logger.json(json);
-        ResultPair resultPair = parseResult(json);
-        if (resultPair.isSuccess()) {
-            Type type = new TypeToken<List<ReportListItemBean>>() {
-            }.getType();
-            return JSONUtils.getObj(resultPair.getData(), type);
-        } else {
-            throw new ParseResultException(resultPair.getData());
-        }
-    }
 
     /**
      * 获取所有报告列表
@@ -109,8 +93,10 @@ public class ReportViewModel extends BaseViewModel {
         } else {
             allReportCurrPageIndex++;
         }
-        MeasureReportCenter.getOneBabyReportList(profileid, allReportCurrPageIndex, 0, 1, 0, pagesize, reportNetCallBack);
+        MeasureReportCenter.getOneBabyReportList(profileid, reportNetCallBack);
     }
+
+
 
     public void getCollectReportList(boolean isRefresh) {
         ReportNetCallBack reportNetCallBack = new ReportNetCallBack(isRefresh, "1");
@@ -152,66 +138,6 @@ public class ReportViewModel extends BaseViewModel {
             isStartedLoadMore.set(false);
         }
     }
-
-    /**
-     * 报告列表选中某一项
-     */
-    public void itemClick(String type, int position) {
-        if (type.equals("0")) {
-            //全部列表
-            List<ReportListItemBean> allReportList = allReportListObF.get();
-            ReportListItemBean reportListItemBean = allReportList.get(position);
-            boolean isOldChecked = reportListItemBean.isChecked();
-            List<String> reportListItemBeanList = allSelectedObserveList.get();
-            if (CommonUtils.listIsEmpty(reportListItemBeanList)) {
-                reportListItemBeanList = new ArrayList<String>();
-            }
-            if (isOldChecked) {
-                //清除当前报告Id选择
-                reportListItemBeanList.remove(reportListItemBean.getId());
-                //需要重新赋值给变量才能收到变化
-                List<String> newReportList = new ArrayList<String>();
-                newReportList.addAll(reportListItemBeanList);
-                allSelectedObserveList.set(newReportList);
-            } else {
-                //添加当前报告id
-                reportListItemBeanList.add(reportListItemBean.getId());
-                //需要重新赋值给变量才能收到变化
-                List<String> newReportList = new ArrayList<String>();
-                newReportList.addAll(reportListItemBeanList);
-                allSelectedObserveList.set(newReportList);
-            }
-            reportListItemBean.setChecked(!isOldChecked);
-            allReportList.set(position, reportListItemBean);
-            allReportListObF.set(allReportList);
-        } else if (type.equals("1")) {
-            //收藏列表
-            List<ReportListItemBean> collectReportList = collectReportListObF.get();
-            ReportListItemBean reportListItemBean = collectReportList.get(position);
-            boolean isOldChecked = reportListItemBean.isChecked();
-            List<String> reportListItemBeanList = collectSelectedObserveList.get();
-            if (CommonUtils.listIsEmpty(reportListItemBeanList)) {
-                reportListItemBeanList = new ArrayList<String>();
-            }
-            if (isOldChecked) {
-                //清除当前报告Id选择
-                reportListItemBeanList.remove(reportListItemBean.getId());
-                List<String> collectList = new ArrayList<>();
-                collectList.addAll(reportListItemBeanList);
-                collectSelectedObserveList.set(collectList);
-            } else {
-                //添加当前报告id
-                reportListItemBeanList.add(reportListItemBean.getId());
-                List<String> collectList = new ArrayList<>();
-                collectList.addAll(reportListItemBeanList);
-                collectSelectedObserveList.set(collectList);
-            }
-            reportListItemBean.setChecked(!isOldChecked);
-            collectReportList.set(position, reportListItemBean);
-            collectReportListObF.set(collectReportList);
-        }
-    }
-
     /**
      * 删除所选报告
      */
@@ -511,20 +437,6 @@ public class ReportViewModel extends BaseViewModel {
                 return;
             }
 
-            //获取本地报告
-            fetchLocalReport(data);
-            if (isHaveLocalReport) {//如果有本地报告则需要对data按开始时间进行排序
-                Collections.sort(data, (o1, o2) -> {
-                    long starttime1 = o1.getStarttime();
-                    long starttime2 = o2.getStarttime();
-                    if (starttime1 - starttime2 < 0) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                });
-            }
-
             switch (reportType) {
                 case "0":
                     //全部报告列表
@@ -573,56 +485,5 @@ public class ReportViewModel extends BaseViewModel {
         }
     }
 
-    private void fetchLocalReport(List<ReportListItemBean> data) {
-        isHaveLocalReport = false;
-        List<ReportBean> reportBeans = LitePal.where("userId = ?", App.get().getApiUid()).find(ReportBean.class);
-        for (ReportBean report : reportBeans) {
-            //上传报告
-            if (TextUtils.isEmpty(report.getFilePath())) {
-                Logger.w("离线报告本地路径为空删除");
-                report.delete();
-                continue;
-            }
 
-            if (!report.getFilePath().startsWith("http") && !FileUtils.isFileExist(report.getFilePath())) {
-                Logger.w("离线报告本地路径文件不存在删除");
-                report.delete();
-                continue;
-            }
-
-            //有文件路径,未上传的有效数据
-            if (!report.getFilePath().startsWith("http")) {
-                ReportListItemBean itemBean = reportBean2ReportListItemBean(report);
-                if (itemBean != null && !Utils.checkProfileIsMeasuring(itemBean.getProfileid())) {
-                    data.add(itemBean);
-                    isHaveLocalReport = true;
-                }
-            }
-        }
-    }
-
-    /**
-     * 数据转换
-     *
-     * @param reportBean
-     * @return
-     */
-    private ReportListItemBean reportBean2ReportListItemBean(ReportBean reportBean) {
-        ReportListItemBean itemBean = new ReportListItemBean();
-        itemBean.setId(reportBean.getReportId());
-        itemBean.setDeviceid(reportBean.getDeviceId());
-        itemBean.setProfileid(Long.parseLong(reportBean.getProfileId()));
-        itemBean.setType(reportBean.getType());
-        itemBean.setProfilename(reportBean.getProfileName());
-        itemBean.setProfileavatar(reportBean.getUserAvatar());
-        itemBean.setDevicetype(reportBean.getDeviceType());
-        itemBean.setStarttime(reportBean.getStartTime());
-        itemBean.setEndtime(reportBean.getEndTime());
-        itemBean.setFilepath(reportBean.getFilePath());
-        ReportListItemBean.DataBean dataBean = new ReportListItemBean.DataBean();
-        dataBean.setTemp_max(String.valueOf(reportBean.getMaxTemp()));
-        itemBean.setData(dataBean);
-        itemBean.setCollect(false);
-        return itemBean;
-    }
 }

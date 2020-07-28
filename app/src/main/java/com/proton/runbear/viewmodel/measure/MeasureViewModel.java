@@ -76,7 +76,7 @@ public class MeasureViewModel extends BaseViewModel {
     /**
      * 当前温度
      */
-    public ObservableFloat currentTemp = new ObservableFloat(0);
+//    public ObservableFloat currentTemp = new ObservableFloat(0);
 
     /**
      * 当前算法温度
@@ -296,7 +296,7 @@ public class MeasureViewModel extends BaseViewModel {
             }
             for (TempDataBean temp : temps) {
                 algorithmTemps.add(temp.getAlgorithmTemp());
-                rawTemps.add(temp.getAlgorithmTemp());
+                rawTemps.add(temp.getTemp());
             }
             //连续的数据，需要处理的原因是因为嵌入式有一批设备有问题
             mLastTemp = temps.get(temps.size() - 1).getAlgorithmTemp();
@@ -322,13 +322,12 @@ public class MeasureViewModel extends BaseViewModel {
                 }
             }
             if (isConnected()) {
-                currentTemp.set(temps.get(temps.size() - 1).getAlgorithmTemp());
+                currentRealTemp.set(temps.get(temps.size() - 1).getTemp());
             }
-            algorithmTemp.set(temps.get(temps.size() - 1).getTemp());
-            Logger.w("实时温度 getAlgorithmTemp: ", currentTemp.get(), " 算法温度 getTemp： ", algorithmTemp.get());
+            algorithmTemp.set(temps.get(temps.size() - 1).getAlgorithmTemp());
             currentRealTemp.set(rawTemp);
+            Logger.w("真实温度 currentRealTemp: ", currentRealTemp.get(), " 算法温度 algorithmTemp： ", algorithmTemp.get());
             uploadData();
-            Logger.w("当前温度:", currentTemp.get(), ",size:", temps.size());
         }
 
         @Override
@@ -408,11 +407,11 @@ public class MeasureViewModel extends BaseViewModel {
 
     public MeasureViewModel() {
         Logger.w("初始化measureviewmodel...");
-        currentTemp.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+        algorithmTemp.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable observable, int i) {
                 //共享和mqtt连接不用发布消息
-                highestTemp.set(Math.max(currentTemp.get(), highestTemp.get()));
+                highestTemp.set(Math.max(algorithmTemp.get(), highestTemp.get()));
             }
         });
         connectStatus.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
@@ -425,13 +424,13 @@ public class MeasureViewModel extends BaseViewModel {
                                 .delay(10, TimeUnit.MINUTES)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(integer -> {
-                                    currentTemp.set(0);
+                                    currentRealTemp.set(0);
                                     algorithmTemp.set(0);
                                     highestTemp.set(0);
                                 });
                     } else {//添加手动断开蓝牙连接的时候，断开mqtt
                         measureTips.set("");
-                        currentTemp.set(0);
+                        currentRealTemp.set(0);
                         algorithmTemp.set(0);
                         MQTTShareManager.getInstance().unsubscribe(App.get().getRawTempUploadTopic());
                         MQTTShareManager.getInstance().unsubscribe(App.get().getCacheTempUploadTopic());

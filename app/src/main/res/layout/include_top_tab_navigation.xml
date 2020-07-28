@@ -23,6 +23,16 @@
                 android:paddingRight="30dp"
                 android:visibility="gone"
                 />
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="#333333"
+                android:textSize="18sp"/>
 
             <!--tab切换标题-->
             <com.proton.runbear.view.TabCheckedChangeView

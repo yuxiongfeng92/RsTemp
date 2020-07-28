@@ -166,8 +166,8 @@
                                 android:id="@+id/id_current_temp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@{ Utils.getFormartTempStr(viewmodel.currentTemp)}"
-                                android:textColor="@{Color.parseColor(Utils.getCurrentTempColor(viewmodel.currentTemp))}"
+                                android:text="@{ Utils.getFormartTempStr(viewmodel.algorithmTemp)}"
+                                android:textColor="@{Color.parseColor(Utils.getCurrentTempColor(viewmodel.algorithmTemp))}"
                                 android:textSize="60sp" />
 
                             <TextView

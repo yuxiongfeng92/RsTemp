@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.gson.reflect.TypeToken;
 import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
 import com.proton.runbear.R;
 import com.proton.runbear.activity.base.BaseActivity;
@@ -23,12 +24,17 @@ import com.proton.runbear.bean.ReportBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.constant.AppConfigs;
 import com.proton.runbear.databinding.ActivityReportDetailBinding;
+import com.proton.runbear.enums.InstructionConstant;
 import com.proton.runbear.fragment.report.ShareReportFragment;
+import com.proton.runbear.net.bean.DeviceBean;
 import com.proton.runbear.net.bean.NoteBean;
+import com.proton.runbear.net.bean.ReportDetailBean;
+import com.proton.runbear.net.bean.ServerTempDateBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.ResultPair;
 import com.proton.runbear.net.center.MeasureReportCenter;
 import com.proton.runbear.utils.BlackToast;
+import com.proton.runbear.utils.DateUtils;
 import com.proton.runbear.utils.FileUtils;
 import com.proton.runbear.utils.JSONUtils;
 import com.proton.runbear.utils.SpUtils;
@@ -45,6 +51,7 @@ import com.wms.utils.DensityUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +81,10 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
      * 报告id
      */
     private String reportId;
+    /**
+     * 记录id
+     */
+    private String recordId;
     /**
      * 最高温度、最低温度
      */
@@ -110,7 +121,7 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
     /**
      * 传递过来的档案id
      */
-    private long profileId;
+    private String profileId;
     private ReportBean reportBean;
 
     @Override
@@ -127,15 +138,21 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
     }
 
     @Override
+    protected boolean showBackBtn() {
+        return true;
+    }
+
+    @Override
     protected void init() {
         super.init();
         Intent mIntent = getIntent();
         reportId = mIntent.getStringExtra("reportId");
+        recordId = mIntent.getStringExtra("recordId");
         maxTemp = mIntent.getStringExtra("maxTemp");
-        starttime = mIntent.getLongExtra("starttime", 0);
-        reportUrlPath = mIntent.getStringExtra("reportUrlPath");
-        endTime = mIntent.getLongExtra("endtime", 0);
-        profileId = mIntent.getLongExtra("profileId", 0);
+//        starttime = mIntent.getLongExtra("starttime", 0);
+//        reportUrlPath = mIntent.getStringExtra("reportUrlPath");
+//        endTime = mIntent.getLongExtra("endtime", 0);
+        profileId = mIntent.getStringExtra("profileId");
         profileName = mIntent.getStringExtra("profileName");
     }
 
@@ -153,14 +170,62 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
         params.width = DensityUtils.dip2px(this, 31);
         params.height = DensityUtils.dip2px(this, 39);
         binding.idIncludeTop.idIvRightOperte.setLayoutParams(params);
-        binding.idIncludeTop.idIvRightOperte.setVisibility(View.VISIBLE);
+//        binding.idIncludeTop.idIvRightOperte.setVisibility(View.VISIBLE);
         //初始化最高体温数据
         initMaxTempData();
         try {
-            fetchChartData();
+//            fetchChartData();
+            fetchReportDetail();
         } catch (Exception error) {
             Logger.w(error.getMessage());
         }
+    }
+
+    /**
+     * 获取报告详情
+     */
+    private void fetchReportDetail() {
+        showDialog();
+        MeasureReportCenter.getReportDetail(recordId, new NetCallBack<ReportDetailBean>() {
+            @Override
+            public void noNet() {
+                super.noNet();
+                BlackToast.show(R.string.string_no_net);
+            }
+
+            @Override
+            public void onSucceed(ReportDetailBean reportDetailBean) {
+                String sourceJson = reportDetailBean.getTempSourceJson();
+                Type type = new TypeToken<ArrayList<ServerTempDateBean>>() {
+                }.getType();
+                List<ServerTempDateBean> serverTempDateBeans = JSONUtils.getObj(sourceJson, type);
+                if (serverTempDateBeans != null && serverTempDateBeans.size() > 0) {
+                    Logger.w("报告size:",serverTempDateBeans.size());
+                    List<TempDataBean> allTemps = new ArrayList<>();
+                    for (int i = 0; i < serverTempDateBeans.size(); i++) {
+                        ServerTempDateBean dateBean = serverTempDateBeans.get(i);
+                        long time=DateUtils.formatStringT(dateBean.getRaw_d());
+                        TempDataBean tempDataBean = new TempDataBean(time, Float.valueOf(dateBean.getRaw_r()), Float.valueOf(dateBean.getRaw_t()));
+                        allTemps.add(tempDataBean);
+                    }
+                    dismissDialog();
+                    runOnUiThread(() -> {
+                        binding.idCurveView.setChartType(InstructionConstant.aa);
+                        binding.idCurveView.addDatas(allTemps);
+                        dismissDialog();
+                    });
+                }else {
+                    Logger.w("报告size: 0");
+                }
+                dismissDialog();
+            }
+
+            @Override
+            public void onFailed(ResultPair resultPair) {
+                super.onFailed(resultPair);
+                BlackToast.show(resultPair.getErrorMessage());
+            }
+        });
     }
 
     /**
@@ -249,9 +314,9 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
                         dismissDialog();
                         return;
                     }
-                    Logger.w("");
+
                     runOnUiThread(() -> {
-                        binding.idCurveView.setChartType(App.get().getInstructionConstant());
+//                        binding.idCurveView.setChartType(App.get().getInstructionConstant());
                         binding.idCurveView.addDatas(allTemps);
                         dismissDialog();
                     });
@@ -265,7 +330,6 @@ public class ReportDetailActivity extends BaseActivity<ActivityReportDetailBindi
     @Override
     protected void initData() {
         super.initData();
-        initNotesRecord();
     }
 
     /**

@@ -104,6 +104,7 @@
                                 android:id="@+id/id_iv_report_collect"
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
+                                android:visibility="gone"
                                 android:src="@drawable/icon_report_collect"/>
                         </FrameLayout>
                         <!--体温内容-->
@@ -177,6 +178,7 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_marginRight="20dp"
                                 android:paddingLeft="8dp"
+                                android:visibility="invisible"
                                 android:src="@drawable/icon_report_more_operations"/>
                             <!--温度范围-->
                             <TextView
@@ -211,7 +213,7 @@
 
 
     </LinearLayout>
-    <!--  android:layout_marginTop="40dp"-->
+
     <LinearLayout
         android:layout_width="100dp"
         android:layout_height="match_parent"

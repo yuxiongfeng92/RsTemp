@@ -2,17 +2,17 @@
 <layout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:background="@color/color_main_bg"
-                  android:orientation="vertical"
-                  tools:context="com.proton.runbear.activity.report.ReportDetailActivity">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_main_bg"
+        android:orientation="vertical"
+        tools:context="com.proton.runbear.activity.report.ReportDetailActivity">
 
         <include
             android:id="@+id/id_include_top"
-            layout="@layout/include_top_navigation"/>
+            layout="@layout/include_top_navigation" />
         <!--温度图表-->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,8 +23,7 @@
             <com.proton.runbear.view.TempCurveView2
                 android:id="@+id/id_curve_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
+                android:layout_height="match_parent" />
 
             <!--图表文字标识-->
             <RelativeLayout
@@ -39,7 +38,7 @@
                     android:layout_height="21dp"
                     android:layout_marginLeft="16dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/icon_highest_report"/>
+                    android:src="@drawable/icon_highest_report" />
                 <!--TODO 温度值颜色大小、单位动态替换-->
                 <TextView
                     android:id="@+id/tv_temp_highest_tip"
@@ -49,7 +48,7 @@
                     android:layout_marginLeft="6dp"
                     android:layout_toRightOf="@id/iv_temp"
                     android:gravity="bottom"
-                    android:text="@string/string_highest_temp"/>
+                    android:text="@string/string_highest_temp" />
 
                 <TextView
                     android:id="@+id/id_tv_highest_temp"
@@ -59,7 +58,7 @@
                     android:layout_alignBottom="@id/tv_temp_highest_tip"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@id/tv_temp_highest_tip"
-                    android:text="--"/>
+                    android:text="--" />
 
                 <TextView
                     android:id="@+id/id_tv_temp_unit"
@@ -68,27 +67,28 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/tv_temp_highest_tip"
                     android:layout_toRightOf="@id/id_tv_highest_temp"
-                    android:text="--"/>
+                    android:text="--" />
 
                 <ImageView
                     android:id="@+id/id_iv_chart_rotate"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_alignParentRight="true"
+                    android:visibility="invisible"
                     android:padding="8dp"
-                    android:src="@drawable/icon_screen_rotation"/>
+                    android:src="@drawable/icon_screen_rotation" />
             </RelativeLayout>
         </RelativeLayout>
 
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-                                                           xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                           android:id="@+id/id_refresh_layout"
-                                                           android:layout_width="match_parent"
-                                                           android:layout_height="match_parent"
-                                                           android:layout_marginTop="11dp"
-                                                           app:srlEnableLoadmore="false"
-                                                           app:srlEnableRefresh="true">
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/id_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="11dp"
+            android:visibility="gone"
+            app:srlEnableLoadmore="false"
+            app:srlEnableRefresh="true">
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -117,20 +117,20 @@
                             android:paddingRight="16dp"
                             android:text="@string/string_note"
                             android:textColor="#0095e4"
-                            android:textSize="16sp"/>
+                            android:textSize="16sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical|right"
                             android:layout_marginRight="16dp"
-                            android:src="@drawable/icon_blue_rightarrow"/>
+                            android:src="@drawable/icon_blue_rightarrow" />
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/color_blue_0095"/>
+                        android:background="@color/color_blue_0095" />
                     <!--分割线-->
                     <!--  <View
                           android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                         android:id="@+id/id_recyclerview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:scrollbars="none"/>
+                        android:scrollbars="none" />
                     <!--贴士-->
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -158,21 +158,21 @@
                             android:paddingLeft="16dp"
                             android:text="@string/string_note_tip"
                             android:textColor="#0095e4"
-                            android:textSize="16sp"/>
+                            android:textSize="16sp" />
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@color/color_blue_0095"/>
+                            android:background="@color/color_blue_0095" />
                         <!--友情提示文案-->
                         <TextView
                             android:id="@+id/id_tv_note_tip_txt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="8dp"
                             android:paddingLeft="16dp"
+                            android:paddingTop="8dp"
                             android:paddingRight="16dp"
-                            android:paddingTop="8dp"/>
+                            android:paddingBottom="8dp" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>

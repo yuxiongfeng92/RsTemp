@@ -6,6 +6,7 @@ import com.proton.runbear.bean.ReportBean;
 import com.proton.runbear.component.App;
 import com.proton.runbear.net.RetrofitHelper;
 import com.proton.runbear.net.bean.NoteBean;
+import com.proton.runbear.net.bean.ReportDetailBean;
 import com.proton.runbear.net.bean.ReportListItemBean;
 import com.proton.runbear.net.callback.NetCallBack;
 import com.proton.runbear.net.callback.NetSubscriber;
@@ -23,6 +24,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by luochune on 2018/3/23.
@@ -55,21 +58,13 @@ public class MeasureReportCenter extends DataCenter {
     }
 
     /**
-     * @param allReportCurrPageIndex 当前页
-     * @param endtime                本地最新报告时间
-     * @param type                   1,体温 2，心电 3，医生端 4，微信
-     * @param collectlist            收藏collectlist==1 取全部:0
-     * @param pagesize               //每页数目
-     * @param netCallBack            网络请求回调
+     * 获取当前档案下所有报告
+     * @param profileid
+     * @param netCallBack
      */
-    public static void getOneBabyReportList(long profileid, int allReportCurrPageIndex, int endtime, int type, int collectlist, int pagesize, NetCallBack<List<ReportListItemBean>> netCallBack) {
+    public static void getOneBabyReportList(long profileid, NetCallBack<List<ReportListItemBean>> netCallBack) {
         HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("page", allReportCurrPageIndex + "");//页码
-        paramMap.put("endtime", "0");//本地最新报告时间
-        paramMap.put("type", "1");//1,体温 2，心电 3，医生端 4，微信
-        paramMap.put("collectlist", "0");//收藏collectlist==1 取全部:0
-        paramMap.put("pagesize", pagesize + "");//每页数目
-        paramMap.put("profileid", profileid);
+        paramMap.put("pid", profileid);
         RetrofitHelper.getReportResultApi().getOneBabyReportList(paramMap).map(
                 json -> {
                     Logger.json(json);
@@ -86,6 +81,29 @@ public class MeasureReportCenter extends DataCenter {
             @Override
             public void onNext(List<ReportListItemBean> reportList) {
                 netCallBack.onSucceed(reportList);
+            }
+        });
+    }
+
+    public static void getReportDetail(String recordid,NetCallBack<ReportDetailBean>callBack){
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("recordid", recordid);
+        RetrofitHelper.getReportResultApi().getReportByPid(paramMap).map(
+                json -> {
+                    Logger.json(json);
+                    ResultPair resultPair = parseResult(json);
+                    if (resultPair.isSuccess()) {
+                        ReportDetailBean detailBean = JSONUtils.getObj(resultPair.getData(), ReportDetailBean.class);
+                        return detailBean;
+                    } else {
+                        throw new ParseResultException(resultPair.getData());
+                    }
+                }
+        ).compose(threadTrans()).subscribe(new NetSubscriber<ReportDetailBean>(callBack) {
+            @Override
+            public void onNext(ReportDetailBean reportDetailBean) {
+                super.onNext(reportDetailBean);
+                callBack.onSucceed(reportDetailBean);
             }
         });
     }

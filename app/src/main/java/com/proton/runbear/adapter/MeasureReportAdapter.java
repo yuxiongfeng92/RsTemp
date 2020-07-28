@@ -6,9 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.proton.runbear.R;
-import com.proton.runbear.component.App;
 import com.proton.runbear.net.bean.ReportListItemBean;
 import com.proton.runbear.utils.FormatUtils;
 import com.proton.runbear.utils.UIUtils;
@@ -37,54 +35,54 @@ public class MeasureReportAdapter extends CommonAdapter<ReportListItemBean> {
             return;
         }
 
-        if (reportListItemBean.getFilepath().startsWith("http")) {
+    /*    if (reportListItemBean.getFilepath().startsWith("http")) {
             holder.getView(R.id.id_not_upload).setVisibility(View.GONE);
         } else {
             holder.getView(R.id.id_not_upload).setVisibility(View.VISIBLE);
-        }
+        }*/
 
         //体温单位
         ((TextView) holder.getView(R.id.id_tv_temp_unit)).setText(Utils.getTempUnit());
         //是否收藏
-        if (reportListItemBean.isCollect()) {
+/*        if (reportListItemBean.isCollect()) {
             //收藏
             holder.getView(R.id.id_iv_report_collect).setVisibility(View.VISIBLE);
         } else {
             //未收藏
             holder.getView(R.id.id_iv_report_collect).setVisibility(View.GONE);
-        }
+        }*/
         //编辑测量报告
         if (isEditMeasureReport) {
             //  holder.mSwipeMenuLayout.setSwipeEnable(false);
             ImageView chooseIv = holder.getView(R.id.id_iv_report_choose);
             chooseIv.setVisibility(View.VISIBLE);
-            if (reportListItemBean.isChecked()) {
+         /*   if (reportListItemBean.isChecked()) {
                 //选中
                 chooseIv.setImageDrawable(ContextCompat.getDrawable(App.get(), R.drawable.icon_rb_checked));
             } else {
                 //取消选中
                 chooseIv.setImageDrawable(ContextCompat.getDrawable(App.get(), R.drawable.icon_rb_unchecked));
-            }
+            }*/
         } else {
             /*TODO   holder.mSwipeMenuLayout.setSwipeEnable(true);
              */
             holder.getView(R.id.id_iv_report_choose).setVisibility(View.GONE);
         }
         //报告测试时间
-        ((TextView) holder.getView(R.id.id_tv_report_sum_time)).setText(FormatUtils.formatTime(reportListItemBean.getEndtime() - reportListItemBean.getStarttime()));
+        ((TextView) holder.getView(R.id.id_tv_report_sum_time)).setText(FormatUtils.formatTime(1000 * reportListItemBean.getMeasureLength()));
         //头像
-        ((SimpleDraweeView) holder.getView(R.id.id_sdv_report_avatar)).setImageURI(reportListItemBean.getProfileavatar());
+//        ((SimpleDraweeView) holder.getView(R.id.id_sdv_report_avatar)).setImageURI(reportListItemBean.getProfileavatar());
         // 报告距离现在经过的时间(1.5以结束时间为准)
-        ((TextView) holder.getView(R.id.id_tv_report_time)).setText(FormatUtils.getTimeElapse(reportListItemBean.getEndtime()));
+        ((TextView) holder.getView(R.id.id_tv_report_time)).setText(reportListItemBean.getDateTime());
         //宝宝姓名
-        ((TextView) holder.getView(R.id.id_tv_report_babyname)).setText(reportListItemBean.getProfilename());
+        ((TextView) holder.getView(R.id.id_tv_report_babyname)).setText(reportListItemBean.getProfileName());
         //温度范围
         //在显示范围内再显示
         TextView temLevelTv = holder.getView(R.id.id_btn_report_temparea);
         TextView highestTempTv = holder.getView(R.id.id_tv_highest_temp);
         float maxTempFloat = -1;
-        if (reportListItemBean.getData() != null) {
-            maxTempFloat = Float.parseFloat(reportListItemBean.getData().getTemp_max());
+        if (reportListItemBean.getTempMax() != null) {
+            maxTempFloat = Float.parseFloat(reportListItemBean.getTempMax());
         }
         //最高体温赋值
         highestTempTv.setText(UIUtils.currMaxTemp(maxTempFloat));

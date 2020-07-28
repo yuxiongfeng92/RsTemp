@@ -27,7 +27,7 @@ public enum InstructionConstant {
                 return instructionConstant;
             }
         }
-        return null;
+        return aa;
     }
 
     public String getInstruction() {
